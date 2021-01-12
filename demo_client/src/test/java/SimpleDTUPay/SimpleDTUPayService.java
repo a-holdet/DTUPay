@@ -8,6 +8,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.math.BigDecimal;
 import java.util.List;
 
 public class SimpleDTUPayService {
@@ -44,4 +45,18 @@ public class SimpleDTUPayService {
         String merchantId = baseUrl.path("merchants").request().post(Entity.entity(restUser, MediaType.APPLICATION_JSON),String.class);
         return merchantId;
     }
+
+    public void transferMoneyFromTo(String customerAccountId, String merchantAccountId, BigDecimal amount, String description) throws Exception {
+        Payment payment = new Payment();
+        payment.amount = amount;
+        payment.customerAccountId = customerAccountId;
+        payment.merchantAccountId = merchantAccountId;
+        payment.description = description;
+
+        Response response = baseUrl.path("payments").request().post(Entity.entity(payment, MediaType.APPLICATION_JSON));
+        if(response.getStatus()<200 || response.getStatus() >= 300){
+            throw new Exception("Something went wong");
+        }
+    }
+
 }
