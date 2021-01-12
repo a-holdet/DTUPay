@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-pushd code-with-quarkus
+pushd DTUPay
 mvn package -Dquarkus.package.type=uber-jar
 # Create a new docker image if necessary.
 # Restarts the container with the new image if necessary
