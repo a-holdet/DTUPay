@@ -1,0 +1,23 @@
+version: '3'
+services:
+  rabbitMq:
+    image: rabbitmq
+    container_name: rabbitMq_container
+    
+  service2:
+    image: service2 
+    container_name: service2 
+    ports:
+     - "8080:8080"
+    depends_on:
+     - "rabbitMq"
+    command: ["./wait-for-it.sh","rabbitmq:5672","java", "-Xmx64m", "-jar", "service2-1.0.0-runner.jar"]
+    
+  service1:
+    image: service1
+    container_name: service1
+    depends_on:
+     - "rabbitMq"
+    command: ["./wait-for-it.sh","rabbitmq:5672","java", "-Xmx64m", "-jar", "service1-1.0.0.jar"]
+
+ 

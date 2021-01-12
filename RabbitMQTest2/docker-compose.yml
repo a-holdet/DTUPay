@@ -1,0 +1,6 @@
+version: '3'
+services:
+  service2:
+    image: service2 
+    build: .
+ 
