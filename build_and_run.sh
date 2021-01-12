@@ -1,24 +1,11 @@
 #!/bin/bash
 set -e
 
-<<<<<<< HEAD
 # Build and install the libraries
 # abstracting away from using the
 # RabbitMq message queue
 pushd libraries/messaging-utilities
 ./build.sh
-=======
-pushd DTUPay
-mvn package
-# Create a new docker image if necessary.
-# Restarts the container with the new image if necessary
-# The server stays running.
-# To terminate the server run docker-compose down in the
-# code-with-quarkus direcgtory
-docker-compose up -d --build
-# clean up images
-docker image prune -f
->>>>>>> e0ff9421f9507f13e7e81007ae76973b62b24156
 popd
 
 pushd RabbitMQTest1
