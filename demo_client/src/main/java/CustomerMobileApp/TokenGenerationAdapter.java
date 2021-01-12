@@ -35,7 +35,7 @@ public class TokenGenerationAdapter implements ITokenGeneration {
         Response response = baseUrl
                 .path("tokens")
                 .request()
-                .post(Entity.entity(new TokenRequestObject(customer.cprNumber, amount), MediaType.APPLICATION_JSON));
+                .post(Entity.entity(new TokenRequestObject(customer.getCprNumber(), amount), MediaType.APPLICATION_JSON));
     }
 
     public List<UUID> readTokensForCustomer(Customer customer) {
