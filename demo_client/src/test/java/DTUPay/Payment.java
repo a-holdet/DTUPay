@@ -1,4 +1,4 @@
-package SimpleDTUPay;
+package DTUPay;
 
 import java.math.BigDecimal;
 
