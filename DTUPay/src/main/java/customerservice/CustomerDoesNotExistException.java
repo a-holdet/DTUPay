@@ -1,4 +1,4 @@
-package BusinessLogic;
+package customerservice;
 
 public class CustomerDoesNotExistException extends Throwable {
     String customerId;

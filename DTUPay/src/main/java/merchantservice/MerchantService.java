@@ -1,4 +1,4 @@
-package BusinessLogic;
+package merchantservice;
 
 import java.util.ArrayList;
 import java.util.List;

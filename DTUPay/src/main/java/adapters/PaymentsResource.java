@@ -1,6 +1,8 @@
-package org.acme;
+package adapters;
 
-import BusinessLogic.*;
+import paymentservice.*;
+import merchantservice.*;
+import customerservice.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

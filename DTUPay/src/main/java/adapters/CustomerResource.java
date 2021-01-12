@@ -1,9 +1,8 @@
-package org.acme;
+package adapters;
 
-import BusinessLogic.Customer;
-import BusinessLogic.CustomerService;
-import BusinessLogic.Payment;
-import BusinessLogic.PaymentService;
+
+
+import customerservice.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

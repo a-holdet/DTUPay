@@ -1,8 +1,7 @@
-package org.acme;
+package adapters;
 
-import BusinessLogic.CustomerService;
-import BusinessLogic.Merchant;
-import BusinessLogic.MerchantService;
+
+import merchantservice.*;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;

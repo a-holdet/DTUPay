@@ -1,4 +1,4 @@
-package BusinessLogic;
+package merchantservice;
 
 public class Merchant {
     public String firstName;
