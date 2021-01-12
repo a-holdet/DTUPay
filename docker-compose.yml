@@ -5,4 +5,4 @@ services:
     build: code-with-quarkus
     container_name: dtupay-server
     ports:
-      - "8040:8080"
+      - "8042:8080"
