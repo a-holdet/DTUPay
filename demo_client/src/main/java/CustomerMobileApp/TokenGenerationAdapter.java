@@ -28,7 +28,7 @@ public class TokenGenerationAdapter implements ITokenGeneration {
 
     public TokenGenerationAdapter() {
         Client client = ClientBuilder.newClient();
-        baseUrl = client.target("http://localhost:8081/");
+        baseUrl = client.target("http://localhost:8080/");
     }
 
     public void createTokensForCustomer(Customer customer, int amount) {

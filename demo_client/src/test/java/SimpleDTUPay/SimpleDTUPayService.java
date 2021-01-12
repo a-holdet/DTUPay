@@ -14,7 +14,7 @@ public class SimpleDTUPayService {
 
     public SimpleDTUPayService() {
         Client client = ClientBuilder.newClient();
-        baseUrl = client.target("http://localhost:8081/");
+        baseUrl = client.target("http://localhost:8080/");
     }
 
     public String registerCustomer(String firstName, String lastName, String cprNumber, String accountId) throws IllegalArgumentException {

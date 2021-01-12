@@ -1,12 +1,12 @@
 #!/bin/bash
 set -e
 
-pushd code-with-quarkus
+pushd DTUPay
 mvn package -Dquarkus.package.type=uber-jar
 
 # Start the server in the background so that the
 # shell script is not blocked and can execute the tests
-java -jar target/code-with-quarkus-1.0.0-SNAPSHOT-runner.jar &
+java -jar target/dtupay-1.0.0-SNAPSHOT-runner.jar &
 
 # Remember the process id of the server process
 # so that we can shutdown the server after the tests
