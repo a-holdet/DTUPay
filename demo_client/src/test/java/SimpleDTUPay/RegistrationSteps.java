@@ -22,9 +22,9 @@ public class RegistrationSteps {
 
     @Given("the customer {string} {string} with CPR {string} does not have a bank account")
     public void theCustomerWithCPRDoesNotHaveABankAccount(String firstName, String lastName, String cprNumber) {
-           this.firstName=firstName;
-           this.lastName= lastName;
-           this.cprNumber = cprNumber;
+        this.firstName=firstName;
+        this.lastName= lastName;
+        this.cprNumber = cprNumber;
     }
 
     @When("the customer is registering with DTUPay")
