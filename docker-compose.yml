@@ -1,8 +1,8 @@
 version: "3"
 services:
   demo:
-    image: simple-quarkus-rest
+    image: DTUPay
     build: code-with-quarkus
-    container_name: simple-quarkus-rest-server
+    container_name: DTUPay-server
     ports:
       - "8040:8080"
