@@ -22,7 +22,7 @@ pushd demo_client
 ./deploy.sh 
 sleep 20s
 ./test.sh
-docker-compose down # We dont take down the containers after tests
+# docker-compose down # We dont take down the containers after tests
 popd
 
 # pushd end_to_end_tests
