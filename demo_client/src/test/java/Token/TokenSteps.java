@@ -1,6 +1,5 @@
 package Token;
 
-import CustomerMobileApp.DTUPay;
 import CustomerMobileApp.TokenGenerationAdapter;
 import CustomerMobileApp.UserManagementAdapter;
 import dtu.ws.fastmoney.BankService;
