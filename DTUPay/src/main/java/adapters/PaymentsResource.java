@@ -2,18 +2,15 @@ package adapters;
 
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import paymentservice.*;
-import merchantservice.*;
-import customerservice.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 
 @Path("/payments")
 public class PaymentsResource {
-    PaymentService paymentService = PaymentService.instance;
+    IPaymentService paymentService = PaymentService.instance;
 
     public PaymentsResource(){
     }

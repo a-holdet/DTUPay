@@ -1,13 +1,10 @@
 package merchantservice;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
-public class MerchantService {
-    public static MerchantService instance = new MerchantService();
+public class LocalMerchantService implements IMerchantService{
+    public static LocalMerchantService instance = new LocalMerchantService();
     IMerchantRepository merchantRepository = new MerchantInMemoryRepository();
-
 
     public String registerMerchant(Merchant merchant){
         if(merchant.accountId==null || merchant.accountId.length()==0)

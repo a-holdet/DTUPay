@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
 
 @Path("/merchants")
 public class MerchantResource {
-    MerchantService merchantService = MerchantService.instance;
+    IMerchantService merchantService = LocalMerchantService.instance;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

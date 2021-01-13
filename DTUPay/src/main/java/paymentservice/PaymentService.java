@@ -1,24 +1,26 @@
 package paymentservice;
-import java.math.BigDecimal;
 import java.util.List;
 
-import customerservice.CustomerService;
+import customerservice.LocalCustomerService;
+import customerservice.ICustomerService;
 import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtu.ws.fastmoney.BankServiceService;
-import merchantservice.MerchantService;
+import merchantservice.IMerchantService;
+import merchantservice.LocalMerchantService;
 
 
-public class PaymentService {
+public class PaymentService implements IPaymentService {
     public static PaymentService instance = new PaymentService();
-    MerchantService merchantService = MerchantService.instance;
-    CustomerService customerService = CustomerService.instance;
+    IMerchantService merchantService = LocalMerchantService.instance;
+    ICustomerService ICustomerService = LocalCustomerService.instance;
 
     BankService bankService = new BankServiceService().getBankServicePort();
 
     public PaymentService(){
     }
 
+    @Override
     public void registerPayment(Payment payment) throws /*MerchantDoesNotExistException, CustomerDoesNotExistException,*/ BankServiceException_Exception {
         //if(!merchantService.merchantExists(merchantAccountId))
         //    throw new MerchantDoesNotExistException(payment.merchantId);
@@ -33,6 +35,7 @@ public class PaymentService {
         );
     }
 
+    @Override
     public List<Payment> getPayments() {
         //TODO
         return null;
