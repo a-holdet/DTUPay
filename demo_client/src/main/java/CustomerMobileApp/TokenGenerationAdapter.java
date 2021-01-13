@@ -19,21 +19,21 @@ public class TokenGenerationAdapter {
     //TODO: And where should this class live?
     //TODO: Where should this class live?
     public static class TokenRequestObject {
-        private String cpr;
+        private String userId;
         private int tokenAmount;
 
         public TokenRequestObject() {}
 
-        public void setCpr(String cpr) {
-            this.cpr = cpr;
+        public void setUserId(String userId) {
+            this.userId = userId;
         }
 
         public void setTokenAmount(int tokenAmount) {
             this.tokenAmount = tokenAmount;
         }
 
-        public String getCpr() {
-            return cpr;
+        public String getUserId() {
+            return userId;
         }
 
         public int getTokenAmount() {
@@ -48,9 +48,9 @@ public class TokenGenerationAdapter {
         baseUrl = client.target("http://localhost:8042/");
     }
 
-    public void createTokensForCustomer(User customer, int amount) throws UnauthorizedException {
+    public List<UUID> createTokensForCustomer(String customerId, int amount) throws UnauthorizedException {
         TokenRequestObject request = new TokenRequestObject();
-        request.setCpr(customer.getCprNumber());
+        request.setUserId(customerId);
         request.setTokenAmount(amount);
         Response response = baseUrl
                 .path("tokens")
@@ -58,22 +58,23 @@ public class TokenGenerationAdapter {
                 .post(Entity.entity(request, MediaType.APPLICATION_JSON));
 
         if (response.getStatus() == 401) { // customer is unauthorized (i.e customer has no bank account)
-            throw new UnauthorizedException("Customer must have an account id to request tokens");
+            String errorMessage = response.readEntity(String.class); // error message is in payload
+            throw new UnauthorizedException(errorMessage);
         }
 
+        return response.readEntity(new GenericType<>(){});
     }
 
-    public List<UUID> readTokensForCustomer(User customer) {
+    public List<UUID> readTokensForCustomer(String customerId) {
         return baseUrl
                 .path("tokens")
-                .queryParam("cpr", customer.getCprNumber())
+                .queryParam("id", customerId)
                 .request().get(new GenericType<>() {});
     }
 
-    public void deleteTokensFor(User customer) {
-        System.out.println("deleteTokensFor:" + customer);
+    public void deleteTokensFor(String customerId) {
         baseUrl.path("tokens")
-                .queryParam("cpr", customer.getCprNumber())
+                .queryParam("id", customerId)
                 .request()
                 .delete();
     }

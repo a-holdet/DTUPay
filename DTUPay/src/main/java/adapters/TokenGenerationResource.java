@@ -1,6 +1,7 @@
 package adapters;
 
 import TokenGeneration.TokenGenerationService;
+import io.quarkus.security.UnauthorizedException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -13,21 +14,21 @@ public class TokenGenerationResource {
 
     //TODO: Where should this class live?
     public static class TokenRequestObject {
-        private String cpr;
+        private String userId;
         private int tokenAmount;
 
         public TokenRequestObject() {}
 
-        public void setCpr(String cpr) {
-            this.cpr = cpr;
+        public void setUserId(String userId) {
+            this.userId = userId;
         }
 
         public void setTokenAmount(int tokenAmount) {
             this.tokenAmount = tokenAmount;
         }
 
-        public String getCpr() {
-            return cpr;
+        public String getUserId() {
+            return userId;
         }
 
         public int getTokenAmount() {
@@ -40,17 +41,20 @@ public class TokenGenerationResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createTokensForCustomer(TokenRequestObject request) {
-        String cpr = request.getCpr();
+        String customerId = request.getUserId();
         int amount = request.getTokenAmount();
-        tokenGenerationService.createTokensForCustomer(cpr, amount);
-        return Response.ok().build();
+        try {
+            List<UUID> tokens = tokenGenerationService.createTokensForCustomer(customerId, amount);
+            return Response.ok(tokens).build();
+        } catch (UnauthorizedException e) {
+            return Response.status(401).entity(e.getMessage()).build(); // 401 = Unauthorized operation (i.e. user with 'cpr' has no bank account.
+        }
     }
 
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response readTokensForCustomer(@QueryParam("cpr") String cpr) {
-        List<UUID> tokens = tokenGenerationService.readTokensForCustomer(cpr);
-
+    public Response readTokensForCustomer(@QueryParam("id") String customerId) {
+        List<UUID> tokens = tokenGenerationService.readTokensForCustomer(customerId);
         return Response.ok(tokens).build();
     }
 

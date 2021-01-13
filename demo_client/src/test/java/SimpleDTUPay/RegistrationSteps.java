@@ -34,8 +34,8 @@ public class RegistrationSteps {
         try {
             customerId = dtuPay.registerCustomer(customer,null);
         } catch (IllegalArgumentException e) {
-            customerId=null;
-            errorMessage=e.getMessage();
+            customerId = null;
+            errorMessage = e.getMessage();
         }
     }
 
