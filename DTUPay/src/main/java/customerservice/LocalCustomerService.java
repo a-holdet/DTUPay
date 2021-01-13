@@ -1,5 +1,7 @@
 package customerservice;
 
+import merchantservice.Merchant;
+
 import java.util.UUID;
 
 public class LocalCustomerService implements ICustomerService {
@@ -25,5 +27,15 @@ public class LocalCustomerService implements ICustomerService {
             if(customer.id.equals(customerId))
                 return true;
         return false;
+    }
+
+    @Override
+    public String getCustomerAccountId(String customerId) {
+        if(customerId==null)
+            return null;
+        for(Customer customer : customerRepository.getAllCustomers())
+            if(customer.id.equals(customerId))
+                return customer.accountId;
+        return null;
     }
 }

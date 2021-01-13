@@ -7,6 +7,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
+import java.util.*;
 
 //TODO: make abstract "BaseAdapter" for common initilisation of 'baseURL'
 public class PaymentAdapter {
@@ -18,10 +19,10 @@ public class PaymentAdapter {
         baseUrl = client.target("http://localhost:8042/");
     }
 
-    public void transferMoneyFromTo(String customerAccountId, String merchantId, BigDecimal amount, String description) throws Exception {
+    public void transferMoneyFromTo(UUID selectedToken, String merchantId, BigDecimal amount, String description) throws Exception {
         Payment payment = new Payment();
         payment.amount = amount;
-        payment.customerAccountId = customerAccountId;
+        payment.customerToken = selectedToken;
         payment.merchantId = merchantId;
         payment.description = description;
 

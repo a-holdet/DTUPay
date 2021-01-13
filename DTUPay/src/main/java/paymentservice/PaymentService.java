@@ -1,6 +1,8 @@
 package paymentservice;
 import java.util.List;
 
+import TokenGeneration.ITokenService;
+import TokenGeneration.TokenService;
 import customerservice.LocalCustomerService;
 import customerservice.ICustomerService;
 import dtu.ws.fastmoney.BankService;
@@ -13,7 +15,8 @@ import merchantservice.LocalMerchantService;
 public class PaymentService implements IPaymentService {
     public static PaymentService instance = new PaymentService();
     IMerchantService merchantService = LocalMerchantService.instance;
-    ICustomerService ICustomerService = LocalCustomerService.instance;
+    ICustomerService customerService = LocalCustomerService.instance;
+    ITokenService tokenService = TokenService.instance;
 
     BankService bankService = new BankServiceService().getBankServicePort();
 
@@ -27,11 +30,14 @@ public class PaymentService implements IPaymentService {
         //if(!customerService.customerExists(customerAccountId))
         //    throw new CustomerDoesNotExistException(payment.customerId);
 
-        //Get MechantAccountId
         String merchantAccountId = merchantService.getMerchantAccountId(payment.merchantId);
 
+        String customerId = tokenService.getCustomerId(payment.customerToken);
+
+        String customerAccountId = customerService.getCustomerAccountId(customerId);
+
         bankService.transferMoneyFromTo(
-                payment.customerAccountId,
+                customerAccountId,
                 merchantAccountId,
                 payment.amount,
                 payment.description
