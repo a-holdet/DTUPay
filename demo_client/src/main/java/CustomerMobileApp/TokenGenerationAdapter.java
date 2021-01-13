@@ -49,7 +49,6 @@ public class TokenGenerationAdapter implements ITokenGeneration {
 
     public void createTokensForCustomer(User customer, int amount) {
         TokenRequestObject request = new TokenRequestObject();
-        System.out.println("createTokensForCustomer: " + customer);
         request.setCpr(customer.getCprNumber());
         request.setTokenAmount(amount);
         Response response = baseUrl

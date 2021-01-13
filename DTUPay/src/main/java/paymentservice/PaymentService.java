@@ -27,9 +27,12 @@ public class PaymentService implements IPaymentService {
         //if(!customerService.customerExists(customerAccountId))
         //    throw new CustomerDoesNotExistException(payment.customerId);
 
+        //Get MechantAccountId
+        String merchantAccountId = merchantService.getMerchantAccountId(payment.merchantId);
+
         bankService.transferMoneyFromTo(
                 payment.customerAccountId,
-                payment.merchantAccountId,
+                merchantAccountId,
                 payment.amount,
                 payment.description
         );

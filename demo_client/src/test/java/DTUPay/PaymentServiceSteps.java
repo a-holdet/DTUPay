@@ -40,8 +40,8 @@ public class PaymentServiceSteps {
     String customerAccountId;
     String merchantAccountId;
     String mostRecentAccountId;
-    String newCustomerId;
-    String newMerchantId;
+    String customerId;
+    String merchantId;
     DTUPay dtuPay = new DTUPay();
     boolean successful;
 
@@ -73,7 +73,7 @@ public class PaymentServiceSteps {
 
     @And("the customer is registered with DTUPay")
     public void theCustomerIsRegisteredWithDTUPay() throws IllegalArgumentException {
-        newCustomerId = dtuPay.registerCustomer(customer, customerAccountId);
+        customerId = dtuPay.registerCustomer(customer, customerAccountId);
     }
 
     @And("the merchant {string} {string} with CPR {string} has a bank account")
@@ -93,14 +93,14 @@ public class PaymentServiceSteps {
 
     @And("the merchant is registered with DTUPay")
     public void theMerchantIsRegisteredWithDTUPay() {
-        newMerchantId = dtuPay.registerMerchant(merchant, merchantAccountId);
+        merchantId = dtuPay.registerMerchant(merchant, merchantAccountId);
     }
 
     @When("the merchant initiates a payment for {int} kr by the customer")
     public void theMerchantInitiatesAPaymentForKrByTheCustomer(int amount) {
         try {
-            dtuPay.transferMoneyFromTo(customerAccountId, merchantAccountId, new BigDecimal(amount), "myscription");
-            successful = true;
+            dtuPay.transferMoneyFromTo(customerAccountId,merchantId,new BigDecimal(amount),"myscription");
+            successful=true;
         } catch (Exception e) {
             successful = false;
         }

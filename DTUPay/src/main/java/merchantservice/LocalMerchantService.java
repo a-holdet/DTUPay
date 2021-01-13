@@ -15,11 +15,17 @@ public class LocalMerchantService implements IMerchantService{
     }
 
     public boolean merchantExists(String merchantId){
+
+        return getMerchantAccountId(merchantId) != null;
+    }
+
+    @Override
+    public String getMerchantAccountId(String merchantId) {
         if(merchantId==null)
-            return false;
+            return null;
         for(Merchant Merchant : merchantRepository.getAllMerchants())
             if(Merchant.id.equals(merchantId))
-                return true;
-        return false;
+                return Merchant.accountId;
+        return null;
     }
 }
