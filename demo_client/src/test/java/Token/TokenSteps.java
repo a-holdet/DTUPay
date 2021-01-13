@@ -42,6 +42,13 @@ public class TokenSteps {
     @After
     public void teardown() {
         if (customer != null) dtuPay.deleteTokensFor(customer);
+        try {
+            if (customerAccountId != null) bankService.retireAccount(customerAccountId);
+        } catch (BankServiceException_Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+        customerAccountId = null;
     }
 
     @Given("the customer with name {string} {string} and CPR {string} has a bank account")
@@ -50,10 +57,10 @@ public class TokenSteps {
         customer.setFirstName(firstName);
         customer.setLastName(lastName);
         customer.setCprNumber(cpr);
-        String accountId;
         try {
             this.customerAccountId = bankService.createAccountWithBalance(customer, BigDecimal.ZERO);
         } catch (BankServiceException_Exception e) {
+            e.printStackTrace();
             fail();
         }
     }
