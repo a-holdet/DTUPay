@@ -46,6 +46,6 @@ public class RegistrationSteps {
 
     @And("the error message is {string}")
     public void theErrorMessageIs(String expectedErrorMessage) {
-        assertEquals(expectedErrorMessage,errorMessage);
+        assertEquals(expectedErrorMessage, errorMessage);
     }
 }

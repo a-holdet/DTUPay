@@ -12,6 +12,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.quarkus.security.UnauthorizedException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class TokenSteps {
     TokenGenerationAdapter tokenService;
     List<UUID> tokens;
     BankService bankService;
+    UnauthorizedException unauthorizedException;
 
     @Before
     public void setup() {
@@ -72,7 +74,11 @@ public class TokenSteps {
 
     @When("the customer requests {int} tokens")
     public void theCustomerRequestsTokens(int tokenAmount) {
-        tokens = dtuPay.requestNewTokens(customer, tokenAmount);
+        try {
+            tokens = dtuPay.requestNewTokens(customer, tokenAmount);
+        } catch (UnauthorizedException e) {
+            this.unauthorizedException = e;
+        }
     }
 
     @Then("the customer gets {int} tokens")
@@ -82,10 +88,12 @@ public class TokenSteps {
 
     @Then("the token granting is not successful")
     public void theTokenGrantingIsNotSuccessful() {
+        assertNotNull(unauthorizedException);
     }
 
     @Then("the token granting is denied")
     public void theTokenGrantingIsDenied() {
+
     }
 
     @And("the customer is registered at DTUPay")
