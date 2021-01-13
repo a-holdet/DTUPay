@@ -1,8 +1,0 @@
-version: "3"
-services:
-  demo:
-    image: dtupay
-    build: DTUPay
-    container_name: dtupay-server
-    ports:
-      - "8042:8080"

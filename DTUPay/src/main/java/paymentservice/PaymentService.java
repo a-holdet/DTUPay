@@ -17,7 +17,6 @@ public class PaymentService implements IPaymentService {
 
     BankService bankService = new BankServiceService().getBankServicePort();
 
-
     public PaymentService(){
     }
 

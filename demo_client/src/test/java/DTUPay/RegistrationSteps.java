@@ -1,5 +1,4 @@
-package SimpleDTUPay;
-
+package DTUPay;
 
 import CustomerMobileApp.UserManagementAdapter;
 import dtu.ws.fastmoney.*;
