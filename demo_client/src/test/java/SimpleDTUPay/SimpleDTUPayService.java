@@ -1,15 +1,12 @@
 package SimpleDTUPay;
 
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
-import java.util.List;
 
 public class SimpleDTUPayService {
     WebTarget baseUrl;
@@ -46,11 +43,11 @@ public class SimpleDTUPayService {
         return merchantId;
     }
 
-    public void transferMoneyFromTo(String customerAccountId, String merchantAccountId, BigDecimal amount, String description) throws Exception {
+    public void transferMoneyFromTo(String customerAccountId, String merchantId, BigDecimal amount, String description) throws Exception {
         Payment payment = new Payment();
         payment.amount = amount;
         payment.customerAccountId = customerAccountId;
-        payment.merchantAccountId = merchantAccountId;
+        payment.merchantId = merchantId;
         payment.description = description;
 
         Response response = baseUrl.path("payments").request().post(Entity.entity(payment, MediaType.APPLICATION_JSON));
