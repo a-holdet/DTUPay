@@ -18,11 +18,11 @@ public class PaymentAdapter {
         baseUrl = client.target("http://localhost:8042/");
     }
 
-    public void transferMoneyFromTo(String customerAccountId, String merchantAccountId, BigDecimal amount, String description) throws Exception {
+    public void transferMoneyFromTo(String customerAccountId, String merchantId, BigDecimal amount, String description) throws Exception {
         Payment payment = new Payment();
         payment.amount = amount;
         payment.customerAccountId = customerAccountId;
-        payment.merchantAccountId = merchantAccountId;
+        payment.merchantId = merchantId;
         payment.description = description;
 
         Response response = baseUrl.path("payments").request().post(Entity.entity(payment, MediaType.APPLICATION_JSON));

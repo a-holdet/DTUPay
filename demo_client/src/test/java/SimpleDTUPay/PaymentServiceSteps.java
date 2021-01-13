@@ -75,7 +75,7 @@ public class PaymentServiceSteps {
 
     @And("the customer is registered with DTUPay")
     public void theCustomerIsRegisteredWithDTUPay() throws IllegalArgumentException {
-        customerId = dtuPay.registerCustomer(customer.getFirstName(), customer.getLastName(), customer.getCprNumber(), customerAccountId);
+        customerId = dtuPay.registerCustomer(customer, customerAccountId);
     }
 
     @And("the merchant {string} {string} with CPR {string} has a bank account")
@@ -95,7 +95,7 @@ public class PaymentServiceSteps {
 
     @And("the merchant is registered with DTUPay")
     public void theMerchantIsRegisteredWithDTUPay() {
-        merchantId = dtuPay.registerMerchant(merchant.getFirstName(), merchant.getLastName(), merchant.getCprNumber(), merchantAccountId);
+        merchantId = dtuPay.registerMerchant(merchant, merchantAccountId);
     }
 
     @When("the merchant initiates a payment for {int} kr by the customer")

@@ -28,7 +28,7 @@ public class DTUPay {
         tokenAdapter.deleteTokensFor(customer);
     }
 
-    public void transferMoneyFromTo(String customerAccountId, String merchantAccountId, BigDecimal amount, String description) throws Exception {
-        paymentAdapter.transferMoneyFromTo(customerAccountId, merchantAccountId, amount, description);
+    public void transferMoneyFromTo(String customerAccountId, String merchantId, BigDecimal amount, String description) throws Exception {
+        paymentAdapter.transferMoneyFromTo(customerAccountId, merchantId, amount, description);
     }
 }
