@@ -10,7 +10,7 @@ popd
 
 pushd RabbitTest
 ./build.sh
-popd 
+popd
 
 pushd DTUPay
 ./build.sh
@@ -21,7 +21,7 @@ popd
 pushd demo_client
 # docker-compose down # We dont take down the containers after tests
 ./deploy.sh 
-sleep 20s
+sleep 5s
 ./test.sh
 popd
 

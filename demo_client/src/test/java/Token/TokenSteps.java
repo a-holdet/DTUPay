@@ -1,13 +1,10 @@
 package Token;
 
-import CustomerMobileApp.DTUPay;
 import CustomerMobileApp.TokenGenerationAdapter;
-import CustomerMobileApp.ITokenGeneration;
-import CustomerMobileApp.DTUPayUser;
+import CustomerMobileApp.UserManagementAdapter;
 import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtu.ws.fastmoney.BankServiceService;
-import dtu.ws.fastmoney.Account;
 import dtu.ws.fastmoney.User;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -15,6 +12,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.quarkus.security.UnauthorizedException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -27,29 +25,24 @@ public class TokenSteps {
 
     User customer;
     String customerAccountId;
-    DTUPay dtuPay;
-    ITokenGeneration tokenService;
+    String customerId;
     List<UUID> tokens;
     BankService bankService;
+    UnauthorizedException unauthorizedException;
+    TokenGenerationAdapter tokenAdapter;
+    UserManagementAdapter userManagementAdapter;
 
     @Before
     public void setup() {
         this.bankService = new BankServiceService().getBankServicePort();
-        this.tokenService = new TokenGenerationAdapter();
+        this.tokenAdapter = new TokenGenerationAdapter();
+        this.userManagementAdapter = new UserManagementAdapter();
         this.tokens = new ArrayList<>();
-        this.dtuPay = new DTUPay();
-        Account acc1 = null;
-        try {
-            acc1 = bankService.getAccountByCprNumber("290176-9947");
-            bankService.retireAccount(acc1.getId());
-        } catch (BankServiceException_Exception e) {
-            // e.printStackTrace();
-        }
     }
 
     @After
     public void teardown() {
-        if (customer != null) dtuPay.deleteTokensFor(customer);
+        if (customer != null) tokenAdapter.deleteTokensFor(customerId);
         try {
             if (customerAccountId != null) bankService.retireAccount(customerAccountId);
         } catch (BankServiceException_Exception e) {
@@ -57,6 +50,7 @@ public class TokenSteps {
             fail();
         }
         customerAccountId = null;
+        customerId = null;
     }
 
     @Given("the customer with name {string} {string} and CPR {string} has a bank account")
@@ -75,14 +69,18 @@ public class TokenSteps {
 
     @And("the customer has {int} tokens")
     public void theCustomerHasTokens(int tokenAmount) {
-        tokenService.createTokensForCustomer(customer, tokenAmount);
-        int amount = tokenService.readTokensForCustomer(customer).size();
-        assertEquals(tokenAmount, amount);
+        assertNotNull(customerId);
+        List<UUID> tokens = tokenAdapter.readTokensForCustomer(customerId);
+        assertEquals(tokenAmount, tokens.size());
     }
 
     @When("the customer requests {int} tokens")
     public void theCustomerRequestsTokens(int tokenAmount) {
-        tokens = dtuPay.requestNewTokens(customer, tokenAmount);
+        try {
+            tokens = tokenAdapter.createTokensForCustomer(customerId, tokenAmount);
+        } catch (UnauthorizedException e) {
+            this.unauthorizedException = e;
+        }
     }
 
     @Then("the customer gets {int} tokens")
@@ -92,15 +90,18 @@ public class TokenSteps {
 
     @Then("the token granting is not successful")
     public void theTokenGrantingIsNotSuccessful() {
+        assertNotNull(unauthorizedException);
     }
 
     @Then("the token granting is denied")
     public void theTokenGrantingIsDenied() {
+
     }
 
     @And("the customer is registered at DTUPay")
     public void theCustomerIsRegisteredAtDTUPay() {
-        dtuPay.registerCustomer(customer, customerAccountId);
+        customerId = userManagementAdapter.registerCustomer(customer.getFirstName(), customer.getLastName(), customer.getCprNumber(), customerAccountId);
+        assertNotNull(customerId);
     }
 
     @Given("the customer with name {string} {string} and CPR {string} has no bank account")
@@ -110,5 +111,10 @@ public class TokenSteps {
         customer.setLastName(lastName);
         customer.setCprNumber(cprNumber);
         this.customerAccountId = null;
+    }
+
+    @And("the received error message is {string}")
+    public void theReceivedErrorMessageIs(String expectedErrorMessage) {
+        assertEquals(expectedErrorMessage, unauthorizedException.getMessage());
     }
 }
