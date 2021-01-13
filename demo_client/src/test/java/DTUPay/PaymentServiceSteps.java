@@ -41,9 +41,8 @@ public class PaymentServiceSteps {
     String merchantAccountId;
     String mostRecentAccountId;
     String newCustomerId;
-    String newMerchantId;<<<<<<<HEAD:demo_client/src/test/java/DTUPay/
-    PaymentServiceSteps.java DTUPayService dtuPay=new DTUPayService();=======
-    DTUPay dtuPay = new DTUPay();>>>>>>>beb5097a040b6e3579bb38addb93a5e8e010c1c2:demo_client/src/test/java/SimpleDTUPay/PaymentServiceSteps.java
+    String newMerchantId;
+    DTUPay dtuPay = new DTUPay();
     boolean successful;
 
     @Given("the customer {string} {string} with CPR {string} has a bank account")
