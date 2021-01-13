@@ -1,7 +1,6 @@
 package DTUPay;
 
-
-
+import CustomerMobileApp.DTUPay;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import dtu.ws.fastmoney.*;
@@ -11,20 +10,19 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
 public class PaymentServiceSteps {
 
     @Before
-    public void beforeScenario()  {
+    public void beforeScenario() {
         Account acc1 = null;
         try {
             acc1 = bankService.getAccountByCprNumber("290276-1234");
             bankService.retireAccount(acc1.getId());
         } catch (BankServiceException_Exception e) {
-            //e.printStackTrace();
+            // e.printStackTrace();
         }
 
         Account acc2 = null;
@@ -32,7 +30,7 @@ public class PaymentServiceSteps {
             acc2 = bankService.getAccountByCprNumber("207082-0101");
             bankService.retireAccount(acc2.getId());
         } catch (BankServiceException_Exception e) {
-            //e.printStackTrace();
+            // e.printStackTrace();
         }
     }
 
@@ -43,8 +41,9 @@ public class PaymentServiceSteps {
     String merchantAccountId;
     String mostRecentAccountId;
     String newCustomerId;
-    String newMerchantId;
-    DTUPayService dtuPay = new DTUPayService();
+    String newMerchantId;<<<<<<<HEAD:demo_client/src/test/java/DTUPay/
+    PaymentServiceSteps.java DTUPayService dtuPay=new DTUPayService();=======
+    DTUPay dtuPay = new DTUPay();>>>>>>>beb5097a040b6e3579bb38addb93a5e8e010c1c2:demo_client/src/test/java/SimpleDTUPay/PaymentServiceSteps.java
     boolean successful;
 
     @Given("the customer {string} {string} with CPR {string} has a bank account")
@@ -54,7 +53,7 @@ public class PaymentServiceSteps {
         customer.setLastName(lastName);
         customer.setCprNumber(cpr);
         try {
-            customerAccountId = bankService.createAccountWithBalance(customer,new BigDecimal(1000));
+            customerAccountId = bankService.createAccountWithBalance(customer, new BigDecimal(1000));
             mostRecentAccountId = customerAccountId;
         } catch (BankServiceException_Exception e) {
             e.printStackTrace();
@@ -66,7 +65,7 @@ public class PaymentServiceSteps {
         Account account;
         try {
             account = bankService.getAccount(mostRecentAccountId);
-            assertEquals(new BigDecimal(expectedBalance),account.getBalance());
+            assertEquals(new BigDecimal(expectedBalance), account.getBalance());
         } catch (BankServiceException_Exception e) {
             e.printStackTrace();
             fail();
@@ -75,7 +74,7 @@ public class PaymentServiceSteps {
 
     @And("the customer is registered with DTUPay")
     public void theCustomerIsRegisteredWithDTUPay() throws IllegalArgumentException {
-        newCustomerId = dtuPay.registerCustomer(customer.getFirstName(), customer.getLastName(), customer.getCprNumber(), customerAccountId);
+        newCustomerId = dtuPay.registerCustomer(customer, customerAccountId);
     }
 
     @And("the merchant {string} {string} with CPR {string} has a bank account")
@@ -85,25 +84,26 @@ public class PaymentServiceSteps {
         merchant.setLastName(lastName);
         merchant.setCprNumber(cpr);
         try {
-            merchantAccountId = bankService.createAccountWithBalance(merchant,new BigDecimal(2000));
+            merchantAccountId = bankService.createAccountWithBalance(merchant, new BigDecimal(2000));
             mostRecentAccountId = merchantAccountId;
         } catch (BankServiceException_Exception e) {
             e.printStackTrace();
+            fail();
         }
     }
 
     @And("the merchant is registered with DTUPay")
     public void theMerchantIsRegisteredWithDTUPay() {
-        newMerchantId = dtuPay.registerMerchant(merchant.getFirstName(), merchant.getLastName(), merchant.getCprNumber(), merchantAccountId);
+        newMerchantId = dtuPay.registerMerchant(merchant, merchantAccountId);
     }
 
     @When("the merchant initiates a payment for {int} kr by the customer")
     public void theMerchantInitiatesAPaymentForKrByTheCustomer(int amount) {
         try {
-            dtuPay.transferMoneyFromTo(customerAccountId,merchantAccountId,new BigDecimal(amount),"myscription");
-            successful=true;
+            dtuPay.transferMoneyFromTo(customerAccountId, merchantAccountId, new BigDecimal(amount), "myscription");
+            successful = true;
         } catch (Exception e) {
-            successful=false;
+            successful = false;
         }
     }
 
@@ -111,7 +111,7 @@ public class PaymentServiceSteps {
     public void theBalanceOfTheCustomerAtTheBankIsKr(int expectedBalance) {
         try {
             Account account = bankService.getAccount(customerAccountId);
-            assertEquals(new BigDecimal(expectedBalance),account.getBalance());
+            assertEquals(new BigDecimal(expectedBalance), account.getBalance());
         } catch (BankServiceException_Exception e) {
             fail("Wrong balance for customer");
         }
@@ -121,30 +121,29 @@ public class PaymentServiceSteps {
     public void theBalanceOfTheMerchantAtTheBankIsKr(int expectedBalance) {
         try {
             Account account = bankService.getAccount(merchantAccountId);
-            assertEquals(new BigDecimal(expectedBalance),account.getBalance());
+            assertEquals(new BigDecimal(expectedBalance), account.getBalance());
         } catch (BankServiceException_Exception e) {
             fail("Wrong balance for merchant");
         }
     }
 
     @After
-    public void afterScenario()  {
+    public void afterScenario() {
         try {
             bankService.retireAccount(customerAccountId);
         } catch (BankServiceException_Exception e) {
-            //e.printStackTrace();
+            // e.printStackTrace();
         }
         try {
             bankService.retireAccount(merchantAccountId);
         } catch (BankServiceException_Exception e) {
-            //½ e.printStackTrace();
+            // ½ e.printStackTrace();
         }
     }
 
     @Then("the payment is successful")
     public void thePaymentIsSuccessful() {
-        assertTrue(successful);;
+        assertTrue(successful);
+        ;
     }
-
-
 }

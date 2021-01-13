@@ -1,4 +1,4 @@
-package DTUPay;
+package CustomerMobileApp;
 
 import java.math.BigDecimal;
 
