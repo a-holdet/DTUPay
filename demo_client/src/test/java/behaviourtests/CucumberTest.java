@@ -1,7 +1,7 @@
-// package behaviourtests;
+package behaviourtests;
 
-// import io.cucumber.junit.platform.engine.Cucumber;
+import io.cucumber.junit.platform.engine.Cucumber;
 
-// @Cucumber
-// public class CucumberTest {
-// }
+@Cucumber
+public class CucumberTest {
+}
