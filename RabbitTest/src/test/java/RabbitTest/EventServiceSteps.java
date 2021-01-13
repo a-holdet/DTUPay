@@ -6,14 +6,14 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import messaging.Event;
 import messaging.EventSender;
-import RabbitTest.Service1;
+import RabbitTest.EventService;
 
-public class Sevice1Steps {
-	Service1 s;
+public class EventServiceSteps {
+	EventService s;
 	Event event;
 	
-	public Sevice1Steps() {
-		s = new Service1(new EventSender() {
+	public EventServiceSteps() {
+		s = new EventService(new EventSender() {
 
 			@Override
 			public void sendEvent(Event ev) throws Exception {

@@ -5,7 +5,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 
-public class Service {
+public class RabbitTestService {
 
 	public boolean doSomething() {
 		Client client = ClientBuilder.newClient();

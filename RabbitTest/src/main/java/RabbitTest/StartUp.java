@@ -11,7 +11,7 @@ public class StartUp {
 
 	private void startUp() throws Exception {
 		EventSender s = new RabbitMqSender();
-		Service1 service = new Service1(s);
+		EventService service = new EventService(s);
 		new RabbitMqListener(service).listen();
 	}
 }
