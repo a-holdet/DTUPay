@@ -19,7 +19,7 @@ public class PaymentServiceSteps {
     public void beforeScenario() {
         Account acc1 = null;
         try {
-            acc1 = bankService.getAccountByCprNumber("290276-1234");
+            acc1 = bankService.getAccountByCprNumber("290276-7777");
             bankService.retireAccount(acc1.getId());
         } catch (BankServiceException_Exception e) {
             // e.printStackTrace();

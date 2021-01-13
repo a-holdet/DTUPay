@@ -7,6 +7,7 @@ import CustomerMobileApp.DTUPayUser;
 import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtu.ws.fastmoney.BankServiceService;
+import dtu.ws.fastmoney.Account;
 import dtu.ws.fastmoney.User;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -37,6 +38,13 @@ public class TokenSteps {
         this.tokenService = new TokenGenerationAdapter();
         this.tokens = new ArrayList<>();
         this.dtuPay = new DTUPay();
+        Account acc1 = null;
+        try {
+            acc1 = bankService.getAccountByCprNumber("290176-9947");
+            bankService.retireAccount(acc1.getId());
+        } catch (BankServiceException_Exception e) {
+            // e.printStackTrace();
+        }
     }
 
     @After
