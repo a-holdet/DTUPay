@@ -10,15 +10,16 @@ import io.cucumber.java.en.When;
 import static org.junit.Assert.*;
 
 public class RegistrationSteps {
-    User customer;
-    String customerId;
-    String errorMessage;
+    //Adapters
     UserManagementAdapter userManagementAdapter = new UserManagementAdapter();
-
+    //Holders
+    UserHolder customerHolder = UserHolder.customer;
+    //Class specifics
+    String errorMessage;
 
     @Given("the customer {string} {string} with CPR {string} does not have a bank account")
     public void theCustomerWithCPRDoesNotHaveABankAccount(String firstName, String lastName, String cprNumber) {
-        customer = new User();
+        User customer = new User();
         customer.setFirstName(firstName);
         customer.setLastName(lastName);
         customer.setCprNumber(cprNumber);
@@ -27,16 +28,16 @@ public class RegistrationSteps {
     @When("the customer is registering with DTUPay")
     public void theCustomerIsRegisteringWithDTUPay() {
         try {
-            customerId = userManagementAdapter.registerCustomer(customer.getFirstName(), customer.getLastName(), customer.getCprNumber(),null);
+            customerHolder.id = userManagementAdapter.registerCustomer(customerHolder.firstName, customerHolder.lastName, customerHolder.cpr,null);
         } catch (IllegalArgumentException e) {
-            customerId = null;
+            customerHolder.id = null;
             errorMessage = e.getMessage();
         }
     }
 
     @Then("the registration is not successful")
     public void theRegistrationIsNotSuccessful() {
-        assertNull(customerId);
+        assertNull(customerHolder.id);
     }
 
     @And("the error message is {string}")
