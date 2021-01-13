@@ -1,9 +1,10 @@
 package CustomerMobileApp;
 
-public class Customer {
+public class DTUPayUser {
     private String firstName;
     private String lastName;
     private String cprNumber;
+    private String accountId;
 
     public String getFirstName() {
         return firstName;
@@ -37,9 +38,7 @@ public class Customer {
         this.accountId = accountId;
     }
 
-    private String accountId;
-
-    public Customer(String firstName, String lastName, String cprNumber, String accountId) {
+    public DTUPayUser(String firstName, String lastName, String cprNumber, String accountId) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.cprNumber = cprNumber;

@@ -1,12 +1,10 @@
-package paymentservice;
+package CustomerMobileApp;
 
 import java.math.BigDecimal;
 
 public class Payment {
-    public BigDecimal amount;
     public String customerAccountId;
     public String merchantAccountId;
     public String description;
-
-    public Payment(){}
+    public BigDecimal amount;
 }

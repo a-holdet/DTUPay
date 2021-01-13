@@ -3,7 +3,7 @@ package Token;
 import CustomerMobileApp.DTUPay;
 import CustomerMobileApp.TokenGenerationAdapter;
 import CustomerMobileApp.ITokenGeneration;
-import CustomerMobileApp.Customer;
+import CustomerMobileApp.DTUPayUser;
 import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtu.ws.fastmoney.BankServiceService;
@@ -14,7 +14,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.junit.jupiter.api.BeforeAll;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -25,7 +24,8 @@ import static org.junit.Assert.*;
 
 public class TokenSteps {
 
-    Customer customer;
+    User customer;
+    String customerAccountId;
     DTUPay dtuPay;
     ITokenGeneration tokenService;
     List<UUID> tokens;
@@ -41,19 +41,18 @@ public class TokenSteps {
 
     @After
     public void teardown() {
-        dtuPay.deleteTokensFor(customer);
+        if (customer != null) dtuPay.deleteTokensFor(customer);
     }
 
     @Given("the customer with name {string} {string} and CPR {string} has a bank account")
     public void theCustomerWithNameAndCPRHasABankAccount(String firstName, String lastName, String cpr) {
-        User user = new User();
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setCprNumber(cpr);
+        this.customer = new User();
+        customer.setFirstName(firstName);
+        customer.setLastName(lastName);
+        customer.setCprNumber(cpr);
         String accountId;
         try {
-            accountId = bankService.createAccountWithBalance(user, BigDecimal.ZERO);
-            this.customer = new Customer(firstName, lastName, cpr, accountId);
+            this.customerAccountId = bankService.createAccountWithBalance(customer, BigDecimal.ZERO);
         } catch (BankServiceException_Exception e) {
             fail();
         }
@@ -86,11 +85,15 @@ public class TokenSteps {
 
     @And("the customer is registered at DTUPay")
     public void theCustomerIsRegisteredAtDTUPay() {
-        dtuPay.registerCustomer(customer);
+        dtuPay.registerCustomer(customer, customerAccountId);
     }
 
     @Given("the customer with name {string} {string} and CPR {string} has no bank account")
     public void theCustomerWithNameAndCPRHasNoBankAccount(String firstName, String lastName, String cprNumber) {
-        this.customer = new Customer(firstName, lastName, cprNumber, null);
+        this.customer = new User();
+        customer.setFirstName(firstName);
+        customer.setLastName(lastName);
+        customer.setCprNumber(cprNumber);
+        this.customerAccountId = null;
     }
 }

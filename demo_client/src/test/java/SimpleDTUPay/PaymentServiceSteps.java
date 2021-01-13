@@ -2,6 +2,7 @@ package SimpleDTUPay;
 
 
 
+import CustomerMobileApp.DTUPay;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import dtu.ws.fastmoney.*;
@@ -11,7 +12,6 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -19,7 +19,6 @@ public class PaymentServiceSteps {
 
     @Before
     public void beforeScenario()  {
-
         Account acc1 = null;
         try {
             acc1 = bankService.getAccountByCprNumber("290276-1234");
@@ -45,7 +44,7 @@ public class PaymentServiceSteps {
     String mostRecentAccountId;
     String newCustomerId;
     String newMerchantId;
-    SimpleDTUPayService dtuPay = new SimpleDTUPayService();
+    DTUPay dtuPay = new DTUPay();
     boolean successful;
 
     @Given("the customer {string} {string} with CPR {string} has a bank account")
@@ -76,7 +75,7 @@ public class PaymentServiceSteps {
 
     @And("the customer is registered with DTUPay")
     public void theCustomerIsRegisteredWithDTUPay() throws IllegalArgumentException {
-        newCustomerId = dtuPay.registerCustomer(customer.getFirstName(), customer.getLastName(), customer.getCprNumber(), customerAccountId);
+        newCustomerId = dtuPay.registerCustomer(customer, customerAccountId);
     }
 
     @And("the merchant {string} {string} with CPR {string} has a bank account")
@@ -90,20 +89,21 @@ public class PaymentServiceSteps {
             mostRecentAccountId = merchantAccountId;
         } catch (BankServiceException_Exception e) {
             e.printStackTrace();
+            fail();
         }
     }
 
     @And("the merchant is registered with DTUPay")
     public void theMerchantIsRegisteredWithDTUPay() {
-        newMerchantId = dtuPay.registerMerchant(merchant.getFirstName(), merchant.getLastName(), merchant.getCprNumber(), merchantAccountId);
+        newMerchantId = dtuPay.registerMerchant(merchant, merchantAccountId);
     }
 
     @When("the merchant initiates a payment for {int} kr by the customer")
     public void theMerchantInitiatesAPaymentForKrByTheCustomer(int amount) {
         try {
-            bankService.transferMoneyFromTo(customerAccountId,merchantAccountId,new BigDecimal(amount),"myscription");
+            dtuPay.transferMoneyFromTo(customerAccountId,merchantAccountId,new BigDecimal(amount),"myscription");
             successful=true;
-        } catch (BankServiceException_Exception e) {
+        } catch (Exception e) {
             successful=false;
         }
     }
@@ -146,6 +146,4 @@ public class PaymentServiceSteps {
     public void thePaymentIsSuccessful() {
         assertTrue(successful);;
     }
-
-
 }

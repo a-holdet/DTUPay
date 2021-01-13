@@ -7,17 +7,17 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-public class CustomerManagementAdapter {
+public class UserManagementAdapter {
 
     WebTarget baseUrl;
 
-    public CustomerManagementAdapter() {
+    public UserManagementAdapter() {
         Client client = ClientBuilder.newClient();
-        baseUrl = client.target("http://localhost:8080/");
+        baseUrl = client.target("http://localhost:8042/");
     }
 
     public String registerCustomer(String firstName, String lastName, String cprNumber, String accountID) throws IllegalArgumentException {
-        Customer customer = new Customer(firstName, lastName, cprNumber, accountID);
+        DTUPayUser customer = new DTUPayUser(firstName, lastName, cprNumber, accountID);
         Response response = baseUrl.path("customers").request().post(Entity.entity(customer, MediaType.APPLICATION_JSON));
 
         if(response.getStatus()==422){
@@ -29,5 +29,11 @@ public class CustomerManagementAdapter {
         // Assumes it to be accountId.
         String accountId = response.readEntity(String.class);
         return accountId;
+    }
+
+    public String registerMerchant(String firstName, String lastName, String cprNumber, String merchantAccountId) {
+        DTUPayUser customer = new DTUPayUser(firstName, lastName, cprNumber, merchantAccountId);
+        String merchantId = baseUrl.path("merchants").request().post(Entity.entity(customer, MediaType.APPLICATION_JSON),String.class);
+        return merchantId;
     }
 }

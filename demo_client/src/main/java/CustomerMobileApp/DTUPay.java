@@ -1,24 +1,34 @@
 package CustomerMobileApp;
 
+import dtu.ws.fastmoney.User;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
 public class DTUPay {
 
     ITokenGeneration tokenAdapter = new TokenGenerationAdapter();
-    //TODO: Refactor to interface?
-    CustomerManagementAdapter customerManagementAdapter = new CustomerManagementAdapter();
+    UserManagementAdapter userManagementAdapter = new UserManagementAdapter(); //TODO: Refactor to interface?
+    PaymentAdapter paymentAdapter = new PaymentAdapter();
 
-    public List<UUID> requestNewTokens(Customer customer, int amount) {
+    public List<UUID> requestNewTokens(User customer, int amount) {
         tokenAdapter.createTokensForCustomer(customer, amount);
         return tokenAdapter.readTokensForCustomer(customer);
     }
 
-    public String registerCustomer(Customer customer) {
-        return customerManagementAdapter.registerCustomer(customer.getFirstName(), customer.getLastName(), customer.getCprNumber(), customer.getAccountId());
+    public String registerCustomer(User customer, String accountID) {
+        return userManagementAdapter.registerCustomer(customer.getFirstName(), customer.getLastName(), customer.getCprNumber(), accountID);
     }
 
-    public void deleteTokensFor(Customer customer) {
+    public String registerMerchant(User merchant, String accountID) {
+        return userManagementAdapter.registerMerchant(merchant.getFirstName(), merchant.getLastName(), merchant.getCprNumber(), accountID);
+    }
+
+    public void deleteTokensFor(User customer) {
         tokenAdapter.deleteTokensFor(customer);
+    }
+
+    public void transferMoneyFromTo(String customerAccountId, String merchantAccountId, BigDecimal amount, String description) throws Exception {
+        paymentAdapter.transferMoneyFromTo(customerAccountId, merchantAccountId, amount, description);
     }
 }

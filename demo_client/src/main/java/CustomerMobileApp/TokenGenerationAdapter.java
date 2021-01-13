@@ -1,6 +1,6 @@
 package CustomerMobileApp;
 
-import io.cucumber.gherkin.Token;
+import dtu.ws.fastmoney.User;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -44,11 +44,12 @@ public class TokenGenerationAdapter implements ITokenGeneration {
 
     public TokenGenerationAdapter() {
         Client client = ClientBuilder.newClient();
-        baseUrl = client.target("http://localhost:8080/");
+        baseUrl = client.target("http://localhost:8042/");
     }
 
-    public void createTokensForCustomer(Customer customer, int amount) {
+    public void createTokensForCustomer(User customer, int amount) {
         TokenRequestObject request = new TokenRequestObject();
+        System.out.println("createTokensForCustomer: " + customer);
         request.setCpr(customer.getCprNumber());
         request.setTokenAmount(amount);
         Response response = baseUrl
@@ -58,15 +59,17 @@ public class TokenGenerationAdapter implements ITokenGeneration {
         //TODO: Should we do something with status code of response here?
     }
 
-    public List<UUID> readTokensForCustomer(Customer customer) {
+    public List<UUID> readTokensForCustomer(User customer) {
         return baseUrl
                 .path("tokens")
                 .queryParam("cpr", customer.getCprNumber())
                 .request().get(new GenericType<>() {});
     }
 
+
     @Override
-    public void deleteTokensFor(Customer customer) {
+    public void deleteTokensFor(User customer) {
+        System.out.println("deleteTokensFor:" + customer);
         baseUrl.path("tokens")
                 .queryParam("cpr", customer.getCprNumber())
                 .request()

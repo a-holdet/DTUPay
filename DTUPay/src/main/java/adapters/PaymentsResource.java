@@ -1,5 +1,6 @@
 package adapters;
 
+import dtu.ws.fastmoney.BankServiceException_Exception;
 import paymentservice.*;
 import merchantservice.*;
 import customerservice.*;
@@ -15,7 +16,6 @@ public class PaymentsResource {
     PaymentService paymentService = PaymentService.instance;
 
     public PaymentsResource(){
-        System.out.println("abc");
     }
 
     @POST
@@ -24,18 +24,14 @@ public class PaymentsResource {
     public Response create(Payment payment) {
         try {
             paymentService.registerPayment(payment);
-        } catch (MerchantDoesNotExistException e) {
-            throw new NotFoundException();
-        } catch (CustomerDoesNotExistException e) {
-            System.out.println("resource" + e.getMessage());
+        /*} catch (MerchantDoesNotExistException e) {
             throw new NotFoundException(e.getMessage());
+        } catch (CustomerDoesNotExistException e) {
+            throw new BadRequestException(e.getMessage());*/
+        } catch (BankServiceException_Exception e) {
+            throw new InternalServerErrorException(e.getMessage());
         }
         return Response.noContent().build();
-    }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Payment> list() {
-        return paymentService.getPayments();
     }
 }
