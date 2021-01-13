@@ -1,6 +1,7 @@
 package CustomerMobileApp;
 
 import dtu.ws.fastmoney.User;
+import io.quarkus.security.UnauthorizedException;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -12,7 +13,7 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.UUID;
 
-public class TokenGenerationAdapter implements ITokenGeneration {
+public class TokenGenerationAdapter {
 
     //TODO: Is this the right way to post?
     //TODO: And where should this class live?
@@ -47,7 +48,7 @@ public class TokenGenerationAdapter implements ITokenGeneration {
         baseUrl = client.target("http://localhost:8042/");
     }
 
-    public void createTokensForCustomer(User customer, int amount) {
+    public void createTokensForCustomer(User customer, int amount) throws UnauthorizedException {
         TokenRequestObject request = new TokenRequestObject();
         System.out.println("createTokensForCustomer: " + customer);
         request.setCpr(customer.getCprNumber());
@@ -56,7 +57,11 @@ public class TokenGenerationAdapter implements ITokenGeneration {
                 .path("tokens")
                 .request()
                 .post(Entity.entity(request, MediaType.APPLICATION_JSON));
-        //TODO: Should we do something with status code of response here?
+
+        if (response.getStatus() == 401) { // customer is unauthorized (i.e customer has no bank account)
+            throw new UnauthorizedException("Customer must have an account id to request tokens");
+        }
+
     }
 
     public List<UUID> readTokensForCustomer(User customer) {
@@ -66,8 +71,6 @@ public class TokenGenerationAdapter implements ITokenGeneration {
                 .request().get(new GenericType<>() {});
     }
 
-
-    @Override
     public void deleteTokensFor(User customer) {
         System.out.println("deleteTokensFor:" + customer);
         baseUrl.path("tokens")

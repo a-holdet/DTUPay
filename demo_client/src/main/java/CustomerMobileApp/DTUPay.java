@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class DTUPay {
 
-    ITokenGeneration tokenAdapter = new TokenGenerationAdapter();
+    TokenGenerationAdapter tokenAdapter = new TokenGenerationAdapter();
     UserManagementAdapter userManagementAdapter = new UserManagementAdapter(); //TODO: Refactor to interface?
     PaymentAdapter paymentAdapter = new PaymentAdapter();
 

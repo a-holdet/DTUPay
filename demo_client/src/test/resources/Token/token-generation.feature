@@ -6,11 +6,11 @@ Feature: TokenGeneration
 		When the customer requests 5 tokens
 		Then the customer gets 5 tokens
 
-#	Scenario: Customer has no Bank Account
-#		Given the customer with name "Stein" "Bagger" and CPR "290276-1234" has no bank account
-#		When the customer requests 5 tokens
-#		Then the token granting is not successful
-#		And the error message is "Customer must have an account id to request tokens"
+	Scenario: Customer has no Bank Account
+		Given the customer with name "Stein" "Bagger" and CPR "290276-1227" has no bank account
+		When the customer requests 5 tokens
+		Then the token granting is not successful
+		And the error message is "Customer must have an account id to request tokens"
 
 #	Scenario: Customer has multiple tokens and requests more tokens
 #		Given the customer with name "Stein" "Bagger" and CPR "290276-1234" has a bank account

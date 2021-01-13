@@ -2,8 +2,6 @@ package Token;
 
 import CustomerMobileApp.DTUPay;
 import CustomerMobileApp.TokenGenerationAdapter;
-import CustomerMobileApp.ITokenGeneration;
-import CustomerMobileApp.DTUPayUser;
 import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtu.ws.fastmoney.BankServiceService;
@@ -27,7 +25,7 @@ public class TokenSteps {
     User customer;
     String customerAccountId;
     DTUPay dtuPay;
-    ITokenGeneration tokenService;
+    TokenGenerationAdapter tokenService;
     List<UUID> tokens;
     BankService bankService;
 
