@@ -17,6 +17,19 @@ import static org.junit.Assert.*;
 
 public class PaymentServiceSteps {
 
+    //Adapters
+    BankService bankService = new BankServiceService().getBankServicePort();
+    UserManagementAdapter userManagementAdapter = new UserManagementAdapter();
+    PaymentAdapter paymentAdapter = new PaymentAdapter();
+    //Holders
+    TokenHolder tokenHolder = TokenHolder.instance;
+    UserHolder customerHolder = UserHolder.customer;
+    UserHolder merchantHolder = UserHolder.merchant;
+    //Class specifics
+    UUID selectedToken;
+    String mostRecentAccountId;
+    boolean successful;
+
     @Before
     public void beforeScenario() {
         Account acc1 = null;
@@ -36,29 +49,18 @@ public class PaymentServiceSteps {
         }
     }
 
-    User customer;
-    User merchant;
-    BankService bankService = new BankServiceService().getBankServicePort();
-    String customerAccountId;
-    String merchantAccountId;
-    String mostRecentAccountId;
-    String customerId;
-    String merchantId;
-    UserManagementAdapter userManagementAdapter = new UserManagementAdapter();
-    PaymentAdapter paymentAdapter = new PaymentAdapter();
-    boolean successful;
-    TokenHolder tokenHolder = TokenHolder.instance;
-    UUID selectedToken;
-
     @Given("the customer {string} {string} with CPR {string} has a bank account")
     public void theCustomerWithCPRHasABankAccount(String firstName, String lastName, String cpr) {
-        customer = new User();
-        customer.setFirstName(firstName);
-        customer.setLastName(lastName);
-        customer.setCprNumber(cpr);
+        customerHolder.firstName = firstName;
+        customerHolder.lastName = lastName;
+        customerHolder.cpr = cpr;
+        User customerBank = new User();
+        customerBank.setFirstName(firstName);
+        customerBank.setLastName(lastName);
+        customerBank.setCprNumber(cpr);
         try {
-            customerAccountId = bankService.createAccountWithBalance(customer, new BigDecimal(1000));
-            mostRecentAccountId = customerAccountId;
+            customerHolder.accountId = bankService.createAccountWithBalance(customerBank, new BigDecimal(1000));
+            mostRecentAccountId = customerHolder.accountId;
         } catch (BankServiceException_Exception e) {
             e.printStackTrace();
         }
@@ -78,18 +80,22 @@ public class PaymentServiceSteps {
 
     @And("the customer is registered with DTUPay")
     public void theCustomerIsRegisteredWithDTUPay() throws IllegalArgumentException {
-        customerId = userManagementAdapter.registerCustomer(customer.getFirstName(), customer.getLastName(), customer.getCprNumber(), customerAccountId);
+        customerHolder.id = userManagementAdapter.registerCustomer(customerHolder.firstName, customerHolder.lastName, customerHolder.cpr, customerHolder.accountId);
+        assertNotNull(customerHolder.id);
     }
 
     @And("the merchant {string} {string} with CPR {string} has a bank account")
     public void theMerchantWithCPRHasABankAccount(String firstName, String lastName, String cpr) {
-        merchant = new User();
-        merchant.setFirstName(firstName);
-        merchant.setLastName(lastName);
-        merchant.setCprNumber(cpr);
+        merchantHolder.firstName = firstName;
+        merchantHolder.lastName = lastName;
+        merchantHolder.cpr = cpr;
+        User merchantBank = new User();
+        merchantBank.setFirstName(firstName);
+        merchantBank.setLastName(lastName);
+        merchantBank.setCprNumber(cpr);
         try {
-            merchantAccountId = bankService.createAccountWithBalance(merchant, new BigDecimal(2000));
-            mostRecentAccountId = merchantAccountId;
+            merchantHolder.accountId = bankService.createAccountWithBalance(merchantBank, new BigDecimal(2000));
+            mostRecentAccountId = merchantHolder.accountId;
         } catch (BankServiceException_Exception e) {
             e.printStackTrace();
             fail();
@@ -98,14 +104,15 @@ public class PaymentServiceSteps {
 
     @And("the merchant is registered with DTUPay")
     public void theMerchantIsRegisteredWithDTUPay() {
-        merchantId = userManagementAdapter.registerMerchant(merchant.getFirstName(), merchant.getLastName(), merchant.getCprNumber(), merchantAccountId);
+        System.out.println("Merchant is registering with DTU Pay");
+        merchantHolder.id = userManagementAdapter.registerMerchant(merchantHolder.firstName, merchantHolder.lastName, merchantHolder.cpr, merchantHolder.accountId);
     }
 
 
     @When("the merchant initiates a payment for {int} kr using the selected customer token")
     public void theMerchantInitiatesAPaymentForKrUsingTheSelectedCustomerToken(int amount) {
         try {
-            paymentAdapter.transferMoneyFromTo(customerAccountId,merchantId,new BigDecimal(amount),"myscription");
+            paymentAdapter.transferMoneyFromTo(selectedToken,merchantHolder.id,new BigDecimal(amount),"myscription");
             successful=true;
         } catch (Exception e) {
             successful = false;
@@ -115,7 +122,7 @@ public class PaymentServiceSteps {
     @And("the balance of the customer at the bank is {int} kr")
     public void theBalanceOfTheCustomerAtTheBankIsKr(int expectedBalance) {
         try {
-            Account account = bankService.getAccount(customerAccountId);
+            Account account = bankService.getAccount(customerHolder.accountId);
             assertEquals(new BigDecimal(expectedBalance), account.getBalance());
         } catch (BankServiceException_Exception e) {
             fail("Wrong balance for customer");
@@ -125,7 +132,7 @@ public class PaymentServiceSteps {
     @And("the balance of the merchant at the bank is {int} kr")
     public void theBalanceOfTheMerchantAtTheBankIsKr(int expectedBalance) {
         try {
-            Account account = bankService.getAccount(merchantAccountId);
+            Account account = bankService.getAccount(merchantHolder.accountId);
             assertEquals(new BigDecimal(expectedBalance), account.getBalance());
         } catch (BankServiceException_Exception e) {
             fail("Wrong balance for merchant");
@@ -135,12 +142,12 @@ public class PaymentServiceSteps {
     @After
     public void afterScenario() {
         try {
-            bankService.retireAccount(customerAccountId);
+            bankService.retireAccount(customerHolder.accountId);
         } catch (BankServiceException_Exception e) {
             // e.printStackTrace();
         }
         try {
-            bankService.retireAccount(merchantAccountId);
+            bankService.retireAccount(merchantHolder.accountId);
         } catch (BankServiceException_Exception e) {
             // ½ e.printStackTrace();
         }
@@ -155,6 +162,7 @@ public class PaymentServiceSteps {
 
     @And("the customer selects a token")
     public void theCustomerSelectsAToken() {
+        System.out.println("Customer selects token number 0");
         selectedToken = tokenHolder.tokens.get(0);
     }
 }

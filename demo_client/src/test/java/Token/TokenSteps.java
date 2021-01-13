@@ -2,6 +2,8 @@ package Token;
 
 import CustomerMobileApp.TokenGenerationAdapter;
 import CustomerMobileApp.UserManagementAdapter;
+import DTUPay.TokenHolder;
+import DTUPay.UserHolder;
 import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtu.ws.fastmoney.BankServiceService;
@@ -23,61 +25,57 @@ import static org.junit.Assert.*;
 
 public class TokenSteps {
 
-    User customer;
-    String customerAccountId;
-    String customerId;
-    List<UUID> tokens;
-    BankService bankService;
+
+    //String customerAccountId;
+    //String customerId;
+
+    //Exceptions
     UnauthorizedException unauthorizedException;
+    //Adapters
+    BankService bankService;
     TokenGenerationAdapter tokenAdapter;
     UserManagementAdapter userManagementAdapter;
+    //Holders
+    TokenHolder tokenHolder = TokenHolder.instance;
+    UserHolder customerHolder = UserHolder.customer;
 
     @Before
     public void setup() {
         this.bankService = new BankServiceService().getBankServicePort();
         this.tokenAdapter = new TokenGenerationAdapter();
         this.userManagementAdapter = new UserManagementAdapter();
-        this.tokens = new ArrayList<>();
     }
 
     @After
     public void teardown() {
-        if (customer != null) tokenAdapter.deleteTokensFor(customerId);
+        if (customerHolder.id != null) {
+            System.out.println("teardown method");
+            tokenAdapter.deleteTokensFor(customerHolder.id);
+            tokenHolder.reset();
+        }
         try {
-            if (customerAccountId != null) bankService.retireAccount(customerAccountId);
+            if (customerHolder.accountId != null) bankService.retireAccount(customerHolder.accountId);
         } catch (BankServiceException_Exception e) {
             e.printStackTrace();
             fail();
         }
-        customerAccountId = null;
-        customerId = null;
-    }
-
-    @Given("the customer with name {string} {string} and CPR {string} has a bank account")
-    public void theCustomerWithNameAndCPRHasABankAccount(String firstName, String lastName, String cpr) {
-        this.customer = new User();
-        customer.setFirstName(firstName);
-        customer.setLastName(lastName);
-        customer.setCprNumber(cpr);
-        try {
-            this.customerAccountId = bankService.createAccountWithBalance(customer, BigDecimal.ZERO);
-        } catch (BankServiceException_Exception e) {
-            e.printStackTrace();
-            fail();
-        }
+        customerHolder.accountId = null;
+        customerHolder.id = null;
     }
 
     @And("the customer has {int} tokens")
     public void theCustomerHasTokens(int tokenAmount) {
-        assertNotNull(customerId);
-        List<UUID> tokens = tokenAdapter.readTokensForCustomer(customerId);
+        assertNotNull(customerHolder.id);
+        List<UUID> tokens = tokenAdapter.readTokensForCustomer(customerHolder.id);
         assertEquals(tokenAmount, tokens.size());
     }
 
     @When("the customer requests {int} tokens")
     public void theCustomerRequestsTokens(int tokenAmount) {
         try {
-            tokens = tokenAdapter.createTokensForCustomer(customerId, tokenAmount);
+            System.out.println("Customer requests tokens");
+            System.out.println("Customer id: " + customerHolder.id);
+            tokenHolder.setTokens(tokenAdapter.createTokensForCustomer(customerHolder.id, tokenAmount));
         } catch (UnauthorizedException e) {
             this.unauthorizedException = e;
         }
@@ -85,7 +83,7 @@ public class TokenSteps {
 
     @Then("the customer gets {int} tokens")
     public void theCustomerGetsTokens(int tokenAmount) {
-        assertEquals(tokenAmount, tokens.size());
+        assertEquals(tokenAmount, tokenHolder.getTokens().size());
     }
 
     @Then("the token granting is not successful")
@@ -98,19 +96,13 @@ public class TokenSteps {
 
     }
 
-    @And("the customer is registered at DTUPay")
-    public void theCustomerIsRegisteredAtDTUPay() {
-        customerId = userManagementAdapter.registerCustomer(customer.getFirstName(), customer.getLastName(), customer.getCprNumber(), customerAccountId);
-        assertNotNull(customerId);
-    }
-
     @Given("the customer with name {string} {string} and CPR {string} has no bank account")
     public void theCustomerWithNameAndCPRHasNoBankAccount(String firstName, String lastName, String cprNumber) {
-        this.customer = new User();
+        User customer =  new User();
         customer.setFirstName(firstName);
         customer.setLastName(lastName);
         customer.setCprNumber(cprNumber);
-        this.customerAccountId = null;
+        this.customerHolder.accountId = null;
     }
 
     @And("the received error message is {string}")

@@ -1,7 +1,7 @@
 Feature: TokenGeneration
 	Scenario: Successful Token Generation
-		Given the customer with name "Stein" "Bagger" and CPR "290276-9111" has a bank account
-		And the customer is registered at DTUPay
+		Given the customer "Stein" "Bagger" with CPR "290276-7777" has a bank account
+		And the customer is registered with DTUPay
 		And the customer has 0 tokens
 		When the customer requests 5 tokens
 		Then the customer has 5 tokens

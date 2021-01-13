@@ -1,6 +1,8 @@
 package adapters;
 
+import TokenGeneration.ITokenService;
 import TokenGeneration.TokenGenerationService;
+import TokenGeneration.TokenService;
 import io.quarkus.security.UnauthorizedException;
 
 import javax.ws.rs.*;
@@ -10,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Path("/tokens")
-public class TokenGenerationResource {
+public class TokenResource {
 
     //TODO: Where should this class live?
     public static class TokenRequestObject {
@@ -36,7 +38,7 @@ public class TokenGenerationResource {
         }
     }
 
-    TokenGenerationService tokenGenerationService = TokenGenerationService.instance;
+    ITokenService tokenService  = TokenService.instance;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -44,7 +46,7 @@ public class TokenGenerationResource {
         String customerId = request.getUserId();
         int amount = request.getTokenAmount();
         try {
-            List<UUID> tokens = tokenGenerationService.createTokensForCustomer(customerId, amount);
+            List<UUID> tokens = tokenService.createTokensForCustomer(customerId, amount);
             return Response.ok(tokens).build();
         } catch (UnauthorizedException e) {
             return Response.status(401).entity(e.getMessage()).build(); // 401 = Unauthorized operation (i.e. user with 'cpr' has no bank account.
@@ -54,14 +56,14 @@ public class TokenGenerationResource {
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     public Response readTokensForCustomer(@QueryParam("id") String customerId) {
-        List<UUID> tokens = tokenGenerationService.readTokensForCustomer(customerId);
+        List<UUID> tokens = tokenService.readTokensForCustomer(customerId);
         return Response.ok(tokens).build();
     }
 
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteTokensForCustomer(@QueryParam("cpr") String cpr) {
-        tokenGenerationService.deleteTokensForCustomer(cpr);
+        tokenService.deleteTokensForCustomer(cpr);
 
         return Response.ok().build();
     }

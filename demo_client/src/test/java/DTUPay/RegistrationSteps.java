@@ -15,6 +15,7 @@ public class RegistrationSteps {
     String errorMessage;
     UserManagementAdapter userManagementAdapter = new UserManagementAdapter();
 
+
     @Given("the customer {string} {string} with CPR {string} does not have a bank account")
     public void theCustomerWithCPRDoesNotHaveABankAccount(String firstName, String lastName, String cprNumber) {
         customer = new User();

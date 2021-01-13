@@ -30,7 +30,6 @@ public class PaymentService implements IPaymentService {
         //if(!customerService.customerExists(customerAccountId))
         //    throw new CustomerDoesNotExistException(payment.customerId);
 
-        //Get MechantAccountId
         String merchantAccountId = merchantService.getMerchantAccountId(payment.merchantId);
 
         String customerId = tokenService.getCustomerId(payment.customerToken);

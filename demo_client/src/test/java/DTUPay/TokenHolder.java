@@ -6,9 +6,11 @@ import java.util.UUID;
 
 public class TokenHolder {
     public static TokenHolder instance = new TokenHolder();
-    List<UUID> tokens = new ArrayList<UUID>(){};
+    List<UUID> tokens;
 
-    public TokenHolder(){}
+    public TokenHolder(){
+        reset();
+    }
 
     public void setTokens(List<UUID> tokens){
         this.tokens = tokens;
@@ -16,5 +18,9 @@ public class TokenHolder {
 
     public List<UUID> getTokens(){
         return this.tokens;
+    }
+
+    public void reset(){
+        tokens = new ArrayList<>();
     }
 }
