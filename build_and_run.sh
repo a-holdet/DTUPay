@@ -4,13 +4,13 @@ set -e
 # Build and install the libraries
 # abstracting away from using the
 # RabbitMq message queue
-#pushd libraries/messaging-utilities
-#./build.sh
-#popd
+pushd libraries/messaging-utilities
+./build.sh
+popd
 
-#pushd RabbitTest
-#./build.sh
-#popd
+pushd RabbitTest
+./build.sh
+popd
 
 pushd DTUPay
 ./build.sh
