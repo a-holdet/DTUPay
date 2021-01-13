@@ -32,7 +32,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>moneytransfer.StartUp</mainClass>
+                  <mainClass>RabbitTest.StartUp</mainClass>
                 </transformer>
               </transformers>
             </configuration>
@@ -113,4 +113,3 @@
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
   </properties>
 </project>
-

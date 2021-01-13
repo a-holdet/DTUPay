@@ -79,7 +79,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>moneytransfer.StartUp</mainClass>
+							<mainClass>RabbitTest.StartUp</mainClass>
 							<classpathPrefix>lib/</classpathPrefix>
 						</manifest>
 					</archive>
