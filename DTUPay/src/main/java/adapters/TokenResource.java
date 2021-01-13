@@ -1,8 +1,8 @@
 package adapters;
 
-import TokenGeneration.ITokenService;
-import TokenGeneration.TokenGenerationService;
-import TokenGeneration.TokenService;
+import tokenservice.ITokenService;
+import tokenservice.TokenCreationDTO;
+import tokenservice.TokenService;
 import io.quarkus.security.UnauthorizedException;
 
 import javax.ws.rs.*;
@@ -13,36 +13,11 @@ import java.util.UUID;
 
 @Path("/tokens")
 public class TokenResource {
-
-    //TODO: Where should this class live?
-    public static class TokenRequestObject {
-        private String userId;
-        private int tokenAmount;
-
-        public TokenRequestObject() {}
-
-        public void setUserId(String userId) {
-            this.userId = userId;
-        }
-
-        public void setTokenAmount(int tokenAmount) {
-            this.tokenAmount = tokenAmount;
-        }
-
-        public String getUserId() {
-            return userId;
-        }
-
-        public int getTokenAmount() {
-            return tokenAmount;
-        }
-    }
-
     ITokenService tokenService  = TokenService.instance;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createTokensForCustomer(TokenRequestObject request) {
+    public Response createTokensForCustomer(TokenCreationDTO request) {
         String customerId = request.getUserId();
         int amount = request.getTokenAmount();
         try {

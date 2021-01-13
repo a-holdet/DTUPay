@@ -1,4 +1,4 @@
-package TokenGeneration;
+package tokenservice;
 
 public class CustomerCannotRequestMoreTokensException {
 }

@@ -49,7 +49,6 @@ public class TokenSteps {
     @After
     public void teardown() {
         if (customerHolder.id != null) {
-            System.out.println("teardown method");
             tokenAdapter.deleteTokensFor(customerHolder.id);
             tokenHolder.reset();
         }
@@ -73,8 +72,6 @@ public class TokenSteps {
     @When("the customer requests {int} tokens")
     public void theCustomerRequestsTokens(int tokenAmount) {
         try {
-            System.out.println("Customer requests tokens");
-            System.out.println("Customer id: " + customerHolder.id);
             tokenHolder.setTokens(tokenAdapter.createTokensForCustomer(customerHolder.id, tokenAmount));
         } catch (UnauthorizedException e) {
             this.unauthorizedException = e;

@@ -1,4 +1,4 @@
-package TokenGeneration;
+package tokenservice;
 
 import io.quarkus.security.UnauthorizedException;
 

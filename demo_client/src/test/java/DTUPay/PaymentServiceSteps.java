@@ -104,7 +104,6 @@ public class PaymentServiceSteps {
 
     @And("the merchant is registered with DTUPay")
     public void theMerchantIsRegisteredWithDTUPay() {
-        System.out.println("Merchant is registering with DTU Pay");
         merchantHolder.id = userManagementAdapter.registerMerchant(merchantHolder.firstName, merchantHolder.lastName, merchantHolder.cpr, merchantHolder.accountId);
     }
 
@@ -156,13 +155,11 @@ public class PaymentServiceSteps {
     @Then("the payment is successful")
     public void thePaymentIsSuccessful() {
         assertTrue(successful);
-        ;
     }
 
 
     @And("the customer selects a token")
     public void theCustomerSelectsAToken() {
-        System.out.println("Customer selects token number 0");
         selectedToken = tokenHolder.tokens.get(0);
     }
 }

@@ -1,4 +1,4 @@
-package TokenGeneration;
+package tokenservice;
 
 import customerservice.ICustomerService;
 import customerservice.LocalCustomerService;

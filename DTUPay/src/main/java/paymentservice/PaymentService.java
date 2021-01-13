@@ -1,8 +1,8 @@
 package paymentservice;
 import java.util.List;
 
-import TokenGeneration.ITokenService;
-import TokenGeneration.TokenService;
+import tokenservice.ITokenService;
+import tokenservice.TokenService;
 import customerservice.LocalCustomerService;
 import customerservice.ICustomerService;
 import dtu.ws.fastmoney.BankService;
