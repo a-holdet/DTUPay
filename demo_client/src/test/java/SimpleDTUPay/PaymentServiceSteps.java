@@ -2,6 +2,7 @@ package SimpleDTUPay;
 
 
 
+import CustomerMobileApp.DTUPay;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import dtu.ws.fastmoney.*;
@@ -43,7 +44,7 @@ public class PaymentServiceSteps {
     String mostRecentAccountId;
     String customerId;
     String merchantId;
-    SimpleDTUPayService dtuPay = new SimpleDTUPayService();
+    DTUPay dtuPay = new DTUPay();
     boolean successful;
 
     @Given("the customer {string} {string} with CPR {string} has a bank account")
@@ -88,6 +89,7 @@ public class PaymentServiceSteps {
             mostRecentAccountId = merchantAccountId;
         } catch (BankServiceException_Exception e) {
             e.printStackTrace();
+            fail();
         }
     }
 
@@ -144,6 +146,4 @@ public class PaymentServiceSteps {
     public void thePaymentIsSuccessful() {
         assertTrue(successful);;
     }
-
-
 }
