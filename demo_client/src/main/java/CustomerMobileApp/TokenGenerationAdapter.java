@@ -1,6 +1,7 @@
 package CustomerMobileApp;
 
 import dtu.ws.fastmoney.User;
+import io.quarkus.security.UnauthorizedException;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -12,27 +13,27 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.UUID;
 
-public class TokenGenerationAdapter implements ITokenGeneration {
+public class TokenGenerationAdapter {
 
     //TODO: Is this the right way to post?
     //TODO: And where should this class live?
     //TODO: Where should this class live?
     public static class TokenRequestObject {
-        private String cpr;
+        private String userId;
         private int tokenAmount;
 
         public TokenRequestObject() {}
 
-        public void setCpr(String cpr) {
-            this.cpr = cpr;
+        public void setUserId(String userId) {
+            this.userId = userId;
         }
 
         public void setTokenAmount(int tokenAmount) {
             this.tokenAmount = tokenAmount;
         }
 
-        public String getCpr() {
-            return cpr;
+        public String getUserId() {
+            return userId;
         }
 
         public int getTokenAmount() {
@@ -47,30 +48,33 @@ public class TokenGenerationAdapter implements ITokenGeneration {
         baseUrl = client.target("http://localhost:8042/");
     }
 
-    public void createTokensForCustomer(User customer, int amount) {
+    public List<UUID> createTokensForCustomer(String customerId, int amount) throws UnauthorizedException {
         TokenRequestObject request = new TokenRequestObject();
-        request.setCpr(customer.getCprNumber());
+        request.setUserId(customerId);
         request.setTokenAmount(amount);
         Response response = baseUrl
                 .path("tokens")
                 .request()
                 .post(Entity.entity(request, MediaType.APPLICATION_JSON));
-        //TODO: Should we do something with status code of response here?
+
+        if (response.getStatus() == 401) { // customer is unauthorized (i.e customer has no bank account)
+            String errorMessage = response.readEntity(String.class); // error message is in payload
+            throw new UnauthorizedException(errorMessage);
+        }
+
+        return response.readEntity(new GenericType<>(){});
     }
 
-    public List<UUID> readTokensForCustomer(User customer) {
+    public List<UUID> readTokensForCustomer(String customerId) {
         return baseUrl
                 .path("tokens")
-                .queryParam("cpr", customer.getCprNumber())
+                .queryParam("id", customerId)
                 .request().get(new GenericType<>() {});
     }
 
-
-    @Override
-    public void deleteTokensFor(User customer) {
-        System.out.println("deleteTokensFor:" + customer);
+    public void deleteTokensFor(String customerId) {
         baseUrl.path("tokens")
-                .queryParam("cpr", customer.getCprNumber())
+                .queryParam("id", customerId)
                 .request()
                 .delete();
     }
