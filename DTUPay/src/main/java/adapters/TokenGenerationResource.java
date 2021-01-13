@@ -1,6 +1,7 @@
 package adapters;
 
-import TokenGeneration.TokenGenerationService;
+import TokenGeneration.ITokenService;
+import TokenGeneration.TokenService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -35,7 +36,7 @@ public class TokenGenerationResource {
         }
     }
 
-    TokenGenerationService tokenGenerationService = TokenGenerationService.instance;
+    ITokenService tokenGenerationService = TokenService.instance;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

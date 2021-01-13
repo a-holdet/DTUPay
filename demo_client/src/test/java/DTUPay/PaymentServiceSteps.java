@@ -10,6 +10,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 import java.math.BigDecimal;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -44,6 +45,8 @@ public class PaymentServiceSteps {
     String merchantId;
     DTUPay dtuPay = new DTUPay();
     boolean successful;
+    TokenHolder tokenHolder = TokenHolder.instance;
+    UUID selectedToken;
 
     @Given("the customer {string} {string} with CPR {string} has a bank account")
     public void theCustomerWithCPRHasABankAccount(String firstName, String lastName, String cpr) {
@@ -96,10 +99,11 @@ public class PaymentServiceSteps {
         merchantId = dtuPay.registerMerchant(merchant, merchantAccountId);
     }
 
-    @When("the merchant initiates a payment for {int} kr by the customer")
-    public void theMerchantInitiatesAPaymentForKrByTheCustomer(int amount) {
+
+    @When("the merchant initiates a payment for {int} kr using the selected customer token")
+    public void theMerchantInitiatesAPaymentForKrUsingTheSelectedCustomerToken(int amount) {
         try {
-            dtuPay.transferMoneyFromTo(customerAccountId,merchantId,new BigDecimal(amount),"myscription");
+            dtuPay.transferMoneyFromTo("TODO CHANGE",merchantId,new BigDecimal(amount),"description");
             successful=true;
         } catch (Exception e) {
             successful = false;
@@ -144,5 +148,11 @@ public class PaymentServiceSteps {
     public void thePaymentIsSuccessful() {
         assertTrue(successful);
         ;
+    }
+
+
+    @And("the customer selects a token")
+    public void theCustomerSelectsAToken() {
+        selectedToken = tokenHolder.tokens.get(0);
     }
 }
