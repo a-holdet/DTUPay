@@ -8,13 +8,14 @@ import javax.ws.rs.Path;
 
 @Path("/status")
 public class Service2Resource {
-	
+
+	IEventService eventService = RabbitMQEventService.instance;
+
 	@PUT
 	@Consumes("text/plain")
 	public boolean doSomething(String status) {
-		Service2 service = new Service2Factory().getService();
 		try {
-			return service.doSomething();
+			return eventService.doSomething();
 		} catch (Exception e) {
 			throw new Error(e);
 		}
