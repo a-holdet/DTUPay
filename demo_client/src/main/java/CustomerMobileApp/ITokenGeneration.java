@@ -8,4 +8,5 @@ public interface ITokenGeneration {
     void createTokensForCustomer(Customer customer, int amount);
     List<UUID> readTokensForCustomer(Customer customer);
 
+    void deleteTokensFor(Customer customer);
 }

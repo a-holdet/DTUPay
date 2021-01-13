@@ -1,5 +1,7 @@
 package CustomerMobileApp;
 
+import io.cucumber.gherkin.Token;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -14,13 +16,27 @@ public class TokenGenerationAdapter implements ITokenGeneration {
 
     //TODO: Is this the right way to post?
     //TODO: And where should this class live?
-    class TokenRequestObject {
-        String cpr;
-        int tokenAmount;
+    //TODO: Where should this class live?
+    public static class TokenRequestObject {
+        private String cpr;
+        private int tokenAmount;
 
-        public TokenRequestObject(String cprNumber, int amount) {
-            this.cpr = cprNumber;
-            this.tokenAmount = amount;
+        public TokenRequestObject() {}
+
+        public void setCpr(String cpr) {
+            this.cpr = cpr;
+        }
+
+        public void setTokenAmount(int tokenAmount) {
+            this.tokenAmount = tokenAmount;
+        }
+
+        public String getCpr() {
+            return cpr;
+        }
+
+        public int getTokenAmount() {
+            return tokenAmount;
         }
     }
 
@@ -32,15 +48,28 @@ public class TokenGenerationAdapter implements ITokenGeneration {
     }
 
     public void createTokensForCustomer(Customer customer, int amount) {
+        TokenRequestObject request = new TokenRequestObject();
+        request.setCpr(customer.getCprNumber());
+        request.setTokenAmount(amount);
         Response response = baseUrl
                 .path("tokens")
                 .request()
-                .post(Entity.entity(new TokenRequestObject(customer.getCprNumber(), amount), MediaType.APPLICATION_JSON));
+                .post(Entity.entity(request, MediaType.APPLICATION_JSON));
+        //TODO: Should we do something with status code of response here?
     }
 
     public List<UUID> readTokensForCustomer(Customer customer) {
         return baseUrl
                 .path("tokens")
+                .queryParam("cpr", customer.getCprNumber())
                 .request().get(new GenericType<>() {});
+    }
+
+    @Override
+    public void deleteTokensFor(Customer customer) {
+        baseUrl.path("tokens")
+                .queryParam("cpr", customer.getCprNumber())
+                .request()
+                .delete();
     }
 }

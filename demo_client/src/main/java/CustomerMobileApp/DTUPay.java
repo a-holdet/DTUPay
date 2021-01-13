@@ -17,4 +17,8 @@ public class DTUPay {
     public String registerCustomer(Customer customer) {
         return customerManagementAdapter.registerCustomer(customer.getFirstName(), customer.getLastName(), customer.getCprNumber(), customer.getAccountId());
     }
+
+    public void deleteTokensFor(Customer customer) {
+        tokenAdapter.deleteTokensFor(customer);
+    }
 }

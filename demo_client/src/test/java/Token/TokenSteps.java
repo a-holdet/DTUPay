@@ -8,6 +8,7 @@ import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtu.ws.fastmoney.BankServiceService;
 import dtu.ws.fastmoney.User;
+import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -38,6 +39,11 @@ public class TokenSteps {
         this.dtuPay = new DTUPay();
     }
 
+    @After
+    public void teardown() {
+        dtuPay.deleteTokensFor(customer);
+    }
+
     @Given("the customer with name {string} {string} and CPR {string} has a bank account")
     public void theCustomerWithNameAndCPRHasABankAccount(String firstName, String lastName, String cpr) {
         User user = new User();
@@ -62,12 +68,12 @@ public class TokenSteps {
 
     @When("the customer requests {int} tokens")
     public void theCustomerRequestsTokens(int tokenAmount) {
-        dtuPay.requestNewTokens(customer, tokenAmount);
+        tokens = dtuPay.requestNewTokens(customer, tokenAmount);
     }
 
     @Then("the customer gets {int} tokens")
     public void theCustomerGetsTokens(int tokenAmount) {
-        assertEquals(tokens.size(), tokenAmount);
+        assertEquals(tokenAmount, tokens.size());
     }
 
     @Then("the token granting is not successful")
