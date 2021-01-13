@@ -1,6 +1,5 @@
 package adapters;
 
-import TokenGeneration.IllegalTokenGrantingException;
 import TokenGeneration.TokenGenerationService;
 import io.quarkus.security.UnauthorizedException;
 
@@ -48,9 +47,7 @@ public class TokenGenerationResource {
             List<UUID> tokens = tokenGenerationService.createTokensForCustomer(customerId, amount);
             return Response.ok(tokens).build();
         } catch (UnauthorizedException e) {
-            return Response.status(401).entity(e.getMessage()).build(); // 401 = Unauthorized operation (i.e. user with 'customerId' has no bank account.
-        } catch (IllegalTokenGrantingException e) {
-            return Response.status(403).entity(e.getMessage()).build(); // Forbidden operation (i.e. user tries to request more tokens than allowed"
+            return Response.status(401).entity(e.getMessage()).build(); // 401 = Unauthorized operation (i.e. user with 'cpr' has no bank account.
         }
     }
 

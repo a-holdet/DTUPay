@@ -16,9 +16,8 @@ public class TokenGenerationService {
     private TokenGenerationService() {}
 
     // Creates tokens for user with 'cpr' iff they are registered at the bank and they have 0 or 1 active tokens.
-    public List<UUID> createTokensForCustomer(String customerId, int amount) throws UnauthorizedException, IllegalTokenGrantingException {
+    public List<UUID> createTokensForCustomer(String customerId, int amount) throws UnauthorizedException {
         if (!customerService.customerExists(customerId)) throw new UnauthorizedException("Customer must have a customer id to request tokens");
-        if (readTokensForCustomer(customerId).size() > 1) throw new IllegalTokenGrantingException("Customer cannot request more tokens");
 
         for (int i = 0; i < amount; i++) {
             persistence.put(UUID.randomUUID(), customerId);

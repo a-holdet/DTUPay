@@ -1,6 +1,5 @@
 package Token;
 
-import CustomerMobileApp.CustomerCannotRequestMoreTokensException;
 import CustomerMobileApp.TokenGenerationAdapter;
 import CustomerMobileApp.UserManagementAdapter;
 import dtu.ws.fastmoney.BankService;
@@ -29,7 +28,7 @@ public class TokenSteps {
     String customerId;
     List<UUID> tokens;
     BankService bankService;
-    Exception exception;
+    UnauthorizedException unauthorizedException;
     TokenGenerationAdapter tokenAdapter;
     UserManagementAdapter userManagementAdapter;
 
@@ -52,7 +51,6 @@ public class TokenSteps {
         }
         customerAccountId = null;
         customerId = null;
-        exception = null;
     }
 
     @Given("the customer with name {string} {string} and CPR {string} has a bank account")
@@ -80,8 +78,8 @@ public class TokenSteps {
     public void theCustomerRequestsTokens(int tokenAmount) {
         try {
             tokens = tokenAdapter.createTokensForCustomer(customerId, tokenAmount);
-        } catch (Exception e) {
-            this.exception = e;
+        } catch (UnauthorizedException e) {
+            this.unauthorizedException = e;
         }
     }
 
@@ -92,7 +90,12 @@ public class TokenSteps {
 
     @Then("the token granting is not successful")
     public void theTokenGrantingIsNotSuccessful() {
-        assertNotNull(exception);
+        assertNotNull(unauthorizedException);
+    }
+
+    @Then("the token granting is denied")
+    public void theTokenGrantingIsDenied() {
+
     }
 
     @And("the customer is registered at DTUPay")
@@ -112,6 +115,6 @@ public class TokenSteps {
 
     @And("the received error message is {string}")
     public void theReceivedErrorMessageIs(String expectedErrorMessage) {
-        assertEquals(expectedErrorMessage, exception.getMessage());
+        assertEquals(expectedErrorMessage, unauthorizedException.getMessage());
     }
 }
