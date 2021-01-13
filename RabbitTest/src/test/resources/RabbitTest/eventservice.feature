@@ -1,6 +1,6 @@
-Feature: Service1 feature
+Feature: EventService feature
 
-  Scenario: demo
+  Scenario: Event
     When I receive event "a"
     Then I have sent event "b"
     

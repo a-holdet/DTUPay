@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-public class Steps {
-	Service service = new Service();
+public class RabbitTestSteps {
+	RabbitTest service = new RabbitTest();
 	private boolean result;
 	
 	@When("I do something")

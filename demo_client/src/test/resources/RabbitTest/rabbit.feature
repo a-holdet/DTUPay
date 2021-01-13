@@ -1,5 +1,5 @@
-Feature: Demo feature
+Feature: Rabbit feature
 
-  Scenario: Demo
+  Scenario: Send do something
   	When I do something
   	Then do something succeeds

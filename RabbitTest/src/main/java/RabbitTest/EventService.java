@@ -4,11 +4,11 @@ import messaging.Event;
 import messaging.EventReceiver;
 import messaging.EventSender;
 
-public class Service1 implements EventReceiver {
+public class EventService implements EventReceiver {
 
 	EventSender sender;
 
-	public Service1(EventSender sender) {
+	public EventService(EventSender sender) {
 		this.sender = sender;
 	}
 
