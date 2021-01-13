@@ -6,12 +6,12 @@ services:
     ports:
      - "8042:8080"
 
-  service1:
-    image: service1
-    container_name: service1
+  RabbitMQService:
+    image: rabbitmqservice
+    container_name: rabbitmqservice
     depends_on:
      - "rabbitMq"
-    command: ["./wait-for-it.sh","rabbitmq:5672","java", "-Xmx64m", "-jar", "service1-1.0.0.jar"]
+    command: ["./wait-for-it.sh","rabbitmq:5672","java", "-Xmx64m", "-jar", "rabbitmqservice-1.0.0.jar"]
 
   rabbitMq:
     image: rabbitmq

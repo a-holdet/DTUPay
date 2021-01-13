@@ -1,6 +1,6 @@
 version: '3'
 services:
-  service1:
-    image: service1 
+  RabbitMQService:
+    image: rabbitmqservice 
     build: .
  

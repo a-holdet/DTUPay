@@ -12,10 +12,6 @@ pushd RabbitMQTest1
 ./build.sh
 popd 
 
-pushd RabbitMQTest2
-./build.sh
-popd
-
 pushd DTUPay
 ./build.sh
 popd

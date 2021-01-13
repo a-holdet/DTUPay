@@ -5,8 +5,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>dk.dtu.compute</groupId>
-	<artifactId>service1</artifactId>
-	<name>Service1</name>
+	<artifactId>rabbitmqservice</artifactId>
+	<name>rabbitmqservice</name>
 	<version>1.0.0</version>
 
 	<properties>
