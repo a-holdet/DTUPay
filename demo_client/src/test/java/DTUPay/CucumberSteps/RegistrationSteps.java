@@ -136,4 +136,7 @@ public class RegistrationSteps {
     }
 
 
+    @And("another merchant has a bank account")
+    public void anotherMerchantHasABankAccount() {
+    }
 }
