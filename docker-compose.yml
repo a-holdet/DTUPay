@@ -11,6 +11,7 @@ services:
     container_name: rabbitmqtest
     depends_on:
      - "rabbitMq"
+    # command: ["./wait-for-it.sh","rabbitmq:5672","java", "-Xmx64m", "-jar", "rabbitmqtest-1.0.0.jar"]
 
   rabbitMq:
     image: rabbitmq
