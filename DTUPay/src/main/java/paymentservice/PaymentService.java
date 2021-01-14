@@ -2,14 +2,14 @@ package paymentservice;
 import java.math.BigDecimal;
 import java.util.List;
 
+import ports.BankException;
+import ports.DTUBankPort;
+import ports.IBank;
 import tokenservice.ITokenService;
 import tokenservice.TokenDoesNotExistException;
 import tokenservice.TokenService;
 import customerservice.LocalCustomerService;
 import customerservice.ICustomerService;
-import dtu.ws.fastmoney.BankService;
-import dtu.ws.fastmoney.BankServiceException_Exception;
-import dtu.ws.fastmoney.BankServiceService;
 import merchantservice.IMerchantService;
 import merchantservice.LocalMerchantService;
 
@@ -19,8 +19,7 @@ public class PaymentService implements IPaymentService {
     IMerchantService merchantService = LocalMerchantService.instance;
     ICustomerService customerService = LocalCustomerService.instance;
     ITokenService tokenService = TokenService.instance;
-
-    BankService bankService = new BankServiceService().getBankServicePort();
+    IBank bank = new DTUBankPort();
 
     public PaymentService(){
     }
@@ -30,27 +29,23 @@ public class PaymentService implements IPaymentService {
     }
 
     @Override
-    public void registerPayment(Payment payment) throws BankServiceException_Exception, TokenDoesNotExistException, MerchantDoesNotExistException, NegativeAmountException {
+    public void registerPayment(Payment payment) throws TokenDoesNotExistException, MerchantDoesNotExistException, NegativeAmountException, BankException {
         String merchantAccountId = merchantService.getMerchantAccountId(payment.merchantId);
 
-        if (merchantAccountId==null)
+        if(merchantAccountId==null)
             throw new MerchantDoesNotExistException("The merchant does not exist in DTUPay");
 
         if(isNegative(payment.amount))
             throw new NegativeAmountException("Cannot transfer a negative amount");
 
-
-
         String customerId = tokenService.consumeToken(payment.customerToken);
-
         String customerAccountId = customerService.getCustomerAccountId(customerId);
 
-        bankService.transferMoneyFromTo(
+        bank.transferMoneyFromTo(
                 customerAccountId,
                 merchantAccountId,
                 payment.amount,
-                payment.description
-        );
+                payment.description);
     }
 
     @Override

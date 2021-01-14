@@ -1,7 +1,7 @@
 package adapters;
 
-import dtu.ws.fastmoney.BankServiceException_Exception;
 import paymentservice.*;
+import ports.BankException;
 import tokenservice.TokenDoesNotExistException;
 
 import javax.ws.rs.*;
@@ -22,7 +22,7 @@ public class PaymentsResource {
     public Response create(Payment payment) {
         try {
             paymentService.registerPayment(payment);
-        } catch (BankServiceException_Exception e) {
+        } catch (BankException e) {
             throw new InternalServerErrorException(e.getMessage());
         } catch (TokenDoesNotExistException | MerchantDoesNotExistException | NegativeAmountException e) {
             return Response.status(422).entity(e.getMessage()).build();
