@@ -26,8 +26,6 @@ public class RegistrationSteps {
 
     @After
     public void after(){
-        System.out.println("Hey from registration teardown");
-
         try {
             if (customerHolder.accountId != null)
                 bankService.retireAccount(customerHolder.accountId);

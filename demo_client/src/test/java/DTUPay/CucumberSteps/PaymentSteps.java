@@ -2,6 +2,7 @@ package DTUPay.CucumberSteps;
 
 import CustomerMobileApp.PaymentAdapter;
 import CustomerMobileApp.UserManagementAdapter;
+import DTUPay.Holders.ErrorMessageHolder;
 import DTUPay.Holders.TokenHolder;
 import DTUPay.Holders.UserHolder;
 import io.cucumber.java.After;
@@ -27,8 +28,10 @@ public class PaymentSteps {
     TokenHolder tokenHolder = TokenHolder.instance;
     UserHolder customerHolder = UserHolder.customer;
     UserHolder merchantHolder = UserHolder.merchant;
+
     //Class specifics
     UUID selectedToken;
+    String errorMessage;
     //String mostRecentAccountId;
     boolean successful;
 
@@ -51,7 +54,7 @@ public class PaymentSteps {
 
     @After
     public void afterScenario() {
-        System.out.println("Hello from payment teardown");
+        //System.out.println("Hello from payment teardown");
     }
 
 
@@ -80,8 +83,9 @@ public class PaymentSteps {
         try {
             paymentAdapter.transferMoneyFromTo(selectedToken,merchantHolder.id,new BigDecimal(amount),"myscription");
             successful=true;
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             successful = false;
+            errorMessage=e.getMessage();
         }
     }
 

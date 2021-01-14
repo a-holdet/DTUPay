@@ -19,7 +19,7 @@ public class PaymentAdapter {
         baseUrl = client.target("http://localhost:8042/");
     }
 
-    public void transferMoneyFromTo(UUID selectedToken, String merchantId, BigDecimal amount, String description) throws Exception {
+    public void transferMoneyFromTo(UUID selectedToken, String merchantId, BigDecimal amount, String description) throws IllegalArgumentException {
         Payment payment = new Payment();
         payment.amount = amount;
         payment.customerToken = selectedToken;
@@ -28,8 +28,11 @@ public class PaymentAdapter {
 
         Response response = baseUrl.path("payments").request().post(Entity.entity(payment, MediaType.APPLICATION_JSON));
         if(response.getStatus()<200 || response.getStatus() >= 300){
-            throw new Exception("Something went wong");
+            String errorMessage = response.readEntity(String.class); //error message is in payload
+            response.close();
+            throw new IllegalArgumentException(errorMessage);
         }
+        response.close();
     }
 
 }

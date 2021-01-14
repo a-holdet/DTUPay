@@ -2,6 +2,7 @@ package adapters;
 
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import paymentservice.*;
+import tokenservice.TokenDoesNotExistException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -27,6 +28,8 @@ public class PaymentsResource {
             throw new BadRequestException(e.getMessage());*/
         } catch (BankServiceException_Exception e) {
             throw new InternalServerErrorException(e.getMessage());
+        } catch (TokenDoesNotExistException e) {
+            return Response.status(422).entity(e.getMessage()).build();
         }
         return Response.noContent().build();
 

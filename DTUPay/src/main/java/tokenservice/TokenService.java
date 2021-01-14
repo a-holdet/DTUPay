@@ -46,7 +46,10 @@ public class TokenService implements ITokenService {
     }
 
     @Override
-    public String getCustomerId(UUID customerToken) {
-        return tokenRepository.get(customerToken);
+    public String consumeToken(UUID customerToken) throws TokenDoesNotExistException {
+        String customerId = tokenRepository.consumeToken(customerToken);
+        if (customerId==null)
+            throw new TokenDoesNotExistException("token does not exist");
+        return customerId;
     }
 }

@@ -43,7 +43,6 @@ public class TokenSteps {
 
     @After
     public void teardown() {
-        System.out.println("Hello from token teardown");
         if (customerHolder.id != null) {
             tokenAdapter.deleteTokensFor(customerHolder.id);
             tokenHolder.reset();

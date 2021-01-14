@@ -2,6 +2,7 @@ package paymentservice;
 import java.util.List;
 
 import tokenservice.ITokenService;
+import tokenservice.TokenDoesNotExistException;
 import tokenservice.TokenService;
 import customerservice.LocalCustomerService;
 import customerservice.ICustomerService;
@@ -24,7 +25,7 @@ public class PaymentService implements IPaymentService {
     }
 
     @Override
-    public void registerPayment(Payment payment) throws /*MerchantDoesNotExistException, CustomerDoesNotExistException,*/ BankServiceException_Exception {
+    public void registerPayment(Payment payment) throws /*MerchantDoesNotExistException, CustomerDoesNotExistException,*/ BankServiceException_Exception, TokenDoesNotExistException {
         //if(!merchantService.merchantExists(merchantAccountId))
         //    throw new MerchantDoesNotExistException(payment.merchantId);
         //if(!customerService.customerExists(customerAccountId))
@@ -32,7 +33,7 @@ public class PaymentService implements IPaymentService {
 
         String merchantAccountId = merchantService.getMerchantAccountId(payment.merchantId);
 
-        String customerId = tokenService.getCustomerId(payment.customerToken);
+        String customerId = tokenService.consumeToken(payment.customerToken);
 
         String customerAccountId = customerService.getCustomerAccountId(customerId);
 

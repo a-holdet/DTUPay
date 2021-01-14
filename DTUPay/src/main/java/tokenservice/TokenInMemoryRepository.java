@@ -26,7 +26,8 @@ public class TokenInMemoryRepository implements ITokenRepository{
     }
 
     @Override
-    public String get(UUID customerToken) {
-        return persistence.get(customerToken);
+    public String consumeToken(UUID customerToken) {
+        String customerId = persistence.remove(customerToken);
+        return customerId;
     }
 }
