@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import messaging.Event;
 import messaging.EventReceiver;
 import messaging.EventSender;
+import messaging.channels.EventServiceListener;
 import messaging.rabbitmq.RabbitMqListener;
 import messaging.rabbitmq.RabbitMqSender;
 
@@ -13,7 +14,7 @@ public class RabbitMQEventService implements IEventService, EventReceiver {
 	private static RabbitMQEventService setUpInstance() {
 		EventSender b = new RabbitMqSender();
 		var service2 = new RabbitMQEventService(b);
-		RabbitMqListener r = new RabbitMqListener(service2);
+		RabbitMqListener r = new EventServiceListener(service2);
 		try {
 			r.listen();
 		} catch (Exception e) {

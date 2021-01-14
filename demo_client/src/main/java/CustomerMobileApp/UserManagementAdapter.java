@@ -22,12 +22,14 @@ public class UserManagementAdapter {
 
         if(response.getStatus()==422){
             String errorMessage = response.readEntity(String.class); //error message is in payload
+            response.close();
             throw new IllegalArgumentException(errorMessage);
         }
 
         //TODO: unsure what is returned by server here.
         // Assumes it to be accountId.
         String accountId = response.readEntity(String.class);
+        response.close();
         return accountId;
     }
 

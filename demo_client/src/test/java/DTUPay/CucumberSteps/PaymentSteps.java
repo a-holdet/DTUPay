@@ -17,7 +17,7 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
-public class PaymentServiceSteps {
+public class PaymentSteps {
 
     //Adapters
     BankService bankService = new BankServiceService().getBankServicePort();
@@ -27,8 +27,10 @@ public class PaymentServiceSteps {
     TokenHolder tokenHolder = TokenHolder.instance;
     UserHolder customerHolder = UserHolder.customer;
     UserHolder merchantHolder = UserHolder.merchant;
+
     //Class specifics
     UUID selectedToken;
+    String errorMessage;
     //String mostRecentAccountId;
     boolean successful;
 
@@ -39,7 +41,6 @@ public class PaymentServiceSteps {
             acc1 = bankService.getAccountByCprNumber("290276-7777");
             bankService.retireAccount(acc1.getId());
         } catch (BankServiceException_Exception e) {
-            // e.printStackTrace();
         }
 
         Account acc2 = null;
@@ -47,13 +48,12 @@ public class PaymentServiceSteps {
             acc2 = bankService.getAccountByCprNumber("207082-0101");
             bankService.retireAccount(acc2.getId());
         } catch (BankServiceException_Exception e) {
-            // e.printStackTrace();
         }
     }
 
     @After
     public void afterScenario() {
-        System.out.println("Hello from payment teardown");
+        //System.out.println("Hello from payment teardown");
     }
 
 
@@ -85,6 +85,7 @@ public class PaymentServiceSteps {
         } catch (Exception e) {
             e.printStackTrace();
             successful = false;
+            errorMessage=e.getMessage();
         }
     }
 
@@ -120,4 +121,13 @@ public class PaymentServiceSteps {
     }
 
 
+    @And("the customer selects a non-valid token")
+    public void theCustomerSelectsANonValidToken() {
+        selectedToken = UUID.randomUUID();
+    }
+
+    @Then("the payment fails")
+    public void thePaymentFails() {
+        assertFalse(successful);
+    }
 }

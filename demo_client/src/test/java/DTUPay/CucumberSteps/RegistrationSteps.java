@@ -10,6 +10,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 
 import java.math.BigDecimal;
+import java.util.Random;
 
 import static org.junit.Assert.*;
 
@@ -21,12 +22,14 @@ public class RegistrationSteps {
     //Holders
     UserHolder customerHolder = UserHolder.customer;
     UserHolder merchantHolder = UserHolder.merchant;
-    ExceptionHolder exceptionHolder = ExceptionHolder.instance;
+    ExceptionHolder exceptionHolder;
+
+    public RegistrationSteps(ExceptionHolder exceptionHolder) {
+        this.exceptionHolder = exceptionHolder;
+    }
 
     @After
     public void after(){
-        System.out.println("Hey from registration teardown");
-
         try {
             if (customerHolder.accountId != null)
                 bankService.retireAccount(customerHolder.accountId);
@@ -43,34 +46,47 @@ public class RegistrationSteps {
         merchantHolder.reset();
     }
 
-    @Given("the customer {string} {string} with CPR {string} does not have a bank account")
-    public void theCustomerWithCPRDoesNotHaveABankAccount(String firstName, String lastName, String cprNumber) {
-        User customer = new User();
-        customer.setFirstName(firstName);
-        customer.setLastName(lastName);
-        customer.setCprNumber(cprNumber);
-    }
-
     @And("the customer is registered with DTUPay")
     public void theCustomerIsRegisteredWithDTUPay() {
         try {
             customerHolder.id = userManagementAdapter.registerCustomer(customerHolder.firstName, customerHolder.lastName, customerHolder.cpr, customerHolder.accountId);
             assertNotNull(customerHolder.id);
         } catch (IllegalArgumentException e){
-            exceptionHolder.exception = e;
+            exceptionHolder.setException(e);
             customerHolder.id=null;
         }
     }
 
-    @Given("the customer {string} {string} with CPR {string} has a bank account")
-    public void theCustomerWithCPRHasABankAccount(String firstName, String lastName, String cpr) {
-        customerHolder.firstName = firstName;
-        customerHolder.lastName = lastName;
+    private int getRandomNumberInRange(int min, int max) {
+        Random r = new Random();
+        return r.nextInt((max - min) + 1) + min;
+    }
+
+    private void setCustomerHolderBasics(){
+        int lastFour = getRandomNumberInRange(1000,9999);
+        String cpr = "200167-"+ lastFour;
+
+        customerHolder.firstName = "Stein";
+        customerHolder.lastName = "Bagger";
         customerHolder.cpr = cpr;
+    }
+
+    private void setMerchantHolderBasics(){
+        int lastFour = getRandomNumberInRange(1000,9999);
+        String cpr = "150363-"+ lastFour;
+
+        merchantHolder.firstName = "Joe";
+        merchantHolder.lastName = "Exotic";
+        merchantHolder.cpr = cpr;
+    }
+
+    @Given("the customer has a bank account")
+    public void theCustomerHasABankAccount() {
+        setCustomerHolderBasics();
         User customerBank = new User();
-        customerBank.setFirstName(firstName);
-        customerBank.setLastName(lastName);
-        customerBank.setCprNumber(cpr);
+        customerBank.setFirstName(customerHolder.firstName);
+        customerBank.setLastName(customerHolder.lastName);
+        customerBank.setCprNumber(customerHolder.cpr);
         try {
             customerHolder.accountId = bankService.createAccountWithBalance(customerBank, new BigDecimal(1000));
         } catch (BankServiceException_Exception e) {
@@ -78,16 +94,13 @@ public class RegistrationSteps {
         }
     }
 
-
-    @And("the merchant {string} {string} with CPR {string} has a bank account")
-    public void theMerchantWithCPRHasABankAccount(String firstName, String lastName, String cpr) {
-        merchantHolder.firstName = firstName;
-        merchantHolder.lastName = lastName;
-        merchantHolder.cpr = cpr;
+    @And("the merchant has a bank account")
+    public void theMerchantHasABankAccount() {
+        setMerchantHolderBasics();
         User merchantBank = new User();
-        merchantBank.setFirstName(firstName);
-        merchantBank.setLastName(lastName);
-        merchantBank.setCprNumber(cpr);
+        merchantBank.setFirstName(merchantHolder.firstName);
+        merchantBank.setLastName(merchantHolder.lastName);
+        merchantBank.setCprNumber(merchantHolder.cpr);
         try {
             merchantHolder.accountId = bankService.createAccountWithBalance(merchantBank, new BigDecimal(2000));
         } catch (BankServiceException_Exception e) {
@@ -101,6 +114,11 @@ public class RegistrationSteps {
         merchantHolder.id = userManagementAdapter.registerMerchant(merchantHolder.firstName, merchantHolder.lastName, merchantHolder.cpr, merchantHolder.accountId);
     }
 
+    @And("the merchant is not registered with DTUPay")
+    public void theMerchantIsNotRegisteredWithDTUPay() {
+        //Do not register merchant with DTUPay
+    }
+
     @Then("the registration is not successful")
     public void theRegistrationIsNotSuccessful() {
         assertNull(customerHolder.id);
@@ -108,11 +126,14 @@ public class RegistrationSteps {
 
     @And("the error message is {string}")
     public void theErrorMessageIs(String expectedErrorMessage) {
-        assertEquals(expectedErrorMessage, exceptionHolder.exception.getMessage());
+        assertEquals(expectedErrorMessage, exceptionHolder.getException().getMessage());
     }
 
-    @Given("the customer with name {string} {string} and CPR {string} has no bank account")
-    public void theCustomerWithNameAndCPRHasNoBankAccount(String firstName, String lastName, String cprNumber) {
-        this.customerHolder.accountId = null;
+    @Given("the customer has no bank account")
+    public void theCustomerWithNameAndCPRHasNoBankAccount() {
+        setCustomerHolderBasics();
+        //Do not create account
     }
+
+
 }

@@ -1,9 +1,6 @@
 package messaging.rabbitmq;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -12,15 +9,18 @@ import com.rabbitmq.client.DeliverCallback;
 import messaging.Event;
 import messaging.EventReceiver;
 
-public class RabbitMqListener {
+public abstract class RabbitMqListener {
 
-	private static final String EXCHANGE_NAME = "eventsExchange";
-	private static final String QUEUE_TYPE = "topic";
-	private static final String TOPIC = "events";
+	private final String QUEUE_TYPE;
+	private final String EXCHANGE_NAME;
+	private final String BINDING;
 
 	EventReceiver service;
 
-	public RabbitMqListener(EventReceiver service) {
+	public RabbitMqListener(EventReceiver service, String queueType, String exchangeName, String binding) {
+		this.QUEUE_TYPE = queueType;
+		this.EXCHANGE_NAME = exchangeName;
+		this.BINDING = binding;
 		this.service = service;
 	}
 
@@ -31,7 +31,7 @@ public class RabbitMqListener {
 		Channel channel = connection.createChannel();
 		channel.exchangeDeclare(EXCHANGE_NAME, QUEUE_TYPE);
 		String queueName = channel.queueDeclare().getQueue();
-		channel.queueBind(queueName, EXCHANGE_NAME, TOPIC);
+		channel.queueBind(queueName, EXCHANGE_NAME, BINDING);
 
 		DeliverCallback deliverCallback = (consumerTag, delivery) -> {
 			String message = new String(delivery.getBody(), "UTF-8");

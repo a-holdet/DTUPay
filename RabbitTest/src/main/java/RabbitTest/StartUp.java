@@ -1,7 +1,7 @@
 package RabbitTest;
 
 import messaging.EventSender;
-import messaging.rabbitmq.RabbitMqListener;
+import messaging.channels.EventServiceListener;
 import messaging.rabbitmq.RabbitMqSender;
 
 public class StartUp {
@@ -12,6 +12,6 @@ public class StartUp {
 	private void startUp() throws Exception {
 		EventSender s = new RabbitMqSender();
 		EventService service = new EventService(s);
-		new RabbitMqListener(service).listen();
+		new EventServiceListener(service).listen();
 	}
 }

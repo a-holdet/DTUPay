@@ -2,13 +2,13 @@ package DTUPay.Holders;
 
 public class ExceptionHolder {
 
-    public static ExceptionHolder instance = new ExceptionHolder();
+    private Exception exception;
 
-    public Exception exception;
+    public Exception getException() {
+        return exception;
+    }
 
-    private ExceptionHolder() { reset (); }
-
-    public void reset() {
-        this.exception = null;
+    public void setException(Exception exception) {
+        this.exception = exception;
     }
 }

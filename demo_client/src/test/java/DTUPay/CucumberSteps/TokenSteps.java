@@ -30,7 +30,11 @@ public class TokenSteps {
     //Holders
     TokenHolder tokenHolder = TokenHolder.instance;
     UserHolder customerHolder = UserHolder.customer;
-    ExceptionHolder exceptionHolder = ExceptionHolder.instance;
+    ExceptionHolder exceptionHolder;
+
+    public TokenSteps(ExceptionHolder exceptionHolder) {
+        this.exceptionHolder = exceptionHolder;
+    }
 
     @Before
     public void setup() {
@@ -41,7 +45,6 @@ public class TokenSteps {
 
     @After
     public void teardown() {
-        System.out.println("Hello from token teardown");
         if (customerHolder.id != null) {
             tokenAdapter.deleteTokensFor(customerHolder.id);
             tokenHolder.reset();
@@ -60,7 +63,7 @@ public class TokenSteps {
         try {
             tokenHolder.setTokens(tokenAdapter.createTokensForCustomer(customerHolder.id, tokenAmount));
         } catch (Exception e) {
-            this.exceptionHolder.exception = e;
+            this.exceptionHolder.setException(e);
         }
     }
 
@@ -71,7 +74,7 @@ public class TokenSteps {
 
     @Then("the token granting is not successful")
     public void theTokenGrantingIsNotSuccessful() {
-        assertNotNull(exceptionHolder.exception);
+        assertNotNull(exceptionHolder.getException());
     }
 
     @Then("the token granting is denied")
@@ -81,6 +84,6 @@ public class TokenSteps {
 
     @And("the received error message is {string}")
     public void theReceivedErrorMessageIs(String expectedErrorMessage) {
-        assertEquals(expectedErrorMessage, exceptionHolder.exception.getMessage());
+        assertEquals(expectedErrorMessage, exceptionHolder.getException().getMessage());
     }
 }
