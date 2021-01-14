@@ -1,4 +1,5 @@
 package paymentservice;
+import java.math.BigDecimal;
 import java.util.List;
 
 import tokenservice.ITokenService;
@@ -24,12 +25,21 @@ public class PaymentService implements IPaymentService {
     public PaymentService(){
     }
 
+    private boolean isNegative(BigDecimal amount) {
+        return amount.compareTo(new BigDecimal(0))<0;
+    }
+
     @Override
-    public void registerPayment(Payment payment) throws BankServiceException_Exception, TokenDoesNotExistException {
+    public void registerPayment(Payment payment) throws BankServiceException_Exception, TokenDoesNotExistException, MerchantDoesNotExistException, NegativeAmountException {
         String merchantAccountId = merchantService.getMerchantAccountId(payment.merchantId);
 
-        //null check on merchantAccountId (if null, then we throw illegal argument exception or something)
-            //throw new MerchantDoesNotExistException(payment.merchantId);
+        if (merchantAccountId==null)
+            throw new MerchantDoesNotExistException("The merchant does not exist in DTUPay");
+
+        if(isNegative(payment.amount))
+            throw new NegativeAmountException("Cannot transfer a negative amount");
+
+
 
         String customerId = tokenService.consumeToken(payment.customerToken);
 

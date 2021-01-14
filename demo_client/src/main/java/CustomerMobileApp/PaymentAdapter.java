@@ -27,7 +27,7 @@ public class PaymentAdapter {
         payment.description = description;
 
         Response response = baseUrl.path("payments").request().post(Entity.entity(payment, MediaType.APPLICATION_JSON));
-        if(response.getStatus()<200 || response.getStatus() >= 300){
+        if(response.getStatus()==422){
             String errorMessage = response.readEntity(String.class); //error message is in payload
             response.close();
             throw new IllegalArgumentException(errorMessage);

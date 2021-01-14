@@ -6,7 +6,7 @@ import tokenservice.TokenDoesNotExistException;
 import java.util.List;
 
 public interface IPaymentService {
-    void registerPayment(Payment payment) throws /*MerchantDoesNotExistException, CustomerDoesNotExistException,*/ BankServiceException_Exception, TokenDoesNotExistException;
+    void registerPayment(Payment payment) throws /*MerchantDoesNotExistException, CustomerDoesNotExistException,*/ BankServiceException_Exception, TokenDoesNotExistException, MerchantDoesNotExistException, NegativeAmountException;
 
     List<Payment> getPayments();
 }

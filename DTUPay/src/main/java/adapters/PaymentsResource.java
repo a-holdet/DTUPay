@@ -22,16 +22,11 @@ public class PaymentsResource {
     public Response create(Payment payment) {
         try {
             paymentService.registerPayment(payment);
-        /*} catch (MerchantDoesNotExistException e) {
-            throw new NotFoundException(e.getMessage());
-        } catch (CustomerDoesNotExistException e) {
-            throw new BadRequestException(e.getMessage());*/
         } catch (BankServiceException_Exception e) {
             throw new InternalServerErrorException(e.getMessage());
-        } catch (TokenDoesNotExistException e) {
+        } catch (TokenDoesNotExistException | MerchantDoesNotExistException | NegativeAmountException e) {
             return Response.status(422).entity(e.getMessage()).build();
         }
         return Response.noContent().build();
-
     }
 }

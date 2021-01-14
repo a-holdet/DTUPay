@@ -60,14 +60,17 @@ public class TokenGenerationAdapter {
 
         if (response.getStatus() == 401) { // customer is unauthorized (i.e customer has no bank account)
             String errorMessage = response.readEntity(String.class); // error message is in payload
+            response.close();
             throw new UnauthorizedException(errorMessage);
         } else if (response.getStatus() == 403) { // Customer not allowed to request more tokens
             String errorMessage = response.readEntity(String.class); // error message is in payload
+            response.close();
             throw new Exception(errorMessage);
         }
 
-        return response.readEntity(new GenericType<>() {
-        });
+        List<UUID> createdTokens = response.readEntity(new GenericType<List<UUID>>() {});
+        response.close();
+        return createdTokens;
     }
 
     public List<UUID> readTokensForCustomer(String customerId) {
