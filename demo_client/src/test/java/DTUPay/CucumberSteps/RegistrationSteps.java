@@ -3,6 +3,7 @@ package DTUPay.CucumberSteps;
 import CustomerMobileApp.UserManagementAdapter;
 import DTUPay.Holders.CustomerHolder;
 import DTUPay.Holders.ExceptionHolder;
+import DTUPay.Holders.MerchantHolder;
 import DTUPay.Holders.UserHolder;
 import dtu.ws.fastmoney.*;
 import io.cucumber.java.After;
@@ -22,16 +23,17 @@ public class RegistrationSteps {
 
     //Holders
     private final CustomerHolder customerHolder;
-    UserHolder merchantHolder = UserHolder.merchant;
+    private final MerchantHolder merchantHolder;
     ExceptionHolder exceptionHolder;
 
-    public RegistrationSteps(CustomerHolder customerHolder, ExceptionHolder exceptionHolder) {
+    public RegistrationSteps(CustomerHolder customerHolder, MerchantHolder merchantHolder, ExceptionHolder exceptionHolder) {
         this.customerHolder = customerHolder;
+        this.merchantHolder = merchantHolder;
         this.exceptionHolder = exceptionHolder;
     }
 
     @After
-    public void after(){
+    public void after() {
         try {
             if (customerHolder.getAccountId() != null)
                 bankService.retireAccount(customerHolder.getAccountId());
@@ -53,7 +55,7 @@ public class RegistrationSteps {
         try {
             customerHolder.setId(userManagementAdapter.registerCustomer(customerHolder.getFirstName(), customerHolder.getLastName(), customerHolder.getCpr(), customerHolder.getAccountId()));
             assertNotNull(customerHolder.getId());
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             exceptionHolder.setException(e);
             customerHolder.setId(null);
         }
@@ -64,18 +66,18 @@ public class RegistrationSteps {
         return r.nextInt((max - min) + 1) + min;
     }
 
-    private void setCustomerHolderBasics(){
-        int lastFour = getRandomNumberInRange(1000,9999);
-        String cpr = "200167-"+ lastFour;
+    private void setCustomerHolderBasics() {
+        int lastFour = getRandomNumberInRange(1000, 9999);
+        String cpr = "200167-" + lastFour;
 
         customerHolder.setFirstName("Stein");
         customerHolder.setLastName("Bagger");
         customerHolder.setCpr(cpr);
     }
 
-    private void setMerchantHolderBasics(){
-        int lastFour = getRandomNumberInRange(1000,9999);
-        String cpr = "150363-"+ lastFour;
+    private void setMerchantHolderBasics() {
+        int lastFour = getRandomNumberInRange(1000, 9999);
+        String cpr = "150363-" + lastFour;
 
         merchantHolder.setFirstName("Joe");
         merchantHolder.setLastName("Exotic");
@@ -83,13 +85,20 @@ public class RegistrationSteps {
     }
 
     @Given("the customer has a bank account")
-    public void theCustomerHasABankAccount() throws Exception {
+    public void theCustomerHasABankAccount() {
         setCustomerHolderBasics();
         User customerBank = new User();
         customerBank.setFirstName(customerHolder.getFirstName());
         customerBank.setLastName(customerHolder.getLastName());
         customerBank.setCprNumber(customerHolder.getCpr());
-            customerHolder.setAccountId(bankService.createAccountWithBalance(customerBank, new BigDecimal(1000)));
+        String accId = null;
+        try {
+            accId = bankService.createAccountWithBalance(customerBank, new BigDecimal(1000));
+        } catch (BankServiceException_Exception e) {
+            e.printStackTrace();
+        }
+
+        customerHolder.setAccountId(accId);
     }
 
     @And("the merchant has a bank account")

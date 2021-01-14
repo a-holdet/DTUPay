@@ -3,6 +3,7 @@ package DTUPay.CucumberSteps;
 import CustomerMobileApp.PaymentAdapter;
 import CustomerMobileApp.UserManagementAdapter;
 import DTUPay.Holders.CustomerHolder;
+import DTUPay.Holders.MerchantHolder;
 import DTUPay.Holders.TokenHolder;
 import DTUPay.Holders.UserHolder;
 import io.cucumber.java.After;
@@ -26,7 +27,7 @@ public class PaymentSteps {
     //Holders
     private final TokenHolder tokenHolder;
     private final CustomerHolder customerHolder;
-    UserHolder merchantHolder = UserHolder.merchant;
+    private final MerchantHolder merchantHolder;
 
     //Class specifics
     UUID selectedToken;
@@ -34,9 +35,10 @@ public class PaymentSteps {
     //String mostRecentAccountId;
     boolean successful;
 
-    public PaymentSteps(TokenHolder tokenHolder, CustomerHolder customerHolder) {
+    public PaymentSteps(TokenHolder tokenHolder, CustomerHolder customerHolder, MerchantHolder merchantHolder) {
         this.tokenHolder = tokenHolder;
         this.customerHolder = customerHolder;
+        this.merchantHolder = merchantHolder;
     }
 
     @Before
@@ -46,6 +48,7 @@ public class PaymentSteps {
             acc1 = bankService.getAccountByCprNumber("290276-7777");
             bankService.retireAccount(acc1.getId());
         } catch (BankServiceException_Exception e) {
+
         }
 
         Account acc2 = null;
@@ -53,12 +56,28 @@ public class PaymentSteps {
             acc2 = bankService.getAccountByCprNumber("207082-0101");
             bankService.retireAccount(acc2.getId());
         } catch (BankServiceException_Exception e) {
+
         }
     }
 
     @After
     public void afterScenario() {
         //System.out.println("Hello from payment teardown");
+        Account acc1 = null;
+        try {
+            acc1 = bankService.getAccountByCprNumber("290276-7777");
+            bankService.retireAccount(acc1.getId());
+        } catch (BankServiceException_Exception e) {
+
+        }
+
+        Account acc2 = null;
+        try {
+            acc2 = bankService.getAccountByCprNumber("207082-0101");
+            bankService.retireAccount(acc2.getId());
+        } catch (BankServiceException_Exception e) {
+
+        }
     }
 
 
@@ -75,9 +94,11 @@ public class PaymentSteps {
     @And("the balance of the merchant account is {int}")
     public void theBalanceOfTheMerchantAccountIs(int expectedBalance) {
         try {
+            System.out.println(merchantHolder.getAccountId());
             Account account = bankService.getAccount(merchantHolder.getAccountId());
             assertEquals(new BigDecimal(expectedBalance), account.getBalance());
         } catch (BankServiceException_Exception e) {
+            System.out.println(e.getMessage());
             fail();
         }
     }
@@ -123,7 +144,6 @@ public class PaymentSteps {
     public void theCustomerSelectsAToken() {
         selectedToken = tokenHolder.getTokens().get(0);
     }
-
 
     @And("the customer selects a non-valid token")
     public void theCustomerSelectsANonValidToken() {
