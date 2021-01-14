@@ -85,17 +85,17 @@ public class RegistrationSteps {
     }
 
     @Given("the customer has a bank account")
-    public void theCustomerHasABankAccount() {
+    public void theCustomerHasABankAccount() throws Exception {
         setCustomerHolderBasics();
         User customerBank = new User();
         customerBank.setFirstName(customerHolder.getFirstName());
         customerBank.setLastName(customerHolder.getLastName());
         customerBank.setCprNumber(customerHolder.getCpr());
-        try {
-            customerHolder.setAccountId(bankService.createAccountWithBalance(customerBank, new BigDecimal(1000)));
-        } catch (BankServiceException_Exception e) {
-            e.printStackTrace();
-        }
+
+        customerBank.setFirstName(customerHolder.getFirstName());
+        customerBank.setLastName(customerHolder.getLastName());
+        customerBank.setCprNumber(customerHolder.getCpr());
+        customerHolder.setAccountId(bankService.createAccountWithBalance(customerBank, new BigDecimal(1000)));
     }
 
     @And("the merchant has a bank account")

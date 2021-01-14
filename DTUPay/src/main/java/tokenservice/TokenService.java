@@ -19,15 +19,16 @@ public class TokenService implements ITokenService {
     @Override
     // Creates tokens for user with 'customerId' iff they are registered at the bank and they have 0 or 1 active tokens.
     public List<UUID> createTokensForCustomer(String customerId, int amount) throws UnauthorizedException, IllegalTokenGrantingException {
-        int customerTokenAmount = readTokensForCustomer(customerId).size();
+        int currentCustomerTokenAmount = readTokensForCustomer(customerId).size();
 
+        if (currentCustomerTokenAmount > 1)
+            throw new IllegalTokenGrantingException("Customer cannot request more tokens");
+        if (currentCustomerTokenAmount + amount > 6)
+            throw new IllegalTokenGrantingException("Customer requested too many tokens");
         if (!customerService.customerExists(customerId))
             throw new UnauthorizedException("Customer must have a customer id to request tokens");
-        if (customerTokenAmount > 1)
-            throw new IllegalTokenGrantingException("Customer cannot request more tokens");
-        if (customerTokenAmount + amount > 6)
-            throw new IllegalTokenGrantingException("Customer requested too many tokens");
 
+        System.out.println("hey");
         for (int i = 0; i < amount; i++) {
             tokenRepository.add(UUID.randomUUID(), customerId);
         }

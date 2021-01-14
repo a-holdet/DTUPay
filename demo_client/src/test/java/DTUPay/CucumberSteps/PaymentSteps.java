@@ -25,7 +25,7 @@ public class PaymentSteps {
     UserManagementAdapter userManagementAdapter = new UserManagementAdapter();
     PaymentAdapter paymentAdapter = new PaymentAdapter();
     //Holders
-    TokenHolder tokenHolder = TokenHolder.instance;
+    private final TokenHolder tokenHolder = TokenHolder.instance;
     private final UserHolder customerHolder;
     private final UserHolder merchantHolder;
 
@@ -122,7 +122,7 @@ public class PaymentSteps {
 
     @And("the customer selects a token")
     public void theCustomerSelectsAToken() {
-        selectedToken = tokenHolder.tokens.get(0);
+        selectedToken = tokenHolder.getTokens().get(0);
     }
 
 
