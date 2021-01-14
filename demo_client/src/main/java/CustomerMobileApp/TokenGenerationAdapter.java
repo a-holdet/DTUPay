@@ -76,6 +76,6 @@ public class TokenGenerationAdapter {
         baseUrl.path("tokens")
                 .queryParam("id", customerId)
                 .request()
-                .delete();
+                .post(null);
     }
 }

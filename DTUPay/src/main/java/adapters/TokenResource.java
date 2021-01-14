@@ -30,12 +30,12 @@ public class TokenResource {
 
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response readTokensForCustomer(@QueryParam("id") String customerId) {
+    public Response ListTokens(@QueryParam("id") String customerId) {
         List<UUID> tokens = tokenService.readTokensForCustomer(customerId);
         return Response.ok(tokens).build();
     }
 
-    @DELETE
+    @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteTokensForCustomer(@QueryParam("cpr") String cpr) {
         tokenService.deleteTokensForCustomer(cpr);
