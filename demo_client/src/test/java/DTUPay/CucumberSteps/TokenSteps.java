@@ -6,14 +6,12 @@ import DTUPay.Holders.ExceptionHolder;
 import DTUPay.Holders.TokenHolder;
 import DTUPay.Holders.UserHolder;
 import dtu.ws.fastmoney.BankService;
-import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtu.ws.fastmoney.BankServiceService;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.quarkus.security.UnauthorizedException;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,11 +26,12 @@ public class TokenSteps {
     UserManagementAdapter userManagementAdapter;
 
     //Holders
-    TokenHolder tokenHolder = TokenHolder.instance;
+    private final TokenHolder tokenHolder;
     UserHolder customerHolder = UserHolder.customer;
     ExceptionHolder exceptionHolder;
 
-    public TokenSteps(ExceptionHolder exceptionHolder) {
+    public TokenSteps(TokenHolder tokenHolder, ExceptionHolder exceptionHolder) {
+        this.tokenHolder = tokenHolder;
         this.exceptionHolder = exceptionHolder;
     }
 

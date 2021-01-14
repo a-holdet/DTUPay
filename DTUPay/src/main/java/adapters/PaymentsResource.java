@@ -20,6 +20,7 @@ public class PaymentsResource {
     //@Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(Payment payment) {
+        System.out.println("hey");
         try {
             paymentService.registerPayment(payment);
         } catch (BankException e) {

@@ -8,7 +8,6 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import dtu.ws.fastmoney.*;
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
@@ -24,7 +23,7 @@ public class PaymentSteps {
     UserManagementAdapter userManagementAdapter = new UserManagementAdapter();
     PaymentAdapter paymentAdapter = new PaymentAdapter();
     //Holders
-    TokenHolder tokenHolder = TokenHolder.instance;
+    private final TokenHolder tokenHolder;
     UserHolder customerHolder = UserHolder.customer;
     UserHolder merchantHolder = UserHolder.merchant;
 
@@ -33,6 +32,10 @@ public class PaymentSteps {
     String errorMessage;
     //String mostRecentAccountId;
     boolean successful;
+
+    public PaymentSteps(TokenHolder tokenHolder) {
+        this.tokenHolder = tokenHolder;
+    }
 
     @Before
     public void beforeScenario() {
@@ -116,7 +119,7 @@ public class PaymentSteps {
 
     @And("the customer selects a token")
     public void theCustomerSelectsAToken() {
-        selectedToken = tokenHolder.tokens.get(0);
+        selectedToken = tokenHolder.getTokens().get(0);
     }
 
 
