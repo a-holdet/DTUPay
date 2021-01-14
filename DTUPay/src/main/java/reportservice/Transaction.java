@@ -1,4 +1,4 @@
-package CustomerMobileApp;
+package reportservice;
 
 import java.util.UUID;
 
