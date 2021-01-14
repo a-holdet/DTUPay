@@ -90,57 +90,38 @@ public class PaymentSteps {
 
 
     @And("the balance of the customer account is {int}")
-    public void theBalanceOfTheCustomerAccountIs(int expectedBalance) {
-        try {
-            Account account = bankService.getAccount(customerHolder.getAccountId());
-            assertEquals(new BigDecimal(expectedBalance), account.getBalance());
-        } catch (BankServiceException_Exception e) {
-            fail();
-        }
+    public void theBalanceOfTheCustomerAccountIs(int expectedBalance) throws BankServiceException_Exception {
+        Account account = bankService.getAccount(customerHolder.getAccountId());
+        assertEquals(new BigDecimal(expectedBalance), account.getBalance());
     }
 
     @And("the balance of the merchant account is {int}")
-    public void theBalanceOfTheMerchantAccountIs(int expectedBalance) {
-        try {
-            System.out.println(merchantHolder.getAccountId());
-            Account account = bankService.getAccount(merchantHolder.getAccountId());
-            assertEquals(new BigDecimal(expectedBalance), account.getBalance());
-        } catch (BankServiceException_Exception e) {
-            System.out.println(e.getMessage());
-            fail();
-        }
+    public void theBalanceOfTheMerchantAccountIs(int expectedBalance) throws BankServiceException_Exception {
+        Account account = bankService.getAccount(merchantHolder.getAccountId());
+        assertEquals(new BigDecimal(expectedBalance), account.getBalance());
     }
 
     @When("the merchant initiates a payment for {int} kr using the selected customer token")
     public void theMerchantInitiatesAPaymentForKrUsingTheSelectedCustomerToken(int amount) {
-        try {
+        try{
             merchantAdapter.transferMoneyFromTo(selectedToken,merchantHolder.getId(),new BigDecimal(amount),"myscription");
             successful=true;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
             successful = false;
             errorMessage=e.getMessage();
         }
     }
 
     @And("the balance of the customer at the bank is {int} kr")
-    public void theBalanceOfTheCustomerAtTheBankIsKr(int expectedBalance) {
-        try {
-            Account account = bankService.getAccount(customerHolder.getAccountId());
-            assertEquals(new BigDecimal(expectedBalance), account.getBalance());
-        } catch (BankServiceException_Exception e) {
-            fail("Wrong balance for customer");
-        }
+    public void theBalanceOfTheCustomerAtTheBankIsKr(int expectedBalance) throws BankServiceException_Exception {
+        Account account = bankService.getAccount(customerHolder.getAccountId());
+        assertEquals(new BigDecimal(expectedBalance), account.getBalance());
     }
 
     @And("the balance of the merchant at the bank is {int} kr")
-    public void theBalanceOfTheMerchantAtTheBankIsKr(int expectedBalance) {
-        try {
-            Account account = bankService.getAccount(merchantHolder.getAccountId());
-            assertEquals(new BigDecimal(expectedBalance), account.getBalance());
-        } catch (BankServiceException_Exception e) {
-            fail("Wrong balance for merchant");
-        }
+    public void theBalanceOfTheMerchantAtTheBankIsKr(int expectedBalance) throws BankServiceException_Exception {
+        Account account = bankService.getAccount(merchantHolder.getAccountId());
+        assertEquals(new BigDecimal(expectedBalance), account.getBalance());
     }
 
 
@@ -171,24 +152,14 @@ public class PaymentSteps {
     }
 
     @And("the merchant and customer perform a successful payment of {int} kr for a {string}")
-    public void theMerchantAndCustomerPerformASuccessfulPaymentOfKrForA(int amount, String productDescription) {
-        try {
-            tokenHolder.setTokens(customerAdapter.createTokensForCustomer(customerHolder.getId(), 2)); // Request 2 tokens
-            UUID tokenUsedInPayment = tokenHolder.getTokens().get(0); // Extract 1st token
-            performPaymentUsing(tokenUsedInPayment, merchantHolder, amount, productDescription);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
+    public void theMerchantAndCustomerPerformASuccessfulPaymentOfKrForA(int amount, String productDescription) throws Exception {
+        tokenHolder.setTokens(customerAdapter.createTokensForCustomer(customerHolder.getId(), 2)); // Request 2 tokens
+        UUID tokenUsedInPayment = tokenHolder.getTokens().get(0); // Extract 1st token
+        performPaymentUsing(tokenUsedInPayment, merchantHolder, amount, productDescription);
     }
 
     private void performPaymentUsing(UUID token, UserHolder merchantHolder, int amount, String productDescription) {
-        try {
-            System.out.println("PERFORMING PAYMENT:" + merchantHolder.getId() + ". " + productDescription);
-            merchantAdapter.transferMoneyFromTo(token, merchantHolder.getId(), BigDecimal.valueOf(amount), productDescription); // Make payment
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
+        System.out.println("PERFORMING PAYMENT:" + merchantHolder.getId() + ". " + productDescription);
+        merchantAdapter.transferMoneyFromTo(token, merchantHolder.getId(), BigDecimal.valueOf(amount), productDescription); // Make payment
     }
 }

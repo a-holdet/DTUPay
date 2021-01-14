@@ -9,7 +9,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 
-@Path("/payments")
+@Path("/merchantapi/payments")
 public class PaymentsResource {
     IPaymentService paymentService = PaymentService.instance;
 
