@@ -2,6 +2,7 @@ package DTUPay.CucumberSteps;
 
 import CustomerMobileApp.TokenGenerationAdapter;
 import CustomerMobileApp.UserManagementAdapter;
+import DTUPay.Holders.ExceptionHolder;
 import DTUPay.Holders.TokenHolder;
 import DTUPay.Holders.UserHolder;
 import dtu.ws.fastmoney.BankService;
@@ -20,8 +21,6 @@ import java.util.UUID;
 import static org.junit.Assert.*;
 
 public class TokenSteps {
-    //Exceptions
-    UnauthorizedException unauthorizedException;
 
     //Adapters
     BankService bankService;
@@ -31,6 +30,9 @@ public class TokenSteps {
     //Holders
     TokenHolder tokenHolder = TokenHolder.instance;
     UserHolder customerHolder = UserHolder.customer;
+    ExceptionHolder exceptionHolder = ExceptionHolder.instance;
+
+
 
     @Before
     public void setup() {
@@ -59,8 +61,8 @@ public class TokenSteps {
     public void theCustomerRequestsTokens(int tokenAmount) {
         try {
             tokenHolder.setTokens(tokenAdapter.createTokensForCustomer(customerHolder.id, tokenAmount));
-        } catch (UnauthorizedException e) {
-            this.unauthorizedException = e;
+        } catch (Exception e) {
+            this.exceptionHolder.exception = e;
         }
     }
 
@@ -71,7 +73,7 @@ public class TokenSteps {
 
     @Then("the token granting is not successful")
     public void theTokenGrantingIsNotSuccessful() {
-        assertNotNull(unauthorizedException);
+        assertNotNull(exceptionHolder.exception);
     }
 
     @Then("the token granting is denied")
@@ -81,6 +83,6 @@ public class TokenSteps {
 
     @And("the received error message is {string}")
     public void theReceivedErrorMessageIs(String expectedErrorMessage) {
-        assertEquals(expectedErrorMessage, unauthorizedException.getMessage());
+        assertEquals(expectedErrorMessage, exceptionHolder.exception.getMessage());
     }
 }

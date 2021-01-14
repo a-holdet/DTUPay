@@ -1,6 +1,7 @@
 package adapters;
 
 import tokenservice.ITokenService;
+import tokenservice.IllegalTokenGrantingException;
 import tokenservice.TokenCreationDTO;
 import tokenservice.TokenService;
 import io.quarkus.security.UnauthorizedException;
@@ -25,6 +26,8 @@ public class TokenResource {
             return Response.ok(tokens).build();
         } catch (UnauthorizedException e) {
             return Response.status(401).entity(e.getMessage()).build(); // 401 = Unauthorized operation (i.e. user with 'cpr' has no bank account.
+        } catch (IllegalTokenGrantingException e) {
+            return Response.status(403).entity(e.getMessage()).build(); // Forbidden operation (i.e. user tries to request more tokens than allowed"
         }
     }
 
