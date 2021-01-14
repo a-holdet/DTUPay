@@ -25,7 +25,7 @@ public class PaymentSteps {
     UserManagementAdapter userManagementAdapter = new UserManagementAdapter();
     PaymentAdapter paymentAdapter = new PaymentAdapter();
     //Holders
-    private final TokenHolder tokenHolder = TokenHolder.instance;
+    private final TokenHolder tokenHolder;
     private final UserHolder customerHolder;
     private final UserHolder merchantHolder;
 
@@ -35,7 +35,8 @@ public class PaymentSteps {
     //String mostRecentAccountId;
     boolean successful;
 
-    public PaymentSteps(CustomerHolder customerHolder, MerchantHolder merchantHolder) {
+    public PaymentSteps(TokenHolder tokenHolder, CustomerHolder customerHolder, MerchantHolder merchantHolder) {
+        this.tokenHolder = tokenHolder;
         this.customerHolder = customerHolder;
         this.merchantHolder = merchantHolder;
     }
