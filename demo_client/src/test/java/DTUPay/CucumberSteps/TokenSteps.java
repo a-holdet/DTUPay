@@ -27,11 +27,12 @@ public class TokenSteps {
     UserManagementAdapter userManagementAdapter;
 
     //Holders
-    TokenHolder tokenHolder = TokenHolder.instance;
+    private final TokenHolder tokenHolder;
     private final UserHolder customerHolder;
     ExceptionHolder exceptionHolder;
 
-    public TokenSteps(CustomerHolder customerHolder, ExceptionHolder exceptionHolder) {
+    public TokenSteps(TokenHolder tokenHolder, CustomerHolder customerHolder, ExceptionHolder exceptionHolder) {
+        this.tokenHolder = tokenHolder;
         this.customerHolder = customerHolder;
         this.exceptionHolder = exceptionHolder;
     }
