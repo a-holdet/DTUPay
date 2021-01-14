@@ -1,4 +1,4 @@
-package CustomerMobileApp;
+package CustomerMobileApp.DTO;
 
 public class DTUPayUser {
     private String firstName;

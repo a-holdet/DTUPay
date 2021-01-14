@@ -1,6 +1,7 @@
 package CustomerMobileApp;
 
-import dtu.ws.fastmoney.User;
+import CustomerMobileApp.DTO.DTUPayUser;
+import CustomerMobileApp.DTO.TokenRequestObject;
 import io.quarkus.security.UnauthorizedException;
 
 import javax.ws.rs.client.Client;
@@ -13,40 +14,29 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.UUID;
 
-public class TokenGenerationAdapter {
-
-    //TODO: Is this the right way to post?
-    //TODO: And where should this class live?
-    //TODO: Where should this class live?
-    public static class TokenRequestObject {
-        private String userId;
-        private int tokenAmount;
-
-        public TokenRequestObject() {
-        }
-
-        public void setUserId(String userId) {
-            this.userId = userId;
-        }
-
-        public void setTokenAmount(int tokenAmount) {
-            this.tokenAmount = tokenAmount;
-        }
-
-        public String getUserId() {
-            return userId;
-        }
-
-        public int getTokenAmount() {
-            return tokenAmount;
-        }
-    }
-
+public class CustomerAdapter {
     WebTarget baseUrl;
 
-    public TokenGenerationAdapter() {
+    public CustomerAdapter(){
         Client client = ClientBuilder.newClient();
         baseUrl = client.target("http://localhost:8042/");
+    }
+
+    public String registerCustomer(String firstName, String lastName, String cprNumber, String accountID) throws IllegalArgumentException {
+        DTUPayUser customer = new DTUPayUser(firstName, lastName, cprNumber, accountID);
+        Response response = baseUrl.path("customers").request().post(Entity.entity(customer, MediaType.APPLICATION_JSON));
+
+        if(response.getStatus()==422){
+            String errorMessage = response.readEntity(String.class); //error message is in payload
+            response.close();
+            throw new IllegalArgumentException(errorMessage);
+        }
+
+        //TODO: unsure what is returned by server here.
+        // Assumes it to be accountId.
+        String accountId = response.readEntity(String.class);
+        response.close();
+        return accountId;
     }
 
     public List<UUID> createTokensForCustomer(String customerId, int amount) throws Exception {
@@ -60,28 +50,17 @@ public class TokenGenerationAdapter {
 
         if (response.getStatus() == 401) { // customer is unauthorized (i.e customer has no bank account)
             String errorMessage = response.readEntity(String.class); // error message is in payload
+            response.close();
             throw new UnauthorizedException(errorMessage);
         } else if (response.getStatus() == 403) { // Customer not allowed to request more tokens
             String errorMessage = response.readEntity(String.class); // error message is in payload
+            response.close();
             throw new Exception(errorMessage);
         }
 
-        return response.readEntity(new GenericType<>() {
-        });
+        List<UUID> createdTokens = response.readEntity(new GenericType<List<UUID>>() {});
+        response.close();
+        return createdTokens;
     }
 
-    public List<UUID> readTokensForCustomer(String customerId) {
-        return baseUrl
-                .path("tokens")
-                .queryParam("id", customerId)
-                .request().get(new GenericType<>() {
-                });
-    }
-
-    public void deleteTokensFor(String customerId) {
-        baseUrl.path("tokens")
-                .queryParam("id", customerId)
-                .request()
-                .post(null);
-    }
 }

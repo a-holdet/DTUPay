@@ -1,4 +1,4 @@
-package CustomerMobileApp;
+package CustomerMobileApp.DTO;
 
 import java.math.BigDecimal;
 import java.util.*;

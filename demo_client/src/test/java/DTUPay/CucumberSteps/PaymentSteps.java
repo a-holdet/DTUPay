@@ -1,14 +1,15 @@
 package DTUPay.CucumberSteps;
 
-import CustomerMobileApp.PaymentAdapter;
-import CustomerMobileApp.UserManagementAdapter;
+import CustomerMobileApp.CustomerAdapter;
+import CustomerMobileApp.MerchantAdapter;
+import DTUPay.Holders.CustomerHolder;
 import DTUPay.Holders.TokenHolder;
 import DTUPay.Holders.UserHolder;
+import DTUPay.Holders.*;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import dtu.ws.fastmoney.*;
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
@@ -21,16 +22,27 @@ public class PaymentSteps {
 
     //Adapters
     BankService bankService = new BankServiceService().getBankServicePort();
-    UserManagementAdapter userManagementAdapter = new UserManagementAdapter();
-    PaymentAdapter paymentAdapter = new PaymentAdapter();
+    MerchantAdapter merchantAdapter = new MerchantAdapter();
+    CustomerAdapter customerAdapter = new CustomerAdapter();
+
     //Holders
-    TokenHolder tokenHolder = TokenHolder.instance;
-    UserHolder customerHolder = UserHolder.customer;
-    UserHolder merchantHolder = UserHolder.merchant;
+    private final TokenHolder tokenHolder;
+    private final CustomerHolder customerHolder;
+    private final MerchantHolder merchantHolder;
+    private final OtherMerchantHolder otherMerchantHolder;
+
     //Class specifics
     UUID selectedToken;
+    String errorMessage;
     //String mostRecentAccountId;
     boolean successful;
+
+    public PaymentSteps(TokenHolder tokenHolder, CustomerHolder customerHolder, MerchantHolder merchantHolder, OtherMerchantHolder otherMerchantHolder) {
+        this.tokenHolder = tokenHolder;
+        this.customerHolder = customerHolder;
+        this.merchantHolder = merchantHolder;
+        this.otherMerchantHolder = otherMerchantHolder;
+    }
 
     @Before
     public void beforeScenario() {
@@ -51,14 +63,17 @@ public class PaymentSteps {
 
     @After
     public void afterScenario() {
-        System.out.println("Hello from payment teardown");
+        customerHolder.reset();
+        merchantHolder.reset();
+        otherMerchantHolder.reset();
+        tokenHolder.reset();
     }
 
 
     @And("the balance of the customer account is {int}")
     public void theBalanceOfTheCustomerAccountIs(int expectedBalance) {
         try {
-            Account account = bankService.getAccount(customerHolder.accountId);
+            Account account = bankService.getAccount(customerHolder.getAccountId());
             assertEquals(new BigDecimal(expectedBalance), account.getBalance());
         } catch (BankServiceException_Exception e) {
             fail();
@@ -68,7 +83,7 @@ public class PaymentSteps {
     @And("the balance of the merchant account is {int}")
     public void theBalanceOfTheMerchantAccountIs(int expectedBalance) {
         try {
-            Account account = bankService.getAccount(merchantHolder.accountId);
+            Account account = bankService.getAccount(merchantHolder.getAccountId());
             assertEquals(new BigDecimal(expectedBalance), account.getBalance());
         } catch (BankServiceException_Exception e) {
             fail();
@@ -78,17 +93,19 @@ public class PaymentSteps {
     @When("the merchant initiates a payment for {int} kr using the selected customer token")
     public void theMerchantInitiatesAPaymentForKrUsingTheSelectedCustomerToken(int amount) {
         try {
-            paymentAdapter.transferMoneyFromTo(selectedToken,merchantHolder.id,new BigDecimal(amount),"myscription");
+            merchantAdapter.transferMoneyFromTo(selectedToken,merchantHolder.getId(),new BigDecimal(amount),"myscription");
             successful=true;
         } catch (Exception e) {
+            e.printStackTrace();
             successful = false;
+            errorMessage=e.getMessage();
         }
     }
 
     @And("the balance of the customer at the bank is {int} kr")
     public void theBalanceOfTheCustomerAtTheBankIsKr(int expectedBalance) {
         try {
-            Account account = bankService.getAccount(customerHolder.accountId);
+            Account account = bankService.getAccount(customerHolder.getAccountId());
             assertEquals(new BigDecimal(expectedBalance), account.getBalance());
         } catch (BankServiceException_Exception e) {
             fail("Wrong balance for customer");
@@ -98,7 +115,7 @@ public class PaymentSteps {
     @And("the balance of the merchant at the bank is {int} kr")
     public void theBalanceOfTheMerchantAtTheBankIsKr(int expectedBalance) {
         try {
-            Account account = bankService.getAccount(merchantHolder.accountId);
+            Account account = bankService.getAccount(merchantHolder.getAccountId());
             assertEquals(new BigDecimal(expectedBalance), account.getBalance());
         } catch (BankServiceException_Exception e) {
             fail("Wrong balance for merchant");
@@ -113,7 +130,7 @@ public class PaymentSteps {
 
     @And("the customer selects a token")
     public void theCustomerSelectsAToken() {
-        selectedToken = tokenHolder.tokens.get(0);
+        selectedToken = tokenHolder.getTokens().get(0);
     }
 
 
@@ -125,5 +142,33 @@ public class PaymentSteps {
     @Then("the payment fails")
     public void thePaymentFails() {
         assertFalse(successful);
+    }
+
+    @And("the other merchant and customer perform a successful payment of {int} kr for a {string}")
+    public void theOtherMerchantAndCustomerPerformASuccessfulPaymentOfKrForA(int amount, String productDescription) {
+        UUID nextTokenUsedInPayment = tokenHolder.getTokens().get(1); // Extract 2nd token
+        performPaymentUsing(nextTokenUsedInPayment, otherMerchantHolder, amount, productDescription);
+    }
+
+    @And("the merchant and customer perform a successful payment of {int} kr for a {string}")
+    public void theMerchantAndCustomerPerformASuccessfulPaymentOfKrForA(int amount, String productDescription) {
+        try {
+            tokenHolder.setTokens(customerAdapter.createTokensForCustomer(customerHolder.getId(), 2)); // Request 2 tokens
+            UUID tokenUsedInPayment = tokenHolder.getTokens().get(0); // Extract 1st token
+            performPaymentUsing(tokenUsedInPayment, merchantHolder, amount, productDescription);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    private void performPaymentUsing(UUID token, UserHolder merchantHolder, int amount, String productDescription) {
+        try {
+            System.out.println("PERFORMING PAYMENT:" + merchantHolder.getId() + ". " + productDescription);
+            merchantAdapter.transferMoneyFromTo(token, merchantHolder.getId(), BigDecimal.valueOf(amount), productDescription); // Make payment
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
     }
 }

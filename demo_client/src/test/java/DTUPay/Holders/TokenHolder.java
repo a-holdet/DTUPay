@@ -5,9 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class TokenHolder {
-    public static TokenHolder instance = new TokenHolder();
-
-    public List<UUID> tokens;
+    private List<UUID> tokens;
 
     public TokenHolder(){
         reset();
@@ -22,6 +20,6 @@ public class TokenHolder {
     }
 
     public void reset(){
-        tokens = new ArrayList<>();
+        setTokens(new ArrayList<>());
     }
 }

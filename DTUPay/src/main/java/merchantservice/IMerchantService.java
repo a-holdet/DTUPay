@@ -5,7 +5,7 @@ import java.util.UUID;
 public interface IMerchantService {
     String registerMerchant(Merchant merchant);
 
-    boolean merchantExists(String merchantId);
-
     String getMerchantAccountId(String merchantId);
+
+    Merchant getMerchantWith(String merchantId);
 }
