@@ -11,11 +11,12 @@ public class LocalMerchantService implements IMerchantService{
             throw new IllegalArgumentException("Merchant must have an account id to be created in DTUPay");
         merchant.id = String.valueOf(UUID.randomUUID());
         merchantRepository.addMerchant(merchant);
+        System.out.println("REGISTER MERCHANT WITH ID" + merchant.id);
+        System.out.println("ALL MERCHANTS: " + merchantRepository.getAllMerchants().size());
         return merchant.id;
     }
 
     public boolean merchantExists(String merchantId){
-
         return getMerchantAccountId(merchantId) != null;
     }
 
@@ -23,9 +24,20 @@ public class LocalMerchantService implements IMerchantService{
     public String getMerchantAccountId(String merchantId) {
         if(merchantId==null)
             return null;
-        for(Merchant Merchant : merchantRepository.getAllMerchants())
-            if(Merchant.id.equals(merchantId))
-                return Merchant.accountId;
+        for(Merchant merchant : merchantRepository.getAllMerchants())
+            if(merchant.id.equals(merchantId))
+                return merchant.accountId;
+        return null;
+    }
+
+    @Override
+    public Merchant getMerchantWith(String merchantId) {
+        System.out.println("GET MERCHANT WITH ID: " + merchantId);
+        System.out.println("ALL MERCHANTS: " + merchantRepository.getAllMerchants().size());
+        System.out.println(merchantRepository.getAllMerchants());
+        for (Merchant m: merchantRepository.getAllMerchants()) {
+            if (m.id.equals(merchantId)) return m;
+        }
         return null;
     }
 }

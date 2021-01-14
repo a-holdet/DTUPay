@@ -1,22 +1,23 @@
 package reportservice;
 
 import dtu.ws.fastmoney.User;
+import paymentservice.Payment;
 
 import java.util.List;
 
 public class Report {
 
-    private List<Transaction> transactions;
+    private List<Payment> payments;
     private User merchant;
 
     public Report() {}
 
-    public List<Transaction> getTransactions() {
-        return transactions;
+    public List<Payment> getPayments() {
+        return payments;
     }
 
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
+    public void setPayments(List<Payment> payments) {
+        this.payments = payments;
     }
 
     public User getMerchant() {
@@ -26,6 +27,4 @@ public class Report {
     public void setMerchant(User merchant) {
         this.merchant = merchant;
     }
-
-
 }

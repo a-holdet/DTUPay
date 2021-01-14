@@ -1,5 +1,8 @@
 package reportservice;
 
+import paymentservice.Payment;
+
 public interface IReportService {
-    public Report generateReportFor(String merchantId);
+    Report generateReportFor(String merchantId);
+    void registerPayment(Payment payment);
 }

@@ -1,6 +1,8 @@
 package paymentservice;
 import java.util.List;
 
+import reportservice.IReportService;
+import reportservice.ReportService;
 import tokenservice.ITokenService;
 import tokenservice.TokenService;
 import customerservice.LocalCustomerService;
@@ -17,6 +19,7 @@ public class PaymentService implements IPaymentService {
     IMerchantService merchantService = LocalMerchantService.instance;
     ICustomerService customerService = LocalCustomerService.instance;
     ITokenService tokenService = TokenService.instance;
+    IReportService reportService = ReportService.instance;
 
     BankService bankService = new BankServiceService().getBankServicePort();
 
@@ -42,6 +45,9 @@ public class PaymentService implements IPaymentService {
                 payment.amount,
                 payment.description
         );
+
+        //TODO: This assumes all transfers are successful! Refactor to wrap .transferMoneyFromTo in try-catch and only log successful transfers.
+        reportService.registerPayment(payment);
     }
 
     @Override

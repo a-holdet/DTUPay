@@ -8,4 +8,6 @@ public interface IMerchantService {
     boolean merchantExists(String merchantId);
 
     String getMerchantAccountId(String merchantId);
+
+    Merchant getMerchantWith(String merchantId);
 }

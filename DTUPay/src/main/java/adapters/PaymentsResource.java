@@ -26,9 +26,10 @@ public class PaymentsResource {
         } catch (CustomerDoesNotExistException e) {
             throw new BadRequestException(e.getMessage());*/
         } catch (BankServiceException_Exception e) {
+            System.out.println("KKKK");
+            e.printStackTrace();
             throw new InternalServerErrorException(e.getMessage());
         }
         return Response.noContent().build();
-
     }
 }

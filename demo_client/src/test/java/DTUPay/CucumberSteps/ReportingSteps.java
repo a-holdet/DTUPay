@@ -56,13 +56,12 @@ public class ReportingSteps {
         assertEquals(cpr, report.getMerchant().getCprNumber());
 
         // Check transactions is correct
-
-        boolean foundCorrectTransaction = report.getTransactions().stream().anyMatch(transaction ->
-                transaction.getToken().equals(tokenUsedInPayment) &&
-                transaction.getAmount() == amount &&
-                transaction.getDescription().equals(productDescription)
+        boolean foundCorrectTransaction = report.getPayments().stream().anyMatch(payment ->
+                payment.customerToken.equals(tokenUsedInPayment) &&
+                payment.amount.equals(BigDecimal.valueOf(amount)) &&
+                payment.description.equals(productDescription)
         );
         assertTrue(foundCorrectTransaction);
-        assertEquals(report.getTransactions().size(), 1);
+        assertEquals(report.getPayments().size(), 1);
     }
 }
