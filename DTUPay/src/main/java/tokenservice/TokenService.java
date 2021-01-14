@@ -40,12 +40,6 @@ public class TokenService implements ITokenService {
         List<UUID> tokens = tokenRepository.getTokensForCustomer(customerId);
         return tokens;
     }
-
-    @Override
-    public void deleteTokensForCustomer(String customerId) {
-        tokenRepository.deleteTokensForCustomer(customerId);
-    }
-
     @Override
     public String consumeToken(UUID customerToken) throws TokenDoesNotExistException {
         String customerId = tokenRepository.consumeToken(customerToken);
