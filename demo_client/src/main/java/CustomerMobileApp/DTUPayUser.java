@@ -6,6 +6,7 @@ public class DTUPayUser {
     private String cprNumber;
     private String accountId;
 
+
     public String getFirstName() {
         return firstName;
     }
