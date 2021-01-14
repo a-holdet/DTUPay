@@ -1,14 +1,12 @@
 package DTUPay.CucumberSteps;
 
-import CustomerMobileApp.PaymentAdapter;
-import CustomerMobileApp.UserManagementAdapter;
+import CustomerMobileApp.MerchantAdapter;
 import DTUPay.Holders.TokenHolder;
 import DTUPay.Holders.UserHolder;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import dtu.ws.fastmoney.*;
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
@@ -21,8 +19,8 @@ public class PaymentSteps {
 
     //Adapters
     BankService bankService = new BankServiceService().getBankServicePort();
-    UserManagementAdapter userManagementAdapter = new UserManagementAdapter();
-    PaymentAdapter paymentAdapter = new PaymentAdapter();
+    MerchantAdapter merchantAdapter = new MerchantAdapter();
+
     //Holders
     TokenHolder tokenHolder = TokenHolder.instance;
     UserHolder customerHolder = UserHolder.customer;
@@ -80,7 +78,7 @@ public class PaymentSteps {
     @When("the merchant initiates a payment for {int} kr using the selected customer token")
     public void theMerchantInitiatesAPaymentForKrUsingTheSelectedCustomerToken(int amount) {
         try {
-            paymentAdapter.transferMoneyFromTo(selectedToken,merchantHolder.id,new BigDecimal(amount),"myscription");
+            merchantAdapter.transferMoneyFromTo(selectedToken,merchantHolder.id,new BigDecimal(amount),"myscription");
             successful=true;
         } catch (IllegalArgumentException e) {
             successful = false;

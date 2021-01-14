@@ -1,6 +1,7 @@
 package DTUPay.CucumberSteps;
 
-import CustomerMobileApp.UserManagementAdapter;
+import CustomerMobileApp.CustomerAdapter;
+import CustomerMobileApp.MerchantAdapter;
 import DTUPay.Holders.ExceptionHolder;
 import DTUPay.Holders.UserHolder;
 import dtu.ws.fastmoney.*;
@@ -16,8 +17,9 @@ import static org.junit.Assert.*;
 
 public class RegistrationSteps {
     //Adapters
-    UserManagementAdapter userManagementAdapter = new UserManagementAdapter();
     BankService bankService = new BankServiceService().getBankServicePort();
+    CustomerAdapter customerAdapter = new CustomerAdapter();
+    MerchantAdapter merchantAdapter = new MerchantAdapter();
 
     //Holders
     UserHolder customerHolder = UserHolder.customer;
@@ -49,7 +51,7 @@ public class RegistrationSteps {
     @And("the customer is registered with DTUPay")
     public void theCustomerIsRegisteredWithDTUPay() {
         try {
-            customerHolder.id = userManagementAdapter.registerCustomer(customerHolder.firstName, customerHolder.lastName, customerHolder.cpr, customerHolder.accountId);
+            customerHolder.id = customerAdapter.registerCustomer(customerHolder.firstName, customerHolder.lastName, customerHolder.cpr, customerHolder.accountId);
             assertNotNull(customerHolder.id);
         } catch (IllegalArgumentException e){
             exceptionHolder.setException(e);
@@ -107,7 +109,7 @@ public class RegistrationSteps {
 
     @And("the merchant is registered with DTUPay")
     public void theMerchantIsRegisteredWithDTUPay() {
-        merchantHolder.id = userManagementAdapter.registerMerchant(merchantHolder.firstName, merchantHolder.lastName, merchantHolder.cpr, merchantHolder.accountId);
+        merchantHolder.id = merchantAdapter.registerMerchant(merchantHolder.firstName, merchantHolder.lastName, merchantHolder.cpr, merchantHolder.accountId);
     }
 
     @And("the merchant is not registered with DTUPay")
