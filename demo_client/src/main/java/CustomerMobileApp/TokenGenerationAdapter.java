@@ -22,7 +22,8 @@ public class TokenGenerationAdapter {
         private String userId;
         private int tokenAmount;
 
-        public TokenRequestObject() {}
+        public TokenRequestObject() {
+        }
 
         public void setUserId(String userId) {
             this.userId = userId;
@@ -48,7 +49,7 @@ public class TokenGenerationAdapter {
         baseUrl = client.target("http://localhost:8042/");
     }
 
-    public List<UUID> createTokensForCustomer(String customerId, int amount) throws UnauthorizedException {
+    public List<UUID> createTokensForCustomer(String customerId, int amount) throws Exception {
         TokenRequestObject request = new TokenRequestObject();
         request.setUserId(customerId);
         request.setTokenAmount(amount);
@@ -60,16 +61,21 @@ public class TokenGenerationAdapter {
         if (response.getStatus() == 401) { // customer is unauthorized (i.e customer has no bank account)
             String errorMessage = response.readEntity(String.class); // error message is in payload
             throw new UnauthorizedException(errorMessage);
+        } else if (response.getStatus() == 403) { // Customer not allowed to request more tokens
+            String errorMessage = response.readEntity(String.class); // error message is in payload
+            throw new Exception(errorMessage);
         }
 
-        return response.readEntity(new GenericType<>(){});
+        return response.readEntity(new GenericType<>() {
+        });
     }
 
     public List<UUID> readTokensForCustomer(String customerId) {
         return baseUrl
                 .path("tokens")
                 .queryParam("id", customerId)
-                .request().get(new GenericType<>() {});
+                .request().get(new GenericType<>() {
+                });
     }
 
     public void deleteTokensFor(String customerId) {
