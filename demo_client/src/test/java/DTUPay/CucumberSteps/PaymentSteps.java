@@ -17,7 +17,7 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
-public class PaymentServiceSteps {
+public class PaymentSteps {
 
     //Adapters
     BankService bankService = new BankServiceService().getBankServicePort();
@@ -39,7 +39,6 @@ public class PaymentServiceSteps {
             acc1 = bankService.getAccountByCprNumber("290276-7777");
             bankService.retireAccount(acc1.getId());
         } catch (BankServiceException_Exception e) {
-            // e.printStackTrace();
         }
 
         Account acc2 = null;
@@ -47,7 +46,6 @@ public class PaymentServiceSteps {
             acc2 = bankService.getAccountByCprNumber("207082-0101");
             bankService.retireAccount(acc2.getId());
         } catch (BankServiceException_Exception e) {
-            // e.printStackTrace();
         }
     }
 
@@ -119,4 +117,11 @@ public class PaymentServiceSteps {
     }
 
 
+    @And("the customer selects a non-valid token")
+    public void theCustomerSelectsANonValidToken() {
+    }
+
+    @Then("the payment fails")
+    public void thePaymentFails() {
+    }
 }

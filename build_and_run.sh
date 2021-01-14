@@ -19,9 +19,11 @@ docker build -t dtupay .
 popd
 
 docker image prune -f
-docker-compose up -d
-
-sleep 10s
+# docker-compose down
+docker-compose up -d rabbitMq
+sleep 5s
+docker-compose up -d RabbitMQTest dtupay
+sleep 5s
 
 # Update the set of services and
 # build and execute the system tests

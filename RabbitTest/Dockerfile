@@ -1,5 +1,5 @@
 FROM adoptopenjdk:11-jre-hotspot
-COPY wait-for-it.sh /usr/src/
+COPY wait-for-it.sh /usr/src/wait-for-it.sh
 COPY target/lib /usr/src/lib
 COPY target/rabbitmqtest-1.0.0.jar /usr/src/
 WORKDIR /usr/src/
