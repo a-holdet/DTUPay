@@ -2,13 +2,14 @@ package DTUPay.CucumberSteps;
 
 import CustomerMobileApp.PaymentAdapter;
 import CustomerMobileApp.UserManagementAdapter;
+import DTUPay.Holders.CustomerHolder;
+import DTUPay.Holders.MerchantHolder;
 import DTUPay.Holders.TokenHolder;
 import DTUPay.Holders.UserHolder;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import dtu.ws.fastmoney.*;
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
@@ -25,14 +26,19 @@ public class PaymentSteps {
     PaymentAdapter paymentAdapter = new PaymentAdapter();
     //Holders
     TokenHolder tokenHolder = TokenHolder.instance;
-    UserHolder customerHolder = UserHolder.customer;
-    UserHolder merchantHolder = UserHolder.merchant;
+    private final UserHolder customerHolder;
+    private final UserHolder merchantHolder;
 
     //Class specifics
     UUID selectedToken;
     String errorMessage;
     //String mostRecentAccountId;
     boolean successful;
+
+    public PaymentSteps(CustomerHolder customerHolder, MerchantHolder merchantHolder) {
+        this.customerHolder = customerHolder;
+        this.merchantHolder = merchantHolder;
+    }
 
     @Before
     public void beforeScenario() {
@@ -60,7 +66,7 @@ public class PaymentSteps {
     @And("the balance of the customer account is {int}")
     public void theBalanceOfTheCustomerAccountIs(int expectedBalance) {
         try {
-            Account account = bankService.getAccount(customerHolder.accountId);
+            Account account = bankService.getAccount(customerHolder.getAccountId());
             assertEquals(new BigDecimal(expectedBalance), account.getBalance());
         } catch (BankServiceException_Exception e) {
             fail();
@@ -70,7 +76,7 @@ public class PaymentSteps {
     @And("the balance of the merchant account is {int}")
     public void theBalanceOfTheMerchantAccountIs(int expectedBalance) {
         try {
-            Account account = bankService.getAccount(merchantHolder.accountId);
+            Account account = bankService.getAccount(merchantHolder.getAccountId());
             assertEquals(new BigDecimal(expectedBalance), account.getBalance());
         } catch (BankServiceException_Exception e) {
             fail();
@@ -80,7 +86,7 @@ public class PaymentSteps {
     @When("the merchant initiates a payment for {int} kr using the selected customer token")
     public void theMerchantInitiatesAPaymentForKrUsingTheSelectedCustomerToken(int amount) {
         try {
-            paymentAdapter.transferMoneyFromTo(selectedToken,merchantHolder.id,new BigDecimal(amount),"myscription");
+            paymentAdapter.transferMoneyFromTo(selectedToken, merchantHolder.getId(),new BigDecimal(amount),"myscription");
             successful=true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -92,7 +98,7 @@ public class PaymentSteps {
     @And("the balance of the customer at the bank is {int} kr")
     public void theBalanceOfTheCustomerAtTheBankIsKr(int expectedBalance) {
         try {
-            Account account = bankService.getAccount(customerHolder.accountId);
+            Account account = bankService.getAccount(customerHolder.getAccountId());
             assertEquals(new BigDecimal(expectedBalance), account.getBalance());
         } catch (BankServiceException_Exception e) {
             fail("Wrong balance for customer");
@@ -102,7 +108,7 @@ public class PaymentSteps {
     @And("the balance of the merchant at the bank is {int} kr")
     public void theBalanceOfTheMerchantAtTheBankIsKr(int expectedBalance) {
         try {
-            Account account = bankService.getAccount(merchantHolder.accountId);
+            Account account = bankService.getAccount(merchantHolder.getAccountId());
             assertEquals(new BigDecimal(expectedBalance), account.getBalance());
         } catch (BankServiceException_Exception e) {
             fail("Wrong balance for merchant");

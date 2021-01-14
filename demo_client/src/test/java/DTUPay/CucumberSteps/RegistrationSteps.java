@@ -1,7 +1,9 @@
 package DTUPay.CucumberSteps;
 
 import CustomerMobileApp.UserManagementAdapter;
+import DTUPay.Holders.CustomerHolder;
 import DTUPay.Holders.ExceptionHolder;
+import DTUPay.Holders.MerchantHolder;
 import DTUPay.Holders.UserHolder;
 import dtu.ws.fastmoney.*;
 import io.cucumber.java.After;
@@ -20,24 +22,26 @@ public class RegistrationSteps {
     BankService bankService = new BankServiceService().getBankServicePort();
 
     //Holders
-    UserHolder customerHolder = UserHolder.customer;
-    UserHolder merchantHolder = UserHolder.merchant;
+    private final UserHolder customerHolder;
+    private final UserHolder merchantHolder;
     ExceptionHolder exceptionHolder;
 
-    public RegistrationSteps(ExceptionHolder exceptionHolder) {
+    public RegistrationSteps(CustomerHolder customerHolder, MerchantHolder merchantHolder, ExceptionHolder exceptionHolder) {
+        this.customerHolder = customerHolder;
+        this.merchantHolder = merchantHolder;
         this.exceptionHolder = exceptionHolder;
     }
 
     @After
     public void after(){
         try {
-            if (customerHolder.accountId != null)
-                bankService.retireAccount(customerHolder.accountId);
+            if (customerHolder.getAccountId() != null)
+                bankService.retireAccount(customerHolder.getAccountId());
         } catch (BankServiceException_Exception e) {
         }
         try {
-            if (merchantHolder.accountId != null)
-                bankService.retireAccount(merchantHolder.accountId);
+            if (merchantHolder.getAccountId() != null)
+                bankService.retireAccount(merchantHolder.getAccountId());
         } catch (BankServiceException_Exception e) {
         }
 
@@ -49,11 +53,11 @@ public class RegistrationSteps {
     @And("the customer is registered with DTUPay")
     public void theCustomerIsRegisteredWithDTUPay() {
         try {
-            customerHolder.id = userManagementAdapter.registerCustomer(customerHolder.firstName, customerHolder.lastName, customerHolder.cpr, customerHolder.accountId);
-            assertNotNull(customerHolder.id);
+            customerHolder.setId(userManagementAdapter.registerCustomer(customerHolder.getFirstName(), customerHolder.getLastName(), customerHolder.getCpr(), customerHolder.getAccountId()));
+            assertNotNull(customerHolder.getId());
         } catch (IllegalArgumentException e){
             exceptionHolder.setException(e);
-            customerHolder.id=null;
+            customerHolder.setId(null);
         }
     }
 
@@ -66,29 +70,29 @@ public class RegistrationSteps {
         int lastFour = getRandomNumberInRange(1000,9999);
         String cpr = "200167-"+ lastFour;
 
-        customerHolder.firstName = "Stein";
-        customerHolder.lastName = "Bagger";
-        customerHolder.cpr = cpr;
+        customerHolder.setFirstName("Stein");
+        customerHolder.setLastName("Bagger");
+        customerHolder.setCpr(cpr);
     }
 
     private void setMerchantHolderBasics(){
         int lastFour = getRandomNumberInRange(1000,9999);
         String cpr = "150363-"+ lastFour;
 
-        merchantHolder.firstName = "Joe";
-        merchantHolder.lastName = "Exotic";
-        merchantHolder.cpr = cpr;
+        merchantHolder.setFirstName("Joe");
+        merchantHolder.setLastName("Exotic");
+        merchantHolder.setCpr(cpr);
     }
 
     @Given("the customer has a bank account")
     public void theCustomerHasABankAccount() {
         setCustomerHolderBasics();
         User customerBank = new User();
-        customerBank.setFirstName(customerHolder.firstName);
-        customerBank.setLastName(customerHolder.lastName);
-        customerBank.setCprNumber(customerHolder.cpr);
+        customerBank.setFirstName(customerHolder.getFirstName());
+        customerBank.setLastName(customerHolder.getLastName());
+        customerBank.setCprNumber(customerHolder.getCpr());
         try {
-            customerHolder.accountId = bankService.createAccountWithBalance(customerBank, new BigDecimal(1000));
+            customerHolder.setAccountId(bankService.createAccountWithBalance(customerBank, new BigDecimal(1000)));
         } catch (BankServiceException_Exception e) {
             e.printStackTrace();
         }
@@ -98,11 +102,11 @@ public class RegistrationSteps {
     public void theMerchantHasABankAccount() {
         setMerchantHolderBasics();
         User merchantBank = new User();
-        merchantBank.setFirstName(merchantHolder.firstName);
-        merchantBank.setLastName(merchantHolder.lastName);
-        merchantBank.setCprNumber(merchantHolder.cpr);
+        merchantBank.setFirstName(merchantHolder.getFirstName());
+        merchantBank.setLastName(merchantHolder.getLastName());
+        merchantBank.setCprNumber(merchantHolder.getCpr());
         try {
-            merchantHolder.accountId = bankService.createAccountWithBalance(merchantBank, new BigDecimal(2000));
+            merchantHolder.setAccountId(bankService.createAccountWithBalance(merchantBank, new BigDecimal(2000)));
         } catch (BankServiceException_Exception e) {
             e.printStackTrace();
             fail();
@@ -111,7 +115,7 @@ public class RegistrationSteps {
 
     @And("the merchant is registered with DTUPay")
     public void theMerchantIsRegisteredWithDTUPay() {
-        merchantHolder.id = userManagementAdapter.registerMerchant(merchantHolder.firstName, merchantHolder.lastName, merchantHolder.cpr, merchantHolder.accountId);
+        merchantHolder.setId(userManagementAdapter.registerMerchant(merchantHolder.getFirstName(), merchantHolder.getLastName(), merchantHolder.getCpr(), merchantHolder.getAccountId()));
     }
 
     @And("the merchant is not registered with DTUPay")
@@ -121,7 +125,7 @@ public class RegistrationSteps {
 
     @Then("the registration is not successful")
     public void theRegistrationIsNotSuccessful() {
-        assertNull(customerHolder.id);
+        assertNull(customerHolder.getId());
     }
 
     @And("the error message is {string}")

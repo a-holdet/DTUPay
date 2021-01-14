@@ -2,18 +2,17 @@ package DTUPay.CucumberSteps;
 
 import CustomerMobileApp.TokenGenerationAdapter;
 import CustomerMobileApp.UserManagementAdapter;
+import DTUPay.Holders.CustomerHolder;
 import DTUPay.Holders.ExceptionHolder;
 import DTUPay.Holders.TokenHolder;
 import DTUPay.Holders.UserHolder;
 import dtu.ws.fastmoney.BankService;
-import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtu.ws.fastmoney.BankServiceService;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.quarkus.security.UnauthorizedException;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,10 +28,11 @@ public class TokenSteps {
 
     //Holders
     TokenHolder tokenHolder = TokenHolder.instance;
-    UserHolder customerHolder = UserHolder.customer;
+    private final UserHolder customerHolder;
     ExceptionHolder exceptionHolder;
 
-    public TokenSteps(ExceptionHolder exceptionHolder) {
+    public TokenSteps(CustomerHolder customerHolder, ExceptionHolder exceptionHolder) {
+        this.customerHolder = customerHolder;
         this.exceptionHolder = exceptionHolder;
     }
 
@@ -45,23 +45,23 @@ public class TokenSteps {
 
     @After
     public void teardown() {
-        if (customerHolder.id != null) {
-            tokenAdapter.deleteTokensFor(customerHolder.id);
+        if (customerHolder.getId() != null) {
+            tokenAdapter.deleteTokensFor(customerHolder.getId());
             tokenHolder.reset();
         }
     }
 
     @And("the customer has {int} tokens")
     public void theCustomerHasTokens(int tokenAmount) {
-        assertNotNull(customerHolder.id);
-        List<UUID> tokens = tokenAdapter.readTokensForCustomer(customerHolder.id);
+        assertNotNull(customerHolder.getId());
+        List<UUID> tokens = tokenAdapter.readTokensForCustomer(customerHolder.getId());
         assertEquals(tokenAmount, tokens.size());
     }
 
     @When("the customer requests {int} tokens")
     public void theCustomerRequestsTokens(int tokenAmount) {
         try {
-            tokenHolder.setTokens(tokenAdapter.createTokensForCustomer(customerHolder.id, tokenAmount));
+            tokenHolder.setTokens(tokenAdapter.createTokensForCustomer(customerHolder.getId(), tokenAmount));
         } catch (Exception e) {
             this.exceptionHolder.setException(e);
         }
