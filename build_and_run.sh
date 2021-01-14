@@ -21,7 +21,7 @@ popd
 docker image prune -f
 docker-compose up -d
 
-sleep 5s
+sleep 10s
 
 # Update the set of services and
 # build and execute the system tests
