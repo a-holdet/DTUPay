@@ -1,7 +1,8 @@
-package RabbitTest;
+package DTUPay.CucumberSteps;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import RabbitTest.RabbitTest;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 

@@ -1,4 +1,4 @@
-package DTUPay;
+package DTUPay.Holders;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,8 @@ import java.util.UUID;
 
 public class TokenHolder {
     public static TokenHolder instance = new TokenHolder();
-    List<UUID> tokens;
+
+    public List<UUID> tokens;
 
     public TokenHolder(){
         reset();

@@ -1,4 +1,4 @@
-package DTUPay;
+package DTUPay.Holders;
 
 public class UserHolder {
     public String id;
@@ -10,8 +10,11 @@ public class UserHolder {
     public static UserHolder merchant = new UserHolder();
     public static UserHolder customer = new UserHolder();
 
-    public static void reset(){
-        merchant = new UserHolder();
-        customer = new UserHolder();
+    public void reset(){
+        id = null;
+        firstName = null;
+        lastName = null;
+        accountId = null;
+        cpr = null;
     }
 }

@@ -1,7 +1,9 @@
-package DTUPay;
+package DTUPay.CucumberSteps;
 
 import CustomerMobileApp.PaymentAdapter;
 import CustomerMobileApp.UserManagementAdapter;
+import DTUPay.Holders.TokenHolder;
+import DTUPay.Holders.UserHolder;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import dtu.ws.fastmoney.*;
@@ -27,7 +29,7 @@ public class PaymentServiceSteps {
     UserHolder merchantHolder = UserHolder.merchant;
     //Class specifics
     UUID selectedToken;
-    String mostRecentAccountId;
+    //String mostRecentAccountId;
     boolean successful;
 
     @Before
@@ -49,64 +51,31 @@ public class PaymentServiceSteps {
         }
     }
 
-    @Given("the customer {string} {string} with CPR {string} has a bank account")
-    public void theCustomerWithCPRHasABankAccount(String firstName, String lastName, String cpr) {
-        customerHolder.firstName = firstName;
-        customerHolder.lastName = lastName;
-        customerHolder.cpr = cpr;
-        User customerBank = new User();
-        customerBank.setFirstName(firstName);
-        customerBank.setLastName(lastName);
-        customerBank.setCprNumber(cpr);
-        try {
-            customerHolder.accountId = bankService.createAccountWithBalance(customerBank, new BigDecimal(1000));
-            mostRecentAccountId = customerHolder.accountId;
-        } catch (BankServiceException_Exception e) {
-            e.printStackTrace();
-        }
+    @After
+    public void afterScenario() {
+        System.out.println("Hello from payment teardown");
     }
 
-    @And("the balance of that account is {int}")
-    public void theBalanceOfThatAccountIs(int expectedBalance) {
-        Account account;
+
+    @And("the balance of the customer account is {int}")
+    public void theBalanceOfTheCustomerAccountIs(int expectedBalance) {
         try {
-            account = bankService.getAccount(mostRecentAccountId);
+            Account account = bankService.getAccount(customerHolder.accountId);
             assertEquals(new BigDecimal(expectedBalance), account.getBalance());
         } catch (BankServiceException_Exception e) {
-            e.printStackTrace();
             fail();
         }
     }
 
-    @And("the customer is registered with DTUPay")
-    public void theCustomerIsRegisteredWithDTUPay() throws IllegalArgumentException {
-        customerHolder.id = userManagementAdapter.registerCustomer(customerHolder.firstName, customerHolder.lastName, customerHolder.cpr, customerHolder.accountId);
-        assertNotNull(customerHolder.id);
-    }
-
-    @And("the merchant {string} {string} with CPR {string} has a bank account")
-    public void theMerchantWithCPRHasABankAccount(String firstName, String lastName, String cpr) {
-        merchantHolder.firstName = firstName;
-        merchantHolder.lastName = lastName;
-        merchantHolder.cpr = cpr;
-        User merchantBank = new User();
-        merchantBank.setFirstName(firstName);
-        merchantBank.setLastName(lastName);
-        merchantBank.setCprNumber(cpr);
+    @And("the balance of the merchant account is {int}")
+    public void theBalanceOfTheMerchantAccountIs(int expectedBalance) {
         try {
-            merchantHolder.accountId = bankService.createAccountWithBalance(merchantBank, new BigDecimal(2000));
-            mostRecentAccountId = merchantHolder.accountId;
+            Account account = bankService.getAccount(merchantHolder.accountId);
+            assertEquals(new BigDecimal(expectedBalance), account.getBalance());
         } catch (BankServiceException_Exception e) {
-            e.printStackTrace();
             fail();
         }
     }
-
-    @And("the merchant is registered with DTUPay")
-    public void theMerchantIsRegisteredWithDTUPay() {
-        merchantHolder.id = userManagementAdapter.registerMerchant(merchantHolder.firstName, merchantHolder.lastName, merchantHolder.cpr, merchantHolder.accountId);
-    }
-
 
     @When("the merchant initiates a payment for {int} kr using the selected customer token")
     public void theMerchantInitiatesAPaymentForKrUsingTheSelectedCustomerToken(int amount) {
@@ -138,28 +107,16 @@ public class PaymentServiceSteps {
         }
     }
 
-    @After
-    public void afterScenario() {
-        try {
-            bankService.retireAccount(customerHolder.accountId);
-        } catch (BankServiceException_Exception e) {
-            // e.printStackTrace();
-        }
-        try {
-            bankService.retireAccount(merchantHolder.accountId);
-        } catch (BankServiceException_Exception e) {
-            // ½ e.printStackTrace();
-        }
-    }
 
     @Then("the payment is successful")
     public void thePaymentIsSuccessful() {
         assertTrue(successful);
     }
 
-
     @And("the customer selects a token")
     public void theCustomerSelectsAToken() {
         selectedToken = tokenHolder.tokens.get(0);
     }
+
+
 }
