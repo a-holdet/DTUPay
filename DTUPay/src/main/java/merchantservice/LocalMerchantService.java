@@ -15,7 +15,6 @@ public class LocalMerchantService implements IMerchantService{
     }
 
     public boolean merchantExists(String merchantId){
-
         return getMerchantAccountId(merchantId) != null;
     }
 

@@ -25,13 +25,11 @@ public class PaymentService implements IPaymentService {
     }
 
     @Override
-    public void registerPayment(Payment payment) throws /*MerchantDoesNotExistException, CustomerDoesNotExistException,*/ BankServiceException_Exception, TokenDoesNotExistException {
-        //if(!merchantService.merchantExists(merchantAccountId))
-        //    throw new MerchantDoesNotExistException(payment.merchantId);
-        //if(!customerService.customerExists(customerAccountId))
-        //    throw new CustomerDoesNotExistException(payment.customerId);
-
+    public void registerPayment(Payment payment) throws BankServiceException_Exception, TokenDoesNotExistException {
         String merchantAccountId = merchantService.getMerchantAccountId(payment.merchantId);
+
+        //null check on merchantAccountId (if null, then we throw illegal argument exception or something)
+            //throw new MerchantDoesNotExistException(payment.merchantId);
 
         String customerId = tokenService.consumeToken(payment.customerToken);
 

@@ -41,8 +41,6 @@ Feature: Payment
 		And the balance of the customer at the bank is 990 kr
 		And the balance of the merchant at the bank is 2010 kr
 
-	#Scenario: Null Token
-
 	#Scenario: Merchant does not exist
 
 	#Scenario: Payment with negative amount

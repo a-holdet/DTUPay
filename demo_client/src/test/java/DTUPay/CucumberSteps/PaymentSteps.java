@@ -2,7 +2,6 @@ package DTUPay.CucumberSteps;
 
 import CustomerMobileApp.PaymentAdapter;
 import CustomerMobileApp.UserManagementAdapter;
-import DTUPay.Holders.ErrorMessageHolder;
 import DTUPay.Holders.TokenHolder;
 import DTUPay.Holders.UserHolder;
 import io.cucumber.java.After;
