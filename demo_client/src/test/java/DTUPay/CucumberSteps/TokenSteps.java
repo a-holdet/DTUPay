@@ -30,7 +30,7 @@ public class TokenSteps {
     private final TokenHolder tokenHolder;
     private final UserHolder customerHolder;
     ExceptionHolder exceptionHolder;
-2
+
     public TokenSteps(TokenHolder tokenHolder, CustomerHolder customerHolder, ExceptionHolder exceptionHolder) {
         this.tokenHolder = tokenHolder;
         this.customerHolder = customerHolder;
