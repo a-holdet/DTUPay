@@ -1,20 +1,59 @@
 package DTUPay.Holders;
 
 public class UserHolder {
-    public String id;
-    public String firstName;
-    public String lastName;
-    public String accountId;
-    public String cpr;
+    private String id;
+    private String firstName;
+    private String lastName;
+    private String accountId;
+    private String cpr;
 
     public static UserHolder merchant = new UserHolder();
-    public static UserHolder customer = new UserHolder();
 
     public void reset(){
-        id = null;
-        firstName = null;
-        lastName = null;
-        accountId = null;
-        cpr = null;
+        setId(null);
+        setFirstName(null);
+        setLastName(null);
+        setAccountId(null);
+        setCpr(null);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
+    }
+
+    public String getCpr() {
+        return cpr;
+    }
+
+    public void setCpr(String cpr) {
+        this.cpr = cpr;
     }
 }

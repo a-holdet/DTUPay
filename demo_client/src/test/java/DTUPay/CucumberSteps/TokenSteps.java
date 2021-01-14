@@ -1,6 +1,7 @@
 package DTUPay.CucumberSteps;
 
 import CustomerMobileApp.CustomerAdapter;
+import DTUPay.Holders.CustomerHolder;
 import DTUPay.Holders.ExceptionHolder;
 import DTUPay.Holders.TokenHolder;
 import DTUPay.Holders.UserHolder;
@@ -12,6 +13,9 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
+import java.util.List;
+import java.util.UUID;
+
 import static org.junit.Assert.*;
 
 public class TokenSteps {
@@ -22,12 +26,14 @@ public class TokenSteps {
     //MerchantAdapter merchantAdapter = new MerchantAdapter();
 
     //Holders
-    TokenHolder tokenHolder = TokenHolder.instance;
-    UserHolder customerHolder = UserHolder.customer;
+    private final TokenHolder tokenHolder;
+    UserHolder customerHolder;
     ExceptionHolder exceptionHolder;
 
-    public TokenSteps(ExceptionHolder exceptionHolder) {
+    public TokenSteps(TokenHolder tokenHolder, ExceptionHolder exceptionHolder, CustomerHolder customerHolder) {
+        this.tokenHolder = tokenHolder;
         this.exceptionHolder = exceptionHolder;
+        this.customerHolder = customerHolder;
     }
 
     @Before
@@ -37,20 +43,20 @@ public class TokenSteps {
 
     @After
     public void teardown() {
-        if (customerHolder.id != null) {
+        if (customerHolder.getId() != null) {
             tokenHolder.reset();
         }
     }
 
     @And("the customer has {int} tokens")
     public void theCustomerHasTokens(int tokenAmount) {
-        assertEquals(tokenAmount, tokenHolder.tokens.size());
+        assertEquals(tokenAmount, tokenHolder.getTokens().size());
     }
 
     @When("the customer requests {int} tokens")
     public void theCustomerRequestsTokens(int tokenAmount) {
         try {
-            tokenHolder.setTokens(customerAdapter.createTokensForCustomer(customerHolder.id, tokenAmount));
+            tokenHolder.setTokens(customerAdapter.createTokensForCustomer(customerHolder.getId(), tokenAmount));
         } catch (Exception e) {
             this.exceptionHolder.setException(e);
         }
