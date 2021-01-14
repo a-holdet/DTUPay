@@ -2,6 +2,7 @@ package DTUPay.CucumberSteps;
 
 import CustomerMobileApp.TokenGenerationAdapter;
 import CustomerMobileApp.UserManagementAdapter;
+import DTUPay.Holders.ErrorMessageHolder;
 import DTUPay.Holders.TokenHolder;
 import DTUPay.Holders.UserHolder;
 import dtu.ws.fastmoney.BankService;
@@ -16,12 +17,12 @@ import io.quarkus.security.UnauthorizedException;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.ErrorManager;
 
 import static org.junit.Assert.*;
 
 public class TokenSteps {
-    //Exceptions
-    UnauthorizedException unauthorizedException;
+    private final ErrorMessageHolder errorMessageHolder;
 
     //Adapters
     BankService bankService;
@@ -31,6 +32,10 @@ public class TokenSteps {
     //Holders
     TokenHolder tokenHolder = TokenHolder.instance;
     UserHolder customerHolder = UserHolder.customer;
+
+    public TokenSteps(ErrorMessageHolder errorMessageHolder){
+        this.errorMessageHolder = errorMessageHolder;
+    }
 
     @Before
     public void setup() {
@@ -60,7 +65,7 @@ public class TokenSteps {
         try {
             tokenHolder.setTokens(tokenAdapter.createTokensForCustomer(customerHolder.id, tokenAmount));
         } catch (UnauthorizedException e) {
-            this.unauthorizedException = e;
+            this.errorMessageHolder.setErrorMessage(e.getMessage());
         }
     }
 
@@ -71,7 +76,7 @@ public class TokenSteps {
 
     @Then("the token granting is not successful")
     public void theTokenGrantingIsNotSuccessful() {
-        assertNotNull(unauthorizedException);
+        assertNotNull(errorMessageHolder.getErrorMessage());
     }
 
     @Then("the token granting is denied")
@@ -81,6 +86,6 @@ public class TokenSteps {
 
     @And("the received error message is {string}")
     public void theReceivedErrorMessageIs(String expectedErrorMessage) {
-        assertEquals(expectedErrorMessage, unauthorizedException.getMessage());
+        assertEquals(expectedErrorMessage, errorMessageHolder.getErrorMessage());
     }
 }
