@@ -83,6 +83,7 @@ public class PaymentServiceSteps {
             paymentAdapter.transferMoneyFromTo(selectedToken,merchantHolder.id,new BigDecimal(amount),"myscription");
             successful=true;
         } catch (Exception e) {
+            e.printStackTrace();
             successful = false;
         }
     }
