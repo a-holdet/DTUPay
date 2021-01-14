@@ -58,7 +58,7 @@ public class CustomerAdapter {
             throw new Exception(errorMessage);
         }
 
-        List<UUID> createdTokens = response.readEntity(new GenericType<List<UUID>>() {});
+        List<UUID> createdTokens = response.readEntity(new GenericType<List<UUID>>(){});
         response.close();
         return createdTokens;
     }

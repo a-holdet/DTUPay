@@ -49,7 +49,6 @@ public class RegistrationSteps {
         } catch (BankServiceException_Exception e) {
         }
 
-        //TODO should we retire DTUPay account?
         customerHolder.reset();
         merchantHolder.reset();
         otherMerchantHolder.reset();
@@ -66,12 +65,12 @@ public class RegistrationSteps {
         }
     }
 
-    private int getRandomNumberInRange(int min, int max) {
+    private int getRandomNumberInRange(int min, int max) { //TODO move to holder
         Random r = new Random();
         return r.nextInt((max - min) + 1) + min;
     }
 
-    private void setCustomerHolderBasics(){
+    private void setCustomerHolderBasics(){ //TODO move to holder
         int lastFour = getRandomNumberInRange(1000,9999);
         String cpr = "200167-"+ lastFour;
 
@@ -80,7 +79,7 @@ public class RegistrationSteps {
         customerHolder.setCpr(cpr);
     }
 
-    private void setMerchantHolderBasicsFor(UserHolder merchantHolder){
+    private void setMerchantHolderBasicsFor(UserHolder merchantHolder){ //TODO move to holder
         int lastFour = getRandomNumberInRange(1000,9999);
         String cpr = "150363-"+ lastFour;
 
@@ -105,18 +104,14 @@ public class RegistrationSteps {
     }
 
     @And("the merchant has a bank account")
-    public void theMerchantHasABankAccount() {
+    public void theMerchantHasABankAccount() throws BankServiceException_Exception {
         setMerchantHolderBasicsFor(merchantHolder);
         User merchantBank = new User();
         merchantBank.setFirstName(merchantHolder.getFirstName());
         merchantBank.setLastName(merchantHolder.getLastName());
         merchantBank.setCprNumber(merchantHolder.getCpr());
-        try {
-            merchantHolder.setAccountId(bankService.createAccountWithBalance(merchantBank, new BigDecimal(2000)));
-        } catch (BankServiceException_Exception e) {
-            e.printStackTrace();
-            fail();
-        }
+
+        merchantHolder.setAccountId(bankService.createAccountWithBalance(merchantBank, new BigDecimal(2000)));
     }
 
     @And("the merchant is registered with DTUPay")
@@ -147,18 +142,14 @@ public class RegistrationSteps {
 
 
     @And("another merchant has a bank account")
-    public void anotherMerchantHasABankAccount() {
+    public void anotherMerchantHasABankAccount() throws BankServiceException_Exception {
         setMerchantHolderBasicsFor(otherMerchantHolder);
         User merchantBank = new User();
         merchantBank.setFirstName(otherMerchantHolder.getFirstName());
         merchantBank.setLastName(otherMerchantHolder.getLastName());
         merchantBank.setCprNumber(otherMerchantHolder.getCpr());
-        try {
-            otherMerchantHolder.setAccountId(bankService.createAccountWithBalance(merchantBank, new BigDecimal(2000)));
-        } catch (BankServiceException_Exception e) {
-            e.printStackTrace();
-            fail();
-        }
+
+        otherMerchantHolder.setAccountId(bankService.createAccountWithBalance(merchantBank, new BigDecimal(2000)));
     }
 
     @And("the other merchant is registered with DTUPay")
