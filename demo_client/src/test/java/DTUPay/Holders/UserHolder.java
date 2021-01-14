@@ -1,13 +1,11 @@
 package DTUPay.Holders;
 
-public class UserHolder {
+public abstract class UserHolder {
     private String id;
     private String firstName;
     private String lastName;
     private String accountId;
     private String cpr;
-
-    public static UserHolder merchant = new UserHolder();
 
     public void reset(){
         setId(null);
@@ -16,6 +14,7 @@ public class UserHolder {
         setAccountId(null);
         setCpr(null);
     }
+
 
     public String getId() {
         return id;

@@ -24,13 +24,13 @@ public class TokenSteps {
 
     //Holders
     private final TokenHolder tokenHolder;
-    UserHolder customerHolder;
+    private final UserHolder customerHolder;
     ExceptionHolder exceptionHolder;
 
-    public TokenSteps(TokenHolder tokenHolder, ExceptionHolder exceptionHolder, CustomerHolder customerHolder) {
+    public TokenSteps(TokenHolder tokenHolder, CustomerHolder customerHolder, ExceptionHolder exceptionHolder) {
         this.tokenHolder = tokenHolder;
-        this.exceptionHolder = exceptionHolder;
         this.customerHolder = customerHolder;
+        this.exceptionHolder = exceptionHolder;
     }
 
     @Before

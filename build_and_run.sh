@@ -21,7 +21,7 @@ popd
 docker image prune -f
 # docker-compose down
 docker-compose up -d rabbitMq
-sleep 5s
+sleep 10s
 docker-compose up -d RabbitMQTest dtupay
 sleep 5s
 
@@ -33,3 +33,4 @@ popd
 
 # Cleanup the build images
 docker image prune -f
+# docker-compose down
