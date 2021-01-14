@@ -2,6 +2,7 @@ package DTUPay.CucumberSteps;
 
 import CustomerMobileApp.TokenGenerationAdapter;
 import CustomerMobileApp.UserManagementAdapter;
+import DTUPay.Holders.CustomerHolder;
 import DTUPay.Holders.ExceptionHolder;
 import DTUPay.Holders.TokenHolder;
 import DTUPay.Holders.UserHolder;
@@ -27,12 +28,13 @@ public class TokenSteps {
 
     //Holders
     private final TokenHolder tokenHolder;
-    UserHolder customerHolder = UserHolder.customer;
+    UserHolder customerHolder;
     ExceptionHolder exceptionHolder;
 
-    public TokenSteps(TokenHolder tokenHolder, ExceptionHolder exceptionHolder) {
+    public TokenSteps(TokenHolder tokenHolder, ExceptionHolder exceptionHolder, CustomerHolder customerHolder) {
         this.tokenHolder = tokenHolder;
         this.exceptionHolder = exceptionHolder;
+        this.customerHolder = customerHolder;
     }
 
     @Before
@@ -44,23 +46,23 @@ public class TokenSteps {
 
     @After
     public void teardown() {
-        if (customerHolder.id != null) {
-            tokenAdapter.deleteTokensFor(customerHolder.id);
+        if (customerHolder.getId() != null) {
+            tokenAdapter.deleteTokensFor(customerHolder.getId());
             tokenHolder.reset();
         }
     }
 
     @And("the customer has {int} tokens")
     public void theCustomerHasTokens(int tokenAmount) {
-        assertNotNull(customerHolder.id);
-        List<UUID> tokens = tokenAdapter.readTokensForCustomer(customerHolder.id);
+        assertNotNull(customerHolder.getId());
+        List<UUID> tokens = tokenAdapter.readTokensForCustomer(customerHolder.getId());
         assertEquals(tokenAmount, tokens.size());
     }
 
     @When("the customer requests {int} tokens")
     public void theCustomerRequestsTokens(int tokenAmount) {
         try {
-            tokenHolder.setTokens(tokenAdapter.createTokensForCustomer(customerHolder.id, tokenAmount));
+            tokenHolder.setTokens(tokenAdapter.createTokensForCustomer(customerHolder.getId(), tokenAmount));
         } catch (Exception e) {
             this.exceptionHolder.setException(e);
         }
