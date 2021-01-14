@@ -22,7 +22,8 @@ public class TokenGenerationAdapter {
         private String userId;
         private int tokenAmount;
 
-        public TokenRequestObject() {}
+        public TokenRequestObject() {
+        }
 
         public void setUserId(String userId) {
             this.userId = userId;
@@ -61,18 +62,20 @@ public class TokenGenerationAdapter {
             String errorMessage = response.readEntity(String.class); // error message is in payload
             throw new UnauthorizedException(errorMessage);
         } else if (response.getStatus() == 403) { // Customer not allowed to request more tokens
-        String errorMessage = response.readEntity(String.class); // error message is in payload
-        throw new Exception(errorMessage);
-    }
+            String errorMessage = response.readEntity(String.class); // error message is in payload
+            throw new Exception(errorMessage);
+        }
 
-        return response.readEntity(new GenericType<>(){});
+        return response.readEntity(new GenericType<>() {
+        });
     }
 
     public List<UUID> readTokensForCustomer(String customerId) {
         return baseUrl
                 .path("tokens")
                 .queryParam("id", customerId)
-                .request().get(new GenericType<>() {});
+                .request().get(new GenericType<>() {
+                });
     }
 
     public void deleteTokensFor(String customerId) {

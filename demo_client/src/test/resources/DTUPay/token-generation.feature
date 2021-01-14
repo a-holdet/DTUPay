@@ -21,3 +21,13 @@ Feature: TokenGeneration
 		When the customer requests 2 tokens
 		Then the token granting is denied
 		And the error message is "Customer cannot request more tokens"
+
+	Scenario: Customer requests too many tokens
+		Given the customer "Stein" "Bagger" with CPR "290276-7777" has a bank account
+		And the customer is registered with DTUPay
+		And the customer has 0 tokens
+		And the customer requests 1 tokens
+		And the customer has 1 tokens
+		When the customer requests 6 tokens
+		Then the token granting is denied
+		And the error message is "Customer requested too many tokens"

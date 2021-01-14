@@ -32,6 +32,8 @@ public class TokenSteps {
     UserHolder customerHolder = UserHolder.customer;
     ExceptionHolder exceptionHolder = ExceptionHolder.instance;
 
+
+
     @Before
     public void setup() {
         this.bankService = new BankServiceService().getBankServicePort();
