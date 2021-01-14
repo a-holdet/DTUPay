@@ -22,4 +22,15 @@ public class LocalMerchantService implements IMerchantService{
                 return Merchant.accountId;
         return null;
     }
+
+    @Override
+    public Merchant getMerchantWith(String merchantId) {
+        System.out.println("GET MERCHANT WITH ID: " + merchantId);
+        System.out.println("ALL MERCHANTS: " + merchantRepository.getAllMerchants().size());
+        System.out.println(merchantRepository.getAllMerchants());
+        for (Merchant m: merchantRepository.getAllMerchants()) {
+            if (m.id.equals(merchantId)) return m;
+        }
+        return null;
+    }
 }

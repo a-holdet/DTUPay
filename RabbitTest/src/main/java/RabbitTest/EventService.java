@@ -1,26 +1,24 @@
 package RabbitTest;
 
-import messaging.Event;
-import messaging.EventReceiver;
-import messaging.EventSender;
+import messaging.rmq.event.interfaces.IEventReceiver;
+import messaging.rmq.event.interfaces.IEventSender;
+import messaging.rmq.event.objects.Event;
 
-public class EventService implements EventReceiver {
+public class EventService implements IEventReceiver {
+	IEventSender sender;
 
-	EventSender sender;
-
-	public EventService(EventSender sender) {
+	public EventService(IEventSender sender) {
 		this.sender = sender;
 	}
 
 	@Override
 	public void receiveEvent(Event event) throws Exception {
 		if (event.getEventType().equals("a")) {
-			System.out.println("handling event: "+event);
+			System.out.println("handling event: " + event);
 			Event e = new Event("b");
 			sender.sendEvent(e);
 		} else {
-			System.out.println("event ignored: "+event);
+			System.out.println("event ignored: " + event);
 		}
 	}
-
 }

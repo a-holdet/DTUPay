@@ -5,6 +5,8 @@ import java.util.List;
 import ports.BankException;
 import ports.DTUBankPort;
 import ports.IBank;
+import reportservice.IReportService;
+import reportservice.ReportService;
 import tokenservice.ITokenService;
 import tokenservice.TokenDoesNotExistException;
 import tokenservice.TokenService;
@@ -20,6 +22,7 @@ public class PaymentService implements IPaymentService {
     ICustomerService customerService = LocalCustomerService.instance;
     ITokenService tokenService = TokenService.instance;
     IBank bank = new DTUBankPort();
+    IReportService reportService = ReportService.instance;
 
     public PaymentService(){
     }
@@ -44,7 +47,11 @@ public class PaymentService implements IPaymentService {
                 customerAccountId,
                 merchantAccountId,
                 payment.amount,
-                payment.description);
+                payment.description
+        );
+
+        //TODO: This assumes all transfers are successful! Refactor to wrap .transferMoneyFromTo in try-catch and only log successful transfers.
+        reportService.registerPayment(payment);
     }
 
     @Override
