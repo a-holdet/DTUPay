@@ -102,7 +102,12 @@ public class RegistrationSteps {
         customerBank.setFirstName(customerHolder.getFirstName());
         customerBank.setLastName(customerHolder.getLastName());
         customerBank.setCprNumber(customerHolder.getCpr());
-        customerHolder.setAccountId(bankService.createAccountWithBalance(customerBank, new BigDecimal(1000)));
+
+        try {
+            customerHolder.setAccountId(bankService.createAccountWithBalance(customerBank, new BigDecimal(1000)));
+        } catch (BankServiceException_Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @And("the merchant has a bank account")
