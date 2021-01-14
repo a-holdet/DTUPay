@@ -1,5 +1,10 @@
 package DTUPay.CucumberSteps;
 
+import CustomerMobileApp.CustomerAdapter;
+import CustomerMobileApp.MerchantAdapter;
+import DTUPay.Holders.CustomerHolder;
+import DTUPay.Holders.ExceptionHolder;
+import DTUPay.Holders.UserHolder;
 import CustomerMobileApp.UserManagementAdapter;
 import DTUPay.Holders.*;
 import dtu.ws.fastmoney.*;
@@ -15,8 +20,9 @@ import static org.junit.Assert.*;
 
 public class RegistrationSteps {
     //Adapters
-    UserManagementAdapter userManagementAdapter = new UserManagementAdapter();
     BankService bankService = new BankServiceService().getBankServicePort();
+    CustomerAdapter customerAdapter = new CustomerAdapter();
+    MerchantAdapter merchantAdapter = new MerchantAdapter();
 
     //Holders
     private final CustomerHolder customerHolder;
@@ -53,7 +59,7 @@ public class RegistrationSteps {
     @And("the customer is registered with DTUPay")
     public void theCustomerIsRegisteredWithDTUPay() {
         try {
-            customerHolder.setId(userManagementAdapter.registerCustomer(customerHolder.getFirstName(), customerHolder.getLastName(), customerHolder.getCpr(), customerHolder.getAccountId()));
+            customerHolder.setId(customerAdapter.registerCustomer(customerHolder.getFirstName(), customerHolder.getLastName(), customerHolder.getCpr(), customerHolder.getAccountId()));
             assertNotNull(customerHolder.getId());
         } catch (IllegalArgumentException e){
             exceptionHolder.setException(e);

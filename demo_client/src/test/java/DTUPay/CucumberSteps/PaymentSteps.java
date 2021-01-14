@@ -1,5 +1,9 @@
 package DTUPay.CucumberSteps;
 
+import CustomerMobileApp.MerchantAdapter;
+import DTUPay.Holders.CustomerHolder;
+import DTUPay.Holders.TokenHolder;
+import DTUPay.Holders.UserHolder;
 import CustomerMobileApp.PaymentAdapter;
 import CustomerMobileApp.TokenGenerationAdapter;
 import DTUPay.Holders.*;
@@ -7,6 +11,7 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import dtu.ws.fastmoney.*;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
@@ -19,6 +24,8 @@ public class PaymentSteps {
 
     //Adapters
     BankService bankService = new BankServiceService().getBankServicePort();
+    MerchantAdapter merchantAdapter = new MerchantAdapter();
+
     PaymentAdapter paymentAdapter = new PaymentAdapter();
     TokenGenerationAdapter tokenGenerationAdapter = new TokenGenerationAdapter();
 
@@ -90,7 +97,7 @@ public class PaymentSteps {
     @When("the merchant initiates a payment for {int} kr using the selected customer token")
     public void theMerchantInitiatesAPaymentForKrUsingTheSelectedCustomerToken(int amount) {
         try {
-            paymentAdapter.transferMoneyFromTo(selectedToken, merchantHolder.getId(),new BigDecimal(amount),"myscription");
+            merchantAdapter.transferMoneyFromTo(selectedToken,merchantHolder.getId(),new BigDecimal(amount),"myscription");
             successful=true;
         } catch (Exception e) {
             e.printStackTrace();
