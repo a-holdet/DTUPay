@@ -1,5 +1,6 @@
 package CustomerMobileApp;
 
+import CustomerMobileApp.DTO.Payment;
 import dtu.ws.fastmoney.User;
 
 import java.util.List;

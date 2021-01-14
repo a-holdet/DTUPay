@@ -1,17 +1,15 @@
 package DTUPay.CucumberSteps;
 
+import CustomerMobileApp.CustomerAdapter;
 import CustomerMobileApp.MerchantAdapter;
 import DTUPay.Holders.CustomerHolder;
 import DTUPay.Holders.TokenHolder;
 import DTUPay.Holders.UserHolder;
-import CustomerMobileApp.PaymentAdapter;
-import CustomerMobileApp.TokenGenerationAdapter;
 import DTUPay.Holders.*;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import dtu.ws.fastmoney.*;
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
@@ -25,9 +23,7 @@ public class PaymentSteps {
     //Adapters
     BankService bankService = new BankServiceService().getBankServicePort();
     MerchantAdapter merchantAdapter = new MerchantAdapter();
-
-    PaymentAdapter paymentAdapter = new PaymentAdapter();
-    TokenGenerationAdapter tokenGenerationAdapter = new TokenGenerationAdapter();
+    CustomerAdapter customerAdapter = new CustomerAdapter();
 
     //Holders
     private final TokenHolder tokenHolder;
@@ -157,7 +153,7 @@ public class PaymentSteps {
     @And("the merchant and customer perform a successful payment of {int} kr for a {string}")
     public void theMerchantAndCustomerPerformASuccessfulPaymentOfKrForA(int amount, String productDescription) {
         try {
-            tokenHolder.setTokens(tokenGenerationAdapter.createTokensForCustomer(customerHolder.getId(), 2)); // Request 2 tokens
+            tokenHolder.setTokens(customerAdapter.createTokensForCustomer(customerHolder.getId(), 2)); // Request 2 tokens
             UUID tokenUsedInPayment = tokenHolder.getTokens().get(0); // Extract 1st token
             performPaymentUsing(tokenUsedInPayment, merchantHolder, amount, productDescription);
         } catch (Exception e) {
@@ -169,7 +165,7 @@ public class PaymentSteps {
     private void performPaymentUsing(UUID token, UserHolder merchantHolder, int amount, String productDescription) {
         try {
             System.out.println("PERFORMING PAYMENT:" + merchantHolder.getId() + ". " + productDescription);
-            paymentAdapter.transferMoneyFromTo(token, merchantHolder.getId(), BigDecimal.valueOf(amount), productDescription); // Make payment
+            merchantAdapter.transferMoneyFromTo(token, merchantHolder.getId(), BigDecimal.valueOf(amount), productDescription); // Make payment
         } catch (Exception e) {
             e.printStackTrace();
             fail();

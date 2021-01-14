@@ -5,7 +5,6 @@ import CustomerMobileApp.MerchantAdapter;
 import DTUPay.Holders.CustomerHolder;
 import DTUPay.Holders.ExceptionHolder;
 import DTUPay.Holders.UserHolder;
-import CustomerMobileApp.UserManagementAdapter;
 import DTUPay.Holders.*;
 import dtu.ws.fastmoney.*;
 import io.cucumber.java.After;
@@ -168,6 +167,6 @@ public class RegistrationSteps {
     }
 
     private void registerMerchantWithDTUPay(UserHolder merchantHolder) {
-        merchantHolder.setId(userManagementAdapter.registerMerchant(merchantHolder.getFirstName(), merchantHolder.getLastName(), merchantHolder.getCpr(), merchantHolder.getAccountId()));
+        merchantHolder.setId(merchantAdapter.registerMerchant(merchantHolder.getFirstName(), merchantHolder.getLastName(), merchantHolder.getCpr(), merchantHolder.getAccountId()));
     }
 }
