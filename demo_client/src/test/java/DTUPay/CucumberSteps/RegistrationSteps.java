@@ -22,7 +22,11 @@ public class RegistrationSteps {
     //Holders
     UserHolder customerHolder = UserHolder.customer;
     UserHolder merchantHolder = UserHolder.merchant;
-    ExceptionHolder exceptionHolder = ExceptionHolder.instance;
+    ExceptionHolder exceptionHolder;
+
+    public RegistrationSteps(ExceptionHolder exceptionHolder) {
+        this.exceptionHolder = exceptionHolder;
+    }
 
     @After
     public void after(){
@@ -50,7 +54,7 @@ public class RegistrationSteps {
             customerHolder.id = userManagementAdapter.registerCustomer(customerHolder.firstName, customerHolder.lastName, customerHolder.cpr, customerHolder.accountId);
             assertNotNull(customerHolder.id);
         } catch (IllegalArgumentException e){
-            exceptionHolder.exception = e;
+            exceptionHolder.setException(e);
             customerHolder.id=null;
         }
     }
@@ -124,7 +128,7 @@ public class RegistrationSteps {
 
     @And("the error message is {string}")
     public void theErrorMessageIs(String expectedErrorMessage) {
-        assertEquals(expectedErrorMessage, exceptionHolder.exception.getMessage());
+        assertEquals(expectedErrorMessage, exceptionHolder.getException().getMessage());
     }
 
     @Given("the customer has no bank account")
