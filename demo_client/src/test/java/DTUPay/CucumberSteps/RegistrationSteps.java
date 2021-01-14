@@ -1,7 +1,7 @@
 package DTUPay.CucumberSteps;
 
 import CustomerMobileApp.UserManagementAdapter;
-import DTUPay.Holders.ErrorMessageHolder;
+import DTUPay.Holders.ExceptionHolder;
 import DTUPay.Holders.UserHolder;
 import dtu.ws.fastmoney.*;
 import io.cucumber.java.After;
@@ -14,7 +14,6 @@ import java.math.BigDecimal;
 import static org.junit.Assert.*;
 
 public class RegistrationSteps {
-    private final ErrorMessageHolder errorMessageHolder;
     //Adapters
     UserManagementAdapter userManagementAdapter = new UserManagementAdapter();
     BankService bankService = new BankServiceService().getBankServicePort();
@@ -22,11 +21,7 @@ public class RegistrationSteps {
     //Holders
     UserHolder customerHolder = UserHolder.customer;
     UserHolder merchantHolder = UserHolder.merchant;
-
-
-    public RegistrationSteps(ErrorMessageHolder errorMessageHolder) {
-        this.errorMessageHolder = errorMessageHolder;
-    }
+    ExceptionHolder exceptionHolder = ExceptionHolder.instance;
 
     @After
     public void after(){
@@ -62,7 +57,7 @@ public class RegistrationSteps {
             customerHolder.id = userManagementAdapter.registerCustomer(customerHolder.firstName, customerHolder.lastName, customerHolder.cpr, customerHolder.accountId);
             assertNotNull(customerHolder.id);
         } catch (IllegalArgumentException e){
-            errorMessageHolder.setErrorMessage(e.getMessage());
+            exceptionHolder.exception = e;
             customerHolder.id=null;
         }
     }
@@ -113,7 +108,7 @@ public class RegistrationSteps {
 
     @And("the error message is {string}")
     public void theErrorMessageIs(String expectedErrorMessage) {
-        assertEquals(expectedErrorMessage, errorMessageHolder.getErrorMessage());
+        assertEquals(expectedErrorMessage, exceptionHolder.exception.getMessage());
     }
 
     @Given("the customer with name {string} {string} and CPR {string} has no bank account")
