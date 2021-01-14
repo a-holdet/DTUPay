@@ -2,21 +2,20 @@ package eventservice;
 
 import java.util.concurrent.CompletableFuture;
 
-import messaging.Event;
-import messaging.EventReceiver;
-import messaging.EventSender;
-import messaging.channels.EventServiceListener;
-import messaging.rabbitmq.RabbitMqListener;
-import messaging.rabbitmq.RabbitMqSender;
+import messaging.rmq.event.EventQueueEvents;
+import messaging.rmq.event.interfaces.IEventReceiver;
+import messaging.rmq.event.interfaces.IEventSender;
+import messaging.rmq.event.objects.Event;
 
-public class RabbitMQEventService implements IEventService, EventReceiver {
+public class RabbitMQEventService implements IEventService, IEventReceiver {
+
+	static EventQueueEvents eventQueueEvents = EventQueueEvents.instance;
 
 	private static RabbitMQEventService setUpInstance() {
-		EventSender b = new RabbitMqSender();
-		var service2 = new RabbitMQEventService(b);
-		RabbitMqListener r = new EventServiceListener(service2);
+		IEventSender ies = eventQueueEvents.getSender();
+		var service2 = new RabbitMQEventService(ies);
 		try {
-			r.listen();
+			eventQueueEvents.registerReceiver(service2);
 		} catch (Exception e) {
 			throw new Error(e);
 		}
@@ -25,10 +24,10 @@ public class RabbitMQEventService implements IEventService, EventReceiver {
 
 	public static RabbitMQEventService instance = setUpInstance();
 
-	private EventSender eventSender;
+	private IEventSender eventSender;
 	private CompletableFuture<Boolean> result;
 
-	public RabbitMQEventService(EventSender eventSender) {
+	public RabbitMQEventService(IEventSender eventSender) {
 		this.eventSender = eventSender;
 	}
 
@@ -36,19 +35,19 @@ public class RabbitMQEventService implements IEventService, EventReceiver {
 	public boolean doSomething() throws Exception {
 		Event event = new Event("a");
 		result = new CompletableFuture<>();
-		
+
 		eventSender.sendEvent(event);
-		
+
 		return result.join();
 	}
 
 	@Override
 	public void receiveEvent(Event event) {
 		if (event.getEventType().equals("b")) {
-			System.out.println("event handled: "+event);
+			System.out.println("event handled: " + event);
 			result.complete(true);
 		} else {
-			System.out.println("event ignored: "+event);
+			System.out.println("event ignored: " + event);
 		}
 	}
 

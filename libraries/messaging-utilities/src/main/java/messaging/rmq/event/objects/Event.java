@@ -1,4 +1,4 @@
-package messaging;
+package messaging.rmq.event.objects;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,13 +9,15 @@ public class Event {
 
 	private String eventType;
 	private Object[] arguments = null;
-	
-	public Event() {};
+
+	public Event() {
+	};
+
 	public Event(String eventType, Object[] arguments) {
 		this.eventType = eventType;
 		this.arguments = arguments;
 	}
-	
+
 	public Event(String type) {
 		this.eventType = type;
 	}
@@ -23,7 +25,7 @@ public class Event {
 	public String getEventType() {
 		return eventType;
 	}
-	
+
 	public Object[] getArguments() {
 		return arguments;
 	}
@@ -33,23 +35,22 @@ public class Event {
 			return false;
 		}
 		Event other = (Event) o;
-		return this.eventType.equals(other.eventType) &&
-				(this.getArguments() != null &&
-				this.getArguments().equals(other.getArguments())) ||
-				(this.getArguments() == null && other.getArguments() == null);
+		return this.eventType.equals(other.eventType)
+				&& (this.getArguments() != null && this.getArguments().equals(other.getArguments()))
+				|| (this.getArguments() == null && other.getArguments() == null);
 	}
-	
+
 	public int hashCode() {
 		return eventType.hashCode();
 	}
-	
+
 	public String toString() {
 		List<String> strs = new ArrayList<>();
 		if (arguments != null) {
 			List<Object> objs = Arrays.asList(arguments);
 			strs = objs.stream().map(o -> o.toString()).collect(Collectors.toList());
 		}
-		
-		return String.format("event(%s,%s)", eventType,String.join(",", strs));
+
+		return String.format("event(%s,%s)", eventType, String.join(",", strs));
 	}
 }
