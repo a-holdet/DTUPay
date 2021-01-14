@@ -119,9 +119,11 @@ public class PaymentSteps {
 
     @And("the customer selects a non-valid token")
     public void theCustomerSelectsANonValidToken() {
+        selectedToken = UUID.randomUUID();
     }
 
     @Then("the payment fails")
     public void thePaymentFails() {
+        assertFalse(successful);
     }
 }

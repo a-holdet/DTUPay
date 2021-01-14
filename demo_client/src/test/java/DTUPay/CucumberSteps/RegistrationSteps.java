@@ -112,6 +112,11 @@ public class RegistrationSteps {
         merchantHolder.id = userManagementAdapter.registerMerchant(merchantHolder.firstName, merchantHolder.lastName, merchantHolder.cpr, merchantHolder.accountId);
     }
 
+    @And("the merchant is not registered with DTUPay")
+    public void theMerchantIsNotRegisteredWithDTUPay() {
+        //Do not register merchant with DTUPay
+    }
+
     @Then("the registration is not successful")
     public void theRegistrationIsNotSuccessful() {
         assertNull(customerHolder.id);
@@ -127,4 +132,6 @@ public class RegistrationSteps {
         setCustomerHolderBasics();
         //Do not create account
     }
+
+
 }
