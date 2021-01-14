@@ -8,6 +8,5 @@ public class Payment {
     public UUID customerToken;
     public String merchantId;
     public String description;
-
     public Payment(){}
 }

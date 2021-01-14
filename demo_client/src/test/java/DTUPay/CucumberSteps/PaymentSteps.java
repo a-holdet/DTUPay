@@ -1,11 +1,8 @@
 package DTUPay.CucumberSteps;
 
 import CustomerMobileApp.PaymentAdapter;
-import CustomerMobileApp.UserManagementAdapter;
-import DTUPay.Holders.CustomerHolder;
-import DTUPay.Holders.MerchantHolder;
-import DTUPay.Holders.TokenHolder;
-import DTUPay.Holders.UserHolder;
+import CustomerMobileApp.TokenGenerationAdapter;
+import DTUPay.Holders.*;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import dtu.ws.fastmoney.*;
@@ -22,12 +19,14 @@ public class PaymentSteps {
 
     //Adapters
     BankService bankService = new BankServiceService().getBankServicePort();
-    UserManagementAdapter userManagementAdapter = new UserManagementAdapter();
     PaymentAdapter paymentAdapter = new PaymentAdapter();
+    TokenGenerationAdapter tokenGenerationAdapter = new TokenGenerationAdapter();
+
     //Holders
     private final TokenHolder tokenHolder;
-    private final UserHolder customerHolder;
-    private final UserHolder merchantHolder;
+    private final CustomerHolder customerHolder;
+    private final MerchantHolder merchantHolder;
+    private final OtherMerchantHolder otherMerchantHolder;
 
     //Class specifics
     UUID selectedToken;
@@ -35,10 +34,11 @@ public class PaymentSteps {
     //String mostRecentAccountId;
     boolean successful;
 
-    public PaymentSteps(TokenHolder tokenHolder, CustomerHolder customerHolder, MerchantHolder merchantHolder) {
+    public PaymentSteps(TokenHolder tokenHolder, CustomerHolder customerHolder, MerchantHolder merchantHolder, OtherMerchantHolder otherMerchantHolder) {
         this.tokenHolder = tokenHolder;
         this.customerHolder = customerHolder;
         this.merchantHolder = merchantHolder;
+        this.otherMerchantHolder = otherMerchantHolder;
     }
 
     @Before
@@ -60,7 +60,10 @@ public class PaymentSteps {
 
     @After
     public void afterScenario() {
-        //System.out.println("Hello from payment teardown");
+        customerHolder.reset();
+        merchantHolder.reset();
+        otherMerchantHolder.reset();
+        tokenHolder.reset();
     }
 
 
@@ -89,7 +92,8 @@ public class PaymentSteps {
         try {
             paymentAdapter.transferMoneyFromTo(selectedToken, merchantHolder.getId(),new BigDecimal(amount),"myscription");
             successful=true;
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             successful = false;
             errorMessage=e.getMessage();
         }
@@ -135,5 +139,33 @@ public class PaymentSteps {
     @Then("the payment fails")
     public void thePaymentFails() {
         assertFalse(successful);
+    }
+
+    @And("the other merchant and customer perform a successful payment of {int} kr for a {string}")
+    public void theOtherMerchantAndCustomerPerformASuccessfulPaymentOfKrForA(int amount, String productDescription) {
+        UUID nextTokenUsedInPayment = tokenHolder.getTokens().get(1); // Extract 2nd token
+        performPaymentUsing(nextTokenUsedInPayment, otherMerchantHolder, amount, productDescription);
+    }
+
+    @And("the merchant and customer perform a successful payment of {int} kr for a {string}")
+    public void theMerchantAndCustomerPerformASuccessfulPaymentOfKrForA(int amount, String productDescription) {
+        try {
+            tokenHolder.setTokens(tokenGenerationAdapter.createTokensForCustomer(customerHolder.getId(), 2)); // Request 2 tokens
+            UUID tokenUsedInPayment = tokenHolder.getTokens().get(0); // Extract 1st token
+            performPaymentUsing(tokenUsedInPayment, merchantHolder, amount, productDescription);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    private void performPaymentUsing(UUID token, UserHolder merchantHolder, int amount, String productDescription) {
+        try {
+            System.out.println("PERFORMING PAYMENT:" + merchantHolder.getId() + ". " + productDescription);
+            paymentAdapter.transferMoneyFromTo(token, merchantHolder.getId(), BigDecimal.valueOf(amount), productDescription); // Make payment
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
     }
 }

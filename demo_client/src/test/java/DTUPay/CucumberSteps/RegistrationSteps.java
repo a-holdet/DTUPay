@@ -1,10 +1,7 @@
 package DTUPay.CucumberSteps;
 
 import CustomerMobileApp.UserManagementAdapter;
-import DTUPay.Holders.CustomerHolder;
-import DTUPay.Holders.ExceptionHolder;
-import DTUPay.Holders.MerchantHolder;
-import DTUPay.Holders.UserHolder;
+import DTUPay.Holders.*;
 import dtu.ws.fastmoney.*;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
@@ -22,13 +19,15 @@ public class RegistrationSteps {
     BankService bankService = new BankServiceService().getBankServicePort();
 
     //Holders
-    private final UserHolder customerHolder;
-    private final UserHolder merchantHolder;
+    private final CustomerHolder customerHolder;
+    private final MerchantHolder merchantHolder;
+    private final OtherMerchantHolder otherMerchantHolder;
     ExceptionHolder exceptionHolder;
 
-    public RegistrationSteps(CustomerHolder customerHolder, MerchantHolder merchantHolder, ExceptionHolder exceptionHolder) {
+    public RegistrationSteps(CustomerHolder customerHolder, MerchantHolder merchantHolder, OtherMerchantHolder otherMerchantHolder, ExceptionHolder exceptionHolder) {
         this.customerHolder = customerHolder;
         this.merchantHolder = merchantHolder;
+        this.otherMerchantHolder = otherMerchantHolder;
         this.exceptionHolder = exceptionHolder;
     }
 
@@ -48,6 +47,7 @@ public class RegistrationSteps {
         //TODO should we retire DTUPay account?
         customerHolder.reset();
         merchantHolder.reset();
+        otherMerchantHolder.reset();
     }
 
     @And("the customer is registered with DTUPay")
@@ -75,9 +75,10 @@ public class RegistrationSteps {
         customerHolder.setCpr(cpr);
     }
 
-    private void setMerchantHolderBasics(){
+    private void setMerchantHolderBasicsFor(UserHolder merchantHolder){
         int lastFour = getRandomNumberInRange(1000,9999);
         String cpr = "150363-"+ lastFour;
+
 
         merchantHolder.setFirstName("Joe");
         merchantHolder.setLastName("Exotic");
@@ -100,7 +101,7 @@ public class RegistrationSteps {
 
     @And("the merchant has a bank account")
     public void theMerchantHasABankAccount() {
-        setMerchantHolderBasics();
+        setMerchantHolderBasicsFor(merchantHolder);
         User merchantBank = new User();
         merchantBank.setFirstName(merchantHolder.getFirstName());
         merchantBank.setLastName(merchantHolder.getLastName());
@@ -115,7 +116,7 @@ public class RegistrationSteps {
 
     @And("the merchant is registered with DTUPay")
     public void theMerchantIsRegisteredWithDTUPay() {
-        merchantHolder.setId(userManagementAdapter.registerMerchant(merchantHolder.getFirstName(), merchantHolder.getLastName(), merchantHolder.getCpr(), merchantHolder.getAccountId()));
+        registerMerchantWithDTUPay(merchantHolder);
     }
 
     @And("the merchant is not registered with DTUPay")
@@ -140,4 +141,27 @@ public class RegistrationSteps {
     }
 
 
+    @And("another merchant has a bank account")
+    public void anotherMerchantHasABankAccount() {
+        setMerchantHolderBasicsFor(otherMerchantHolder);
+        User merchantBank = new User();
+        merchantBank.setFirstName(otherMerchantHolder.getFirstName());
+        merchantBank.setLastName(otherMerchantHolder.getLastName());
+        merchantBank.setCprNumber(otherMerchantHolder.getCpr());
+        try {
+            otherMerchantHolder.setAccountId(bankService.createAccountWithBalance(merchantBank, new BigDecimal(2000)));
+        } catch (BankServiceException_Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @And("the other merchant is registered with DTUPay")
+    public void theOtherMerchantIsRegisteredWithDTUPay() {
+        registerMerchantWithDTUPay(otherMerchantHolder);
+    }
+
+    private void registerMerchantWithDTUPay(UserHolder merchantHolder) {
+        merchantHolder.setId(userManagementAdapter.registerMerchant(merchantHolder.getFirstName(), merchantHolder.getLastName(), merchantHolder.getCpr(), merchantHolder.getAccountId()));
+    }
 }
