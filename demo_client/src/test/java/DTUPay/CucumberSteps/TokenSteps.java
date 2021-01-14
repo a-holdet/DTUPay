@@ -13,9 +13,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-import java.util.List;
-import java.util.UUID;
-
 import static org.junit.Assert.*;
 
 public class TokenSteps {

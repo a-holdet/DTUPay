@@ -85,7 +85,7 @@ public class PaymentSteps {
     @When("the merchant initiates a payment for {int} kr using the selected customer token")
     public void theMerchantInitiatesAPaymentForKrUsingTheSelectedCustomerToken(int amount) {
         try {
-            merchantAdapter.transferMoneyFromTo(selectedToken,merchantHolder.id,new BigDecimal(amount),"myscription");
+            merchantAdapter.transferMoneyFromTo(selectedToken,merchantHolder.getId(),new BigDecimal(amount),"myscription");
             successful=true;
         } catch (IllegalArgumentException e) {
             successful = false;
