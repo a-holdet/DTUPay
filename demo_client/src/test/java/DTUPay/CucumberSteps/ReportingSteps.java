@@ -48,18 +48,18 @@ public class ReportingSteps {
         assertNotNull(report);
     }
 
-    @Then("the merchant receives a report having a transaction of {int} kr for a {string} to {string} {string} with CPR {string} using the same token")
-    public void theMerchantReceivesAReportHavingATransactionOfKrForAToWithCPRUsingTheSameToken(int amount, String productDescription, String firstName, String lastName, String cpr) {
+    @Then("the merchant receives a report having a transaction of {int} kr for a {string} to the merchant using the same token")
+    public void theMerchantReceivesAReportHavingATransactionOfKrForAToTheMerchantUsingTheSameToken(int amount, String productDescription) {
         // check merchant is correct
-        assertEquals(firstName, report.getMerchant().getFirstName());
-        assertEquals(lastName, report.getMerchant().getLastName());
-        assertEquals(cpr, report.getMerchant().getCprNumber());
+        assertEquals(merchant.firstName, report.getMerchant().getFirstName());
+        assertEquals(merchant.lastName, report.getMerchant().getLastName());
+        assertEquals(merchant.cpr, report.getMerchant().getCprNumber());
 
         // Check transactions is correct
         boolean foundCorrectTransaction = report.getPayments().stream().anyMatch(payment ->
                 payment.customerToken.equals(tokenUsedInPayment) &&
-                payment.amount.equals(BigDecimal.valueOf(amount)) &&
-                payment.description.equals(productDescription)
+                        payment.amount.equals(BigDecimal.valueOf(amount)) &&
+                        payment.description.equals(productDescription)
         );
         assertTrue(foundCorrectTransaction);
         assertEquals(report.getPayments().size(), 1);
