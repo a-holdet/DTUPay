@@ -17,7 +17,7 @@ public class MerchantAdapter {
 
     public MerchantAdapter(){
         Client client = ClientBuilder.newClient();
-        baseUrl = client.target("http://localhost:8042/");
+        baseUrl = client.target("http://localhost:8042/merchantapi");
     }
 
     public String registerMerchant(String firstName, String lastName, String cprNumber, String merchantAccountId) {

@@ -8,7 +8,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/customers")
+@Path("/customerapi/customers")
 public class CustomerResource {
     ICustomerService ICustomerService = LocalCustomerService.instance;
 

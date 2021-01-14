@@ -19,7 +19,7 @@ public class CustomerAdapter {
 
     public CustomerAdapter(){
         Client client = ClientBuilder.newClient();
-        baseUrl = client.target("http://localhost:8042/");
+        baseUrl = client.target("http://localhost:8042/customerapi");
     }
 
     public String registerCustomer(String firstName, String lastName, String cprNumber, String accountID) throws IllegalArgumentException {
