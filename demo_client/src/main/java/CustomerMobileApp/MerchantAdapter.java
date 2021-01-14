@@ -1,5 +1,8 @@
 package CustomerMobileApp;
 
+import CustomerMobileApp.DTO.DTUPayUser;
+import CustomerMobileApp.DTO.Payment;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -7,16 +10,20 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.UUID;
 
-//TODO: make abstract "BaseAdapter" for common initilisation of 'baseURL'
-public class PaymentAdapter {
-
+public class MerchantAdapter {
     WebTarget baseUrl;
 
-    public PaymentAdapter() {
+    public MerchantAdapter(){
         Client client = ClientBuilder.newClient();
         baseUrl = client.target("http://localhost:8042/");
+    }
+
+    public String registerMerchant(String firstName, String lastName, String cprNumber, String merchantAccountId) {
+        DTUPayUser customer = new DTUPayUser(firstName, lastName, cprNumber, merchantAccountId);
+        String merchantId = baseUrl.path("merchants").request().post(Entity.entity(customer, MediaType.APPLICATION_JSON),String.class);
+        return merchantId;
     }
 
     public void transferMoneyFromTo(UUID selectedToken, String merchantId, BigDecimal amount, String description) throws IllegalArgumentException {
@@ -34,5 +41,4 @@ public class PaymentAdapter {
         }
         response.close();
     }
-
 }

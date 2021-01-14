@@ -1,7 +1,6 @@
 package DTUPay.CucumberSteps;
 
-import CustomerMobileApp.TokenGenerationAdapter;
-import CustomerMobileApp.UserManagementAdapter;
+import CustomerMobileApp.CustomerAdapter;
 import DTUPay.Holders.CustomerHolder;
 import DTUPay.Holders.ExceptionHolder;
 import DTUPay.Holders.TokenHolder;
@@ -14,17 +13,14 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-import java.util.List;
-import java.util.UUID;
-
 import static org.junit.Assert.*;
 
 public class TokenSteps {
 
     //Adapters
     BankService bankService;
-    TokenGenerationAdapter tokenAdapter;
-    UserManagementAdapter userManagementAdapter;
+    CustomerAdapter customerAdapter = new CustomerAdapter();
+    //MerchantAdapter merchantAdapter = new MerchantAdapter();
 
     //Holders
     private final TokenHolder tokenHolder;
@@ -40,29 +36,24 @@ public class TokenSteps {
     @Before
     public void setup() {
         this.bankService = new BankServiceService().getBankServicePort();
-        this.tokenAdapter = new TokenGenerationAdapter();
-        this.userManagementAdapter = new UserManagementAdapter();
     }
 
     @After
     public void teardown() {
         if (customerHolder.getId() != null) {
-            tokenAdapter.deleteTokensFor(customerHolder.getId());
             tokenHolder.reset();
         }
     }
 
     @And("the customer has {int} tokens")
     public void theCustomerHasTokens(int tokenAmount) {
-        assertNotNull(customerHolder.getId());
-        List<UUID> tokens = tokenAdapter.readTokensForCustomer(customerHolder.getId());
-        assertEquals(tokenAmount, tokens.size());
+        assertEquals(tokenAmount, tokenHolder.getTokens().size());
     }
 
     @When("the customer requests {int} tokens")
     public void theCustomerRequestsTokens(int tokenAmount) {
         try {
-            tokenHolder.setTokens(tokenAdapter.createTokensForCustomer(customerHolder.getId(), tokenAmount));
+            tokenHolder.setTokens(customerAdapter.createTokensForCustomer(customerHolder.getId(), tokenAmount));
         } catch (Exception e) {
             this.exceptionHolder.setException(e);
         }
@@ -80,7 +71,6 @@ public class TokenSteps {
 
     @Then("the token granting is denied")
     public void theTokenGrantingIsDenied() {
-
     }
 
     @And("the received error message is {string}")

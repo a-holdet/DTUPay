@@ -1,6 +1,7 @@
 package DTUPay.CucumberSteps;
 
-import CustomerMobileApp.UserManagementAdapter;
+import CustomerMobileApp.CustomerAdapter;
+import CustomerMobileApp.MerchantAdapter;
 import DTUPay.Holders.CustomerHolder;
 import DTUPay.Holders.ExceptionHolder;
 import DTUPay.Holders.MerchantHolder;
@@ -18,8 +19,9 @@ import static org.junit.Assert.*;
 
 public class RegistrationSteps {
     //Adapters
-    UserManagementAdapter userManagementAdapter = new UserManagementAdapter();
     BankService bankService = new BankServiceService().getBankServicePort();
+    CustomerAdapter customerAdapter = new CustomerAdapter();
+    MerchantAdapter merchantAdapter = new MerchantAdapter();
 
     //Holders
     private final CustomerHolder customerHolder;
@@ -53,7 +55,7 @@ public class RegistrationSteps {
     @And("the customer is registered with DTUPay")
     public void theCustomerIsRegisteredWithDTUPay() {
         try {
-            customerHolder.setId(userManagementAdapter.registerCustomer(customerHolder.getFirstName(), customerHolder.getLastName(), customerHolder.getCpr(), customerHolder.getAccountId()));
+            customerHolder.setId(customerAdapter.registerCustomer(customerHolder.getFirstName(), customerHolder.getLastName(), customerHolder.getCpr(), customerHolder.getAccountId()));
             assertNotNull(customerHolder.getId());
         } catch (IllegalArgumentException e) {
             exceptionHolder.setException(e);
@@ -118,7 +120,7 @@ public class RegistrationSteps {
 
     @And("the merchant is registered with DTUPay")
     public void theMerchantIsRegisteredWithDTUPay() {
-        merchantHolder.setId(userManagementAdapter.registerMerchant(merchantHolder.getFirstName(), merchantHolder.getLastName(), merchantHolder.getCpr(), merchantHolder.getAccountId()));
+        merchantHolder.setId(merchantAdapter.registerMerchant(merchantHolder.getFirstName(), merchantHolder.getLastName(), merchantHolder.getCpr(), merchantHolder.getAccountId()));
     }
 
     @And("the merchant is not registered with DTUPay")
