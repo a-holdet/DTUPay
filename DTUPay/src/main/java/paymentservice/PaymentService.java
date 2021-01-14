@@ -34,7 +34,6 @@ public class PaymentService implements IPaymentService {
     @Override
     public void registerPayment(Payment payment) throws TokenDoesNotExistException, MerchantDoesNotExistException, NegativeAmountException, BankException {
         String merchantAccountId = merchantService.getMerchantAccountId(payment.merchantId);
-
         if(merchantAccountId==null)
             throw new MerchantDoesNotExistException("The merchant does not exist in DTUPay");
 

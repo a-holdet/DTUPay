@@ -119,6 +119,7 @@ public class PaymentSteps {
         }
     }
 
+
     @Then("the payment is successful")
     public void thePaymentIsSuccessful() {
         assertTrue(successful);
@@ -126,7 +127,7 @@ public class PaymentSteps {
 
     @And("the customer selects a token")
     public void theCustomerSelectsAToken() {
-        selectedToken = tokenHolder.tokens.get(0);
+        selectedToken = tokenHolder.getTokens().get(0);
     }
 
 
