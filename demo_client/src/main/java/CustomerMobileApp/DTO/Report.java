@@ -1,4 +1,4 @@
-package CustomerMobileApp;
+package CustomerMobileApp.DTO;
 
 import CustomerMobileApp.DTO.Payment;
 import dtu.ws.fastmoney.User;

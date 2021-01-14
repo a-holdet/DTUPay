@@ -2,11 +2,13 @@ package CustomerMobileApp;
 
 import CustomerMobileApp.DTO.DTUPayUser;
 import CustomerMobileApp.DTO.Payment;
+import CustomerMobileApp.DTO.Report;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
@@ -17,7 +19,7 @@ public class MerchantAdapter {
 
     public MerchantAdapter(){
         Client client = ClientBuilder.newClient();
-        baseUrl = client.target("http://localhost:8042/");
+        baseUrl = client.target("http://localhost:8042/merchantapi");
     }
 
     public String registerMerchant(String firstName, String lastName, String cprNumber, String merchantAccountId) {
@@ -40,5 +42,13 @@ public class MerchantAdapter {
             throw new IllegalArgumentException(errorMessage);
         }
         response.close();
+    }
+
+    public Report getMerchantReport(String merchantId) {
+        return baseUrl
+                .path("reports")
+                .queryParam("id", merchantId)
+                .request()
+                .get(new GenericType<>() {});
     }
 }

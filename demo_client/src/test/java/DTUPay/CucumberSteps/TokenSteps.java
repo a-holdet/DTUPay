@@ -55,6 +55,8 @@ public class TokenSteps {
         try {
             tokenHolder.setTokens(customerAdapter.createTokensForCustomer(customerHolder.getId(), tokenAmount));
         } catch (Exception e) {
+            System.out.println("what");
+            System.out.println(e.getMessage());
             this.exceptionHolder.setException(e);
         }
     }

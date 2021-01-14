@@ -16,7 +16,7 @@ OR
 @Path("<merchanthost>/mearchants/{ìd}/payments")
 @Path("<customerhost>/customers/{ìd}/payments")*/
 
-@Path("/merchants")
+@Path("/merchantapi/merchants")
 public class MerchantResource {
     IMerchantService merchantService = LocalMerchantService.instance;
 
@@ -25,10 +25,5 @@ public class MerchantResource {
     public String create(Merchant merchant) {
         merchantService.registerMerchant(merchant);
         return merchant.id;
-    }
-
-    @GET
-    public Response list() {
-        return Response.noContent().build();
     }
 }

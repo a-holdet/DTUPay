@@ -53,10 +53,4 @@ public class PaymentService implements IPaymentService {
         //TODO: This assumes all transfers are successful! Refactor to wrap .transferMoneyFromTo in try-catch and only log successful transfers.
         reportService.registerPayment(payment);
     }
-
-    @Override
-    public List<Payment> getPayments() {
-        //TODO
-        return null;
-    }
 }

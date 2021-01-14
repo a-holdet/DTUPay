@@ -1,6 +1,7 @@
 package DTUPay.CucumberSteps;
 
 import CustomerMobileApp.*;
+import CustomerMobileApp.DTO.Report;
 import DTUPay.Holders.MerchantHolder;
 import DTUPay.Holders.OtherMerchantHolder;
 import DTUPay.Holders.TokenHolder;
@@ -13,10 +14,16 @@ import static org.junit.Assert.*;
 
 public class ReportingSteps {
 
+    //Adapters
+    MerchantAdapter merchantAdapter = new MerchantAdapter();
+
     // Holders
     private MerchantHolder merchant;
     private OtherMerchantHolder otherMerchant;
     TokenHolder tokenHolder;
+
+    //Class specifics
+    Report report;
 
     public ReportingSteps(MerchantHolder merchant, OtherMerchantHolder otherMerchant, TokenHolder tokenHolder) {
         this.merchant = merchant;
@@ -24,14 +31,9 @@ public class ReportingSteps {
         this.tokenHolder = tokenHolder;
     }
 
-    // Adapters
-    ReportingAdapter reportingAdapter = new ReportingAdapter();
-
-    Report report;
-
     @When("the merchant requests a report of transactions")
     public void theMerchantRequestsAReportOfTransactions() {
-        report = reportingAdapter.getReportFor(merchant.getId());
+        report = merchantAdapter.getMerchantReport(merchant.getId());
         assertNotNull(report);
     }
 
