@@ -1,8 +1,6 @@
 package messaging.rmq;
 
 import java.io.IOException;
-import java.util.Set;
-import java.util.HashSet;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -10,11 +8,9 @@ import com.rabbitmq.client.ConnectionFactory;
 public class RMQChannel {
     public static final RMQChannel instance = new RMQChannel();
 
-    // Set<String> exchances;
     private final Channel channel;
 
     public RMQChannel() {
-        // this.exchances = new HashSet<String>();
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("rabbitMq");
         try {
@@ -28,13 +24,12 @@ public class RMQChannel {
     public void exchangeDeclare(String exchangeName, String exchangeType) {
         try {
             this.channel.exchangeDeclare(exchangeName, exchangeType);
-            // this.exchances.add(exchangeName);
         } catch (IOException e) {
             throw new Error(e);
         }
     }
 
-    public void queueDeclare(String queueName, String exchanceName) {
+    public void queueDeclare(String queueName) {
         try {
             channel.queueDeclare(queueName, true, false, false, null);
         } catch (IOException e) {
@@ -42,9 +37,9 @@ public class RMQChannel {
         }
     }
 
-    public void queueBind(String queueName, String exchanceName, String routingKey) {
+    public void queueBind(String queueName, String exchangeName, String routingKey) {
         try {
-            channel.queueBind(queueName, exchanceName, routingKey);
+            channel.queueBind(queueName, exchangeName, routingKey);
         } catch (IOException e) {
             throw new Error(e);
         }
