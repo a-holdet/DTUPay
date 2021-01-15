@@ -36,7 +36,7 @@ Feature: Reporting
       Given the customer has a bank account
       And the customer is registering with DTUPay
       And the merchant has a bank account
-      And the merchant is registered with DTUPay
+      And the merchant is registering with DTUPay
       And the merchant and customer perform a successful payment of 10 kr for a "Gulddame"
       When the customer requests a report of transactions
       Then the customer receives a report having a transaction of 10 kr for a "Gulddame" to the merchant using the same token
