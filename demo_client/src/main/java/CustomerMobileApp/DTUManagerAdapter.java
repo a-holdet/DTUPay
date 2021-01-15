@@ -1,6 +1,7 @@
 package CustomerMobileApp;
 
-import CustomerMobileApp.DTO.Report;
+import CustomerMobileApp.DTO.UserReport;
+import CustomerMobileApp.DTO.Transaction;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -17,7 +18,7 @@ public class DTUManagerAdapter {
         baseUrl = client.target("http://localhost:8042/managerapi");
     }
 
-    public List<Report> getReport() {
+    public List<Transaction> getManagerOverview() {
         return baseUrl
                 .path("reports")
                 .request()

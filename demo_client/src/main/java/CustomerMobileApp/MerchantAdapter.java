@@ -2,7 +2,7 @@ package CustomerMobileApp;
 
 import CustomerMobileApp.DTO.DTUPayUser;
 import CustomerMobileApp.DTO.Payment;
-import CustomerMobileApp.DTO.Report;
+import CustomerMobileApp.DTO.UserReport;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -44,7 +44,7 @@ public class MerchantAdapter {
         response.close();
     }
 
-    public Report getMerchantReport(String merchantId) {
+    public UserReport getMerchantReport(String merchantId) {
         return baseUrl
                 .path("reports")
                 .queryParam("id", merchantId)

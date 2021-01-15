@@ -6,4 +6,6 @@ public interface ICustomerService {
     boolean customerExists(String customerId);
 
     String getCustomerAccountId(String customerId);
+
+    Customer getCustomerWith(String customerId);
 }

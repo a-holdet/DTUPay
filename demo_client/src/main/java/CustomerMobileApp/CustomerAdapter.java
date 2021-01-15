@@ -2,6 +2,7 @@ package CustomerMobileApp;
 
 import CustomerMobileApp.DTO.DTUPayUser;
 import CustomerMobileApp.DTO.TokenRequestObject;
+import CustomerMobileApp.DTO.UserReport;
 import io.quarkus.security.UnauthorizedException;
 
 import javax.ws.rs.client.Client;
@@ -63,4 +64,11 @@ public class CustomerAdapter {
         return createdTokens;
     }
 
+    public UserReport getCustomerReport(String customerID) {
+        return baseUrl
+                .path("reports")
+                .queryParam("id", customerID)
+                .request()
+                .get(new GenericType<>() {});
+    }
 }
