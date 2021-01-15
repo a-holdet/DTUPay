@@ -1,7 +1,7 @@
 Feature: TokenGeneration
 	Scenario: Successful Token Generation
 		Given the customer has a bank account
-		And the customer is registered with DTUPay
+		And the customer is registering with DTUPay
 		And the customer has 0 tokens
 		When the customer requests 5 tokens
 		Then the customer has 5 tokens
@@ -14,7 +14,7 @@ Feature: TokenGeneration
 
 	Scenario: Customer has multiple tokens and requests more tokens
 		Given the customer has a bank account
-		And the customer is registered with DTUPay
+		And the customer is registering with DTUPay
 		And the customer has 0 tokens
 		And the customer requests 2 tokens
 		And the customer has 2 tokens
@@ -24,7 +24,7 @@ Feature: TokenGeneration
 
 	Scenario: Customer requests too many tokens
 		Given the customer has a bank account
-		And the customer is registered with DTUPay
+		And the customer is registering with DTUPay
 		And the customer has 0 tokens
 		And the customer requests 1 tokens
 		And the customer has 1 tokens

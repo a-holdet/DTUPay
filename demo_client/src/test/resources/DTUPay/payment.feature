@@ -2,7 +2,7 @@ Feature: Payment
 	Scenario: Successful Payment
 		Given the customer has a bank account
 		And the balance of the customer account is 1000
-		And the customer is registered with DTUPay
+		And the customer is registering with DTUPay
 		And the merchant has a bank account
 		And the balance of the merchant account is 2000
 		And the merchant is registered with DTUPay
@@ -16,7 +16,7 @@ Feature: Payment
 	Scenario: Non-Existing Token
 		Given the customer has a bank account
 		And the balance of the customer account is 1000
-		And the customer is registered with DTUPay
+		And the customer is registering with DTUPay
 		And the merchant has a bank account
 		And the balance of the merchant account is 2000
 		And the merchant is registered with DTUPay
@@ -29,7 +29,7 @@ Feature: Payment
 	Scenario: Used Token
 		Given the customer has a bank account
 		And the balance of the customer account is 1000
-		And the customer is registered with DTUPay
+		And the customer is registering with DTUPay
 		And the merchant has a bank account
 		And the balance of the merchant account is 2000
 		And the merchant is registered with DTUPay
@@ -44,7 +44,7 @@ Feature: Payment
 	Scenario: Merchant does not exist
 		Given the customer has a bank account
 		And the balance of the customer account is 1000
-		And the customer is registered with DTUPay
+		And the customer is registering with DTUPay
 		And the merchant has a bank account
 		And the balance of the merchant account is 2000
 		And the merchant is not registered with DTUPay
@@ -58,7 +58,7 @@ Feature: Payment
 	Scenario: Payment with negative amount
 		Given the customer has a bank account
 		And the balance of the customer account is 1000
-		And the customer is registered with DTUPay
+		And the customer is registering with DTUPay
 		And the merchant has a bank account
 		And the balance of the merchant account is 2000
 		And the merchant is registered with DTUPay
