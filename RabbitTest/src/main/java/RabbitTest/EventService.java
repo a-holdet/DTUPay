@@ -9,19 +9,34 @@ import messaging.rmq.event.objects.Event;
 
 public class EventService implements IEventReceiver {
 
-	public static EventService instance = new EventService();
+	public static EventService instance = null; // startUp(); //cannot be used until after startUp();
+
+	public static void startUp() {
+		if (instance == null) {
+			try {
+				var s = EventExchange.instance.getSender();
+				EventService service = new EventService(s);
+				new EventQueue().registerReceiver(service);
+				instance = service;
+			} catch (Exception e) {
+				throw new Error(e);
+			}
+		}
+	}
 
 	IEventSender sender;
 
-	public EventService() {
-		super();
-		System.out.println("Without IEventSender");
-		//this.sender = EventExchange.instance.getSender();
-	}
+//	public EventService() {
+//		try {
+//			this.sender = EventExchange.instance.getSender();
+//			new EventQueue().registerReceiver(this);
+//		}
+//		catch (Exception e) {
+//			throw new Error(e);
+//		}
+//	}
 
 	public EventService(IEventSender sender) {
-		super();
-		System.out.println("With IEventSender");
 		this.sender = sender;
 	}
 
@@ -33,40 +48,12 @@ public class EventService implements IEventReceiver {
 
 	@Override
 	public void receiveEvent(Event event) throws Exception {
-//		System.out.println("handling event: " + event);
-		if (event.getEventType().equals("a")) {
-			Event e = new Event("b");
+		System.out.println("handling event: " + event);
+		if (event.getEventType().equals("RabbitTest a")) {
+			Event e = new Event("RabbitTest b");
 			this.sendEvent(e);
 		} else {
 			System.out.println("event ignored: " + event);
 		}
 	}
 }
-
-/*
-* package RabbitTest;
-
-import messaging.rmq.event.interfaces.IEventReceiver;
-import messaging.rmq.event.interfaces.IEventSender;
-import messaging.rmq.event.objects.Event;
-
-public class EventService implements IEventReceiver {
-	IEventSender sender;
-
-	public EventService(IEventSender sender) {
-		this.sender = sender;
-	}
-
-	@Override
-	public void receiveEvent(Event event) throws Exception {
-		if (event.getEventType().equals("a")) {
-			System.out.println("handling event: " + event);
-			Event e = new Event("b");
-			sender.sendEvent(e);
-		} else {
-			System.out.println("event ignored: " + event);
-		}
-	}
-}
-
-* */

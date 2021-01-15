@@ -35,19 +35,23 @@ public class RabbitMQEventService implements IEventService, IEventReceiver {
 
 	@Override
 	public boolean doSomething() throws Exception {
-		Event event = new Event("a");
-		result = new CompletableFuture<>();
+		Event event = new Event("RabbitTest a");
+		result = new CompletableFuture<>(); // I promise that in the future i will have a value. (Asyc communication)
 
 		eventSender.sendEvent(event);
 
-		return result.join();
+		return result.join(); // Get the future value of result.
 	}
 
 	@Override
-	public void receiveEvent(Event event) {
-		if (event.getEventType().equals("b")) {
+	public void receiveEvent(Event event) throws Exception {
+		if (event.getEventType().equals("RabbitTest b")) {
 			System.out.println("event handled: " + event);
-			result.complete(true);
+
+			result.complete(true);	// set the future value to true which completes the future.
+
+			event = new Event("TokenTest a");
+			eventSender.sendEvent(new Event("TokenTest a"));
 		} else {
 			System.out.println("event ignored: " + event);
 		}

@@ -1,6 +1,6 @@
 Feature: EventService feature
 
   Scenario: Event
-    When I receive event "a"
-    Then I have sent event "b"
+    When I receive event "RabbitTest a"
+    Then I have sent event "RabbitTest b"
     

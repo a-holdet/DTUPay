@@ -23,6 +23,13 @@ services:
     image: rabbitmq
     container_name: rabbitMq_container
 
+
+  # rabbitMq:
+  #   image: rabbitmq:management
+  #   container_name: rabbitMq_container
+  #   ports:
+  #    - "8080:15672"
+
   # Nginx:
   #   image: nginx:latest
   #   container_name: nginx_reverseProxy
