@@ -13,6 +13,11 @@ mvn clean package
 docker build -t rabbitmqtest .
 popd
 
+pushd TokenMicroService
+mvn clean package
+docker build -t tokenmicroservice .
+popd
+
 pushd DTUPay
 mvn clean package
 docker build -t dtupay .
@@ -21,8 +26,8 @@ popd
 docker image prune -f
 # docker-compose down
 docker-compose up -d rabbitMq
-sleep 10s
-docker-compose up -d RabbitMQTest dtupay
+sleep 20s
+docker-compose up -d RabbitMQTest TokenMicroService dtupay
 sleep 5s
 
 # Update the set of services and

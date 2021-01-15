@@ -2,7 +2,7 @@ version: '3'
 services:    
   dtupay:
     image: dtupay
-    container_name: dtupay    
+    container_name: dtupay
     ports:
      - "8042:8080"
 
@@ -12,6 +12,12 @@ services:
     depends_on:
      - "rabbitMq"
     # command: ["./wait-for-it.sh","rabbitmq:5672","java", "-Xmx64m", "-jar", "rabbitmqtest-1.0.0.jar"]
+
+  TokenMicroService:
+    image: tokenmicroservice
+    container_name: tokenmicroservice
+    depends_on:
+      - "rabbitMq"
 
   rabbitMq:
     image: rabbitmq
