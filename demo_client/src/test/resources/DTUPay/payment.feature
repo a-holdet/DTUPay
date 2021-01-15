@@ -5,7 +5,7 @@ Feature: Payment
 		And the customer is registering with DTUPay
 		And the merchant has a bank account
 		And the balance of the merchant account is 2000
-		And the merchant is registered with DTUPay
+		And the merchant is registering with DTUPay
 		And the customer requests 5 tokens
 		And the customer selects a token
 		When the merchant initiates a payment for 10 kr using the selected customer token
@@ -19,7 +19,7 @@ Feature: Payment
 		And the customer is registering with DTUPay
 		And the merchant has a bank account
 		And the balance of the merchant account is 2000
-		And the merchant is registered with DTUPay
+		And the merchant is registering with DTUPay
 		And the customer selects a non-valid token
 		When the merchant initiates a payment for 10 kr using the selected customer token
 		Then the payment fails
@@ -32,7 +32,7 @@ Feature: Payment
 		And the customer is registering with DTUPay
 		And the merchant has a bank account
 		And the balance of the merchant account is 2000
-		And the merchant is registered with DTUPay
+		And the merchant is registering with DTUPay
 		And the customer requests 5 tokens
 		And the customer selects a token
 		And the merchant initiates a payment for 10 kr using the selected customer token
@@ -61,7 +61,7 @@ Feature: Payment
 		And the customer is registering with DTUPay
 		And the merchant has a bank account
 		And the balance of the merchant account is 2000
-		And the merchant is registered with DTUPay
+		And the merchant is registering with DTUPay
 		And the customer requests 5 tokens
 		And the customer selects a token
 		When the merchant initiates a payment for -10 kr using the selected customer token

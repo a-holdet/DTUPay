@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 
 import static org.junit.Assert.*;
 
-public class RegistrationSteps {
+public class CustomerRegistrationSteps {
     //Adapters
     BankService bankService = new BankServiceService().getBankServicePort();
     CustomerAdapter customerAdapter = new CustomerAdapter();
@@ -22,7 +22,7 @@ public class RegistrationSteps {
     private final CustomerHolder customerHolder;
     ExceptionHolder exceptionHolder;
 
-    public RegistrationSteps(CustomerHolder customerHolder, ExceptionHolder exceptionHolder) {
+    public CustomerRegistrationSteps(CustomerHolder customerHolder, ExceptionHolder exceptionHolder) {
         this.customerHolder = customerHolder;
         this.exceptionHolder = exceptionHolder;
     }
@@ -54,16 +54,11 @@ public class RegistrationSteps {
         //Do not create account
     }
 
-    @Then("the customer registration is not successful")
-    public void theRegistrationIsNotSuccessful() {
-        assertNull(customerHolder.getId());
-    }
-
     @And("the customer is registering with DTUPay")
     public void theCustomerIsRegisteringWithDTUPay() {
         try {
-            customerHolder.setId(customerAdapter.registerCustomer(customerHolder.getFirstName(), customerHolder.getLastName(), customerHolder.getCpr(), customerHolder.getAccountId()));
-            assertNotNull(customerHolder.getId());
+            String customerId = customerAdapter.registerCustomer(customerHolder.getFirstName(), customerHolder.getLastName(), customerHolder.getCpr(), customerHolder.getAccountId());
+            customerHolder.setId(customerId);
         } catch (IllegalArgumentException e) {
             exceptionHolder.setException(e);
             customerHolder.setId(null);
@@ -73,6 +68,11 @@ public class RegistrationSteps {
     @Then("the customer registration is successful")
     public void theRegistrationIsSuccessful() {
         assertNotNull(customerHolder.getId());
+    }
+
+    @Then("the customer registration is not successful")
+    public void theRegistrationIsNotSuccessful() {
+        assertNull(customerHolder.getId());
     }
 
     @And("the error message is {string}")

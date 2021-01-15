@@ -32,11 +32,9 @@ public class CustomerAdapter {
             throw new IllegalArgumentException(errorMessage);
         }
 
-        //TODO: unsure what is returned by server here.
-        // Assumes it to be accountId.
-        String accountId = response.readEntity(String.class);
+        String customerId = response.readEntity(String.class);
         response.close();
-        return accountId;
+        return customerId;
     }
 
     public List<UUID> createTokensForCustomer(String customerId, int amount) throws Exception {
