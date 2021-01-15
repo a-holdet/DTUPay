@@ -12,12 +12,13 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.UUID;
 
-@Path("/tokens")
+@Path("/customerapi/tokens")
 public class TokenResource {
     ITokenService tokenService  = TokenService.instance;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response createTokensForCustomer(TokenCreationDTO request) {
         String customerId = request.getUserId();
         int amount = request.getTokenAmount();
@@ -29,20 +30,5 @@ public class TokenResource {
         } catch (IllegalTokenGrantingException e) {
             return Response.status(403).entity(e.getMessage()).build(); // Forbidden operation (i.e. user tries to request more tokens than allowed"
         }
-    }
-
-    @GET
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response ListTokens(@QueryParam("id") String customerId) {
-        List<UUID> tokens = tokenService.readTokensForCustomer(customerId);
-        return Response.ok(tokens).build();
-    }
-
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response deleteTokensForCustomer(@QueryParam("cpr") String cpr) {
-        tokenService.deleteTokensForCustomer(cpr);
-
-        return Response.ok().build();
     }
 }

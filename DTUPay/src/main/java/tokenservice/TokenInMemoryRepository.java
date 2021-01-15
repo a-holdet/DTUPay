@@ -5,7 +5,6 @@ import java.util.*;
 public class TokenInMemoryRepository implements ITokenRepository{
     Map<UUID, String> persistence = new HashMap<>();
 
-
     @Override
     public void add(UUID token, String customerId) {
         persistence.put(UUID.randomUUID(), customerId);
@@ -18,11 +17,6 @@ public class TokenInMemoryRepository implements ITokenRepository{
             if (persistence.get(uuid).equals(customerId)) tokens.add(uuid);
         }
         return tokens;
-    }
-
-    @Override
-    public void deleteTokensForCustomer(String customerId) {
-        persistence.entrySet().removeIf(entry -> entry.getValue().equals(customerId));
     }
 
     @Override

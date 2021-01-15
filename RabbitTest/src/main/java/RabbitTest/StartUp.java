@@ -1,17 +1,19 @@
 package RabbitTest;
 
-import messaging.EventSender;
-import messaging.channels.EventServiceListener;
-import messaging.rabbitmq.RabbitMqSender;
+import messaging.rmq.event.EventQueueEvents;
+import messaging.rmq.event.interfaces.IEventSender;
 
 public class StartUp {
-    public static void main(String[] args) throws Exception {
-    	new StartUp().startUp();
-    }
+
+	static EventQueueEvents eventQueueEvents = EventQueueEvents.instance;
+
+	public static void main(String[] args) throws Exception {
+		new StartUp().startUp();
+	}
 
 	private void startUp() throws Exception {
-		EventSender s = new RabbitMqSender();
+		IEventSender s = eventQueueEvents.getSender();
 		EventService service = new EventService(s);
-		new EventServiceListener(service).listen();
+		eventQueueEvents.registerReceiver(service);
 	}
 }
