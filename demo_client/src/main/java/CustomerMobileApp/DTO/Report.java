@@ -1,14 +1,11 @@
 package CustomerMobileApp.DTO;
 
-import CustomerMobileApp.DTO.Payment;
-import dtu.ws.fastmoney.User;
-
 import java.util.List;
 
 public class Report {
 
     private List<Payment> payments;
-    private User merchant;
+    private DTUPayUser user;
 
     public Report() {}
 
@@ -20,12 +17,11 @@ public class Report {
         this.payments = payments;
     }
 
-    public User getMerchant() {
-        return merchant;
+    public DTUPayUser getUser() {
+        return user;
     }
 
-    public void setMerchant(User merchant) {
-        this.merchant = merchant;
+    public void setUser(DTUPayUser user) {
+        this.user = user;
     }
-
 }

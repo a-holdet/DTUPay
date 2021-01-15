@@ -13,9 +13,8 @@ public class EventServiceSteps {
 
 	public EventServiceSteps() {
 		s = new EventService(new IEventSender() {
-
 			@Override
-			public void sendEvent(Event ev) throws Exception {
+			public void sendEvent(Event ev) {
 				event = ev;
 			}
 		});

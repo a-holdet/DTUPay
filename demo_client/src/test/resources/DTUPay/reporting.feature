@@ -19,3 +19,15 @@ Feature: Reporting
       And the other merchant and customer perform a successful payment of 20 kr for a "Tuborg"
       When the merchant requests a report of transactions
       Then he does not see the other merchants report
+
+    Scenario: DTUPay can access all reports
+      Given the customer has a bank account
+      And the customer is registered with DTUPay
+      And the merchant has a bank account
+      And the merchant is registered with DTUPay
+      And another merchant has a bank account
+      And the other merchant is registered with DTUPay
+      And the merchant and customer perform a successful payment of 10 kr for a "Gulddame"
+      And the other merchant and customer perform a successful payment of 20 kr for a "Tuborg"
+      When DTUPay requests a report of transactions
+      Then DTUPay receives a report including both transactions

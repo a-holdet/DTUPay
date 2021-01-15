@@ -1,4 +1,4 @@
-package CustomerMobileApp.DTO;
+package DTO;
 
 public class DTUPayUser {
     private String firstName;
@@ -45,6 +45,4 @@ public class DTUPayUser {
         this.cprNumber = cprNumber;
         this.accountId = accountId;
     }
-
-    public DTUPayUser() {}
 }

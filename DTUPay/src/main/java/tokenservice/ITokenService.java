@@ -10,7 +10,5 @@ public interface ITokenService {
 
     List<UUID> readTokensForCustomer(String cpr);
 
-    void deleteTokensForCustomer(String cpr);
-
     String consumeToken(UUID customerToken) throws TokenDoesNotExistException;
 }
