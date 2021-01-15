@@ -1,5 +1,7 @@
 package DTUPay.Holders;
 
+import java.util.Random;
+
 public abstract class UserHolder {
     private String id;
     private String firstName;
@@ -54,5 +56,10 @@ public abstract class UserHolder {
 
     public void setCpr(String cpr) {
         this.cpr = cpr;
+    }
+
+    protected int getRandomNumberInRange(int min, int max) {
+        Random r = new Random();
+        return r.nextInt((max - min) + 1) + min;
     }
 }

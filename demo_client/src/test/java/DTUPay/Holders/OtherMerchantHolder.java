@@ -1,4 +1,4 @@
 package DTUPay.Holders;
 
-public class OtherMerchantHolder extends UserHolder {
+public class OtherMerchantHolder extends MerchantHolder {
 }

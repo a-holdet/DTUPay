@@ -14,7 +14,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 
 import java.math.BigDecimal;
-import java.util.Random;
 
 import static org.junit.Assert.*;
 
@@ -66,33 +65,9 @@ public class RegistrationSteps {
         }
     }
 
-    private int getRandomNumberInRange(int min, int max) { //TODO move to holder
-        Random r = new Random();
-        return r.nextInt((max - min) + 1) + min;
-    }
-
-    private void setCustomerHolderBasics(){ //TODO move to holder
-        int lastFour = getRandomNumberInRange(1000,9999);
-        String cpr = "200167-"+ lastFour;
-
-        customerHolder.setFirstName("Stein");
-        customerHolder.setLastName("Bagger");
-        customerHolder.setCpr(cpr);
-    }
-
-    private void setMerchantHolderBasicsFor(UserHolder merchantHolder){ //TODO move to holder
-        int lastFour = getRandomNumberInRange(1000,9999);
-        String cpr = "150363-"+ lastFour;
-
-
-        merchantHolder.setFirstName("Joe");
-        merchantHolder.setLastName("Exotic");
-        merchantHolder.setCpr(cpr);
-    }
-
     @Given("the customer has a bank account")
     public void theCustomerHasABankAccount() {
-        setCustomerHolderBasics();
+        customerHolder.setCustomerBasics();
         User customerBank = new User();
         customerBank.setFirstName(customerHolder.getFirstName());
         customerBank.setLastName(customerHolder.getLastName());
@@ -111,7 +86,7 @@ public class RegistrationSteps {
 
     @And("the merchant has a bank account")
     public void theMerchantHasABankAccount() throws BankServiceException_Exception {
-        setMerchantHolderBasicsFor(merchantHolder);
+        merchantHolder.setMerchantBasics();
         User merchantBank = new User();
         merchantBank.setFirstName(merchantHolder.getFirstName());
         merchantBank.setLastName(merchantHolder.getLastName());
@@ -142,14 +117,14 @@ public class RegistrationSteps {
 
     @Given("the customer has no bank account")
     public void theCustomerWithNameAndCPRHasNoBankAccount() {
-        setCustomerHolderBasics();
+        customerHolder.setCustomerBasics();
         //Do not create account
     }
 
 
     @And("another merchant has a bank account")
     public void anotherMerchantHasABankAccount() throws BankServiceException_Exception {
-        setMerchantHolderBasicsFor(otherMerchantHolder);
+        otherMerchantHolder.setMerchantBasics();
         User merchantBank = new User();
         merchantBank.setFirstName(otherMerchantHolder.getFirstName());
         merchantBank.setLastName(otherMerchantHolder.getLastName());
