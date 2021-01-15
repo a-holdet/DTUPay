@@ -7,8 +7,8 @@ services:
      - "8042:8080"
 
   RabbitMQTest:
-    image: rabbitmqtest
-    container_name: rabbitmqtest
+    image: rabbittest
+    container_name: rabbittest
     depends_on:
      - "rabbitMq"
     # command: ["./wait-for-it.sh","rabbitmq:5672","java", "-Xmx64m", "-jar", "rabbitmqtest-1.0.0.jar"]
