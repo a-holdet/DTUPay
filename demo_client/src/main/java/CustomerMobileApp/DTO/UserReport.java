@@ -1,16 +1,13 @@
-package reportservice;
-
-import DTO.DTUPayUser;
-import paymentservice.Payment;
+package CustomerMobileApp.DTO;
 
 import java.util.List;
 
-public class Report {
+public class UserReport {
 
     private List<Payment> payments;
     private DTUPayUser user;
 
-    public Report() {}
+    public UserReport() {}
 
     public List<Payment> getPayments() {
         return payments;

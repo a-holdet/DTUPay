@@ -62,4 +62,11 @@ public abstract class UserHolder {
         Random r = new Random();
         return r.nextInt((max - min) + 1) + min;
     }
+
+    public String getRandomCpr(){
+        int fourRandomDigits = getRandomNumberInRange(1000,9999);
+        int anotherFourRandomDigits = getRandomNumberInRange(1000,9999);
+        int lastFourRandomDigits = getRandomNumberInRange(1000,9999);
+        return fourRandomDigits + anotherFourRandomDigits + "-" + lastFourRandomDigits;
+    }
 }

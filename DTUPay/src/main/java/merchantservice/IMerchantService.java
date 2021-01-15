@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IMerchantService {
-    String registerMerchant(Merchant merchant);
+    String registerMerchant(Merchant merchant) throws IllegalArgumentException;
 
     String getMerchantAccountId(String merchantId);
 

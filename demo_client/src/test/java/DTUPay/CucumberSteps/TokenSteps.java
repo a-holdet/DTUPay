@@ -20,7 +20,6 @@ public class TokenSteps {
     //Adapters
     BankService bankService;
     CustomerAdapter customerAdapter = new CustomerAdapter();
-    //MerchantAdapter merchantAdapter = new MerchantAdapter();
 
     //Holders
     private final TokenHolder tokenHolder;
@@ -55,8 +54,6 @@ public class TokenSteps {
         try {
             tokenHolder.setTokens(customerAdapter.createTokensForCustomer(customerHolder.getId(), tokenAmount));
         } catch (Exception e) {
-            System.out.println("what");
-            System.out.println(e.getMessage());
             this.exceptionHolder.setException(e);
         }
     }

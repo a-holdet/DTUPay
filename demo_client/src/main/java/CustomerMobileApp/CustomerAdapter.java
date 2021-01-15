@@ -2,6 +2,7 @@ package CustomerMobileApp;
 
 import CustomerMobileApp.DTO.DTUPayUser;
 import CustomerMobileApp.DTO.TokenRequestObject;
+import CustomerMobileApp.DTO.UserReport;
 import io.quarkus.security.UnauthorizedException;
 
 import javax.ws.rs.client.Client;
@@ -32,11 +33,9 @@ public class CustomerAdapter {
             throw new IllegalArgumentException(errorMessage);
         }
 
-        //TODO: unsure what is returned by server here.
-        // Assumes it to be accountId.
-        String accountId = response.readEntity(String.class);
+        String customerId = response.readEntity(String.class);
         response.close();
-        return accountId;
+        return customerId;
     }
 
     public List<UUID> createTokensForCustomer(String customerId, int amount) throws Exception {
@@ -63,4 +62,11 @@ public class CustomerAdapter {
         return createdTokens;
     }
 
+    public UserReport getCustomerReport(String customerID) {
+        return baseUrl
+                .path("reports")
+                .queryParam("id", customerID)
+                .request()
+                .get(new GenericType<>() {});
+    }
 }

@@ -1,39 +1,40 @@
-/*
 package reportservice;
 
+import paymentservice.Payment;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Transaction {
-
-    private UUID token;
-    private String description;
-    private int amount;
+    public UUID customerToken;
+    public String merchantId;
+    public String description;
+    public BigDecimal amount;
+    public String customerId;
+    public LocalDateTime datetime;
 
     public Transaction() {}
 
-    public UUID getToken() {
-        return token;
-    }
-
-    public void setToken(UUID token) {
-        this.token = token;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
+    public Transaction(UUID customerToken, String merchantId, String description, BigDecimal amount, String customerId, LocalDateTime datetime) {
+        this.customerToken = customerToken;
+        this.merchantId = merchantId;
         this.description = description;
-    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-    public void setAmount(int amount) {
         this.amount = amount;
+        this.customerId = customerId;
+        this.datetime = datetime;
     }
 
+    public Payment toPayment() {
+        return new Payment(amount, customerToken, merchantId, description);
+    }
+
+    public Transaction(Payment payment, String customerId, LocalDateTime time) {
+        this.customerToken = payment.customerToken;
+        this.merchantId = payment.merchantId;
+        this.description = payment.description;
+        this.amount = payment.amount;
+        this.customerId = customerId;
+        this.datetime = time;
+    }
 }
-*/

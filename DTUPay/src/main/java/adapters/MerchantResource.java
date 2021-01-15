@@ -22,8 +22,12 @@ public class MerchantResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public String create(Merchant merchant) {
-        merchantService.registerMerchant(merchant);
-        return merchant.id;
+    public Response create(Merchant merchant) {
+        try{
+            String merchantId = merchantService.registerMerchant(merchant);
+            return Response.ok(merchantId).build();
+        } catch (IllegalArgumentException e){
+            return Response.status(422).entity(e.getMessage()).build();
+        }
     }
 }

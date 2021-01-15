@@ -24,6 +24,7 @@ public class PaymentService implements IPaymentService {
     IBank bank = new DTUBankPort();
     IReportService reportService = ReportService.instance;
 
+    //TODO: Make private to ensure singleton-pattern
     public PaymentService(){
     }
 
@@ -51,6 +52,6 @@ public class PaymentService implements IPaymentService {
         );
 
         //TODO: This assumes all transfers are successful! Refactor to wrap .transferMoneyFromTo in try-catch and only log successful transfers.
-        reportService.registerPayment(payment);
+        reportService.registerTransaction(payment, customerId);
     }
 }

@@ -5,8 +5,8 @@ import paymentservice.Payment;
 import java.util.List;
 
 public interface IReportService {
-    Report generateReportFor(String merchantId);
-    void registerPayment(Payment payment);
-
-    List<Report> generateAllReports();
+    UserReport generateReportForCustomer(String customerId);
+    UserReport generateReportForMerchant(String merchantId);
+    void registerTransaction(Payment payment, String customerId);
+    List<Transaction> generateManagerOverview();
 }

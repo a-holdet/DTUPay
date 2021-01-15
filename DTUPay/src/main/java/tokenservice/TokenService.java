@@ -28,7 +28,6 @@ public class TokenService implements ITokenService {
         if (!customerService.customerExists(customerId))
             throw new UnauthorizedException("Customer must have a customer id to request tokens");
 
-        System.out.println("hey");
         for (int i = 0; i < amount; i++) {
             tokenRepository.add(UUID.randomUUID(), customerId);
         }

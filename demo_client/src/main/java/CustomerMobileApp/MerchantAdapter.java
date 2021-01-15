@@ -2,7 +2,7 @@ package CustomerMobileApp;
 
 import CustomerMobileApp.DTO.DTUPayUser;
 import CustomerMobileApp.DTO.Payment;
-import CustomerMobileApp.DTO.Report;
+import CustomerMobileApp.DTO.UserReport;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -22,9 +22,18 @@ public class MerchantAdapter {
         baseUrl = client.target("http://localhost:8042/merchantapi");
     }
 
-    public String registerMerchant(String firstName, String lastName, String cprNumber, String merchantAccountId) {
-        DTUPayUser customer = new DTUPayUser(firstName, lastName, cprNumber, merchantAccountId);
-        String merchantId = baseUrl.path("merchants").request().post(Entity.entity(customer, MediaType.APPLICATION_JSON),String.class);
+    public String registerMerchant(String firstName, String lastName, String cprNumber, String merchantAccountId) throws IllegalArgumentException{
+        DTUPayUser merchant = new DTUPayUser(firstName, lastName, cprNumber, merchantAccountId);
+        Response response = baseUrl.path("merchants").request().post(Entity.entity(merchant, MediaType.APPLICATION_JSON));
+
+        if(response.getStatus()==422){
+            String errorMessage = response.readEntity(String.class); //error message is in payload
+            response.close();
+            throw new IllegalArgumentException(errorMessage);
+        }
+
+        String merchantId = response.readEntity(String.class);
+        response.close();
         return merchantId;
     }
 
@@ -44,7 +53,7 @@ public class MerchantAdapter {
         response.close();
     }
 
-    public Report getMerchantReport(String merchantId) {
+    public UserReport getMerchantReport(String merchantId) {
         return baseUrl
                 .path("reports")
                 .queryParam("id", merchantId)
