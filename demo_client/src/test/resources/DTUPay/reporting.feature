@@ -34,7 +34,7 @@ Feature: Reporting
 
     Scenario: Successful Customer Reporting
       Given the customer has a bank account
-      And the customer is registered with DTUPay
+      And the customer is registering with DTUPay
       And the merchant has a bank account
       And the merchant is registered with DTUPay
       And the merchant and customer perform a successful payment of 10 kr for a "Gulddame"
