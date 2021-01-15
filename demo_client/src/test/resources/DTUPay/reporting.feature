@@ -1,5 +1,5 @@
 Feature: Reporting
-    Scenario: Successful Reporting
+    Scenario: Successful Merchant Reporting
       Given the customer has a bank account
       And the customer is registering with DTUPay
       And the merchant has a bank account
@@ -31,3 +31,12 @@ Feature: Reporting
       And the other merchant and customer perform a successful payment of 20 kr for a "Tuborg"
       When DTUPay requests a report of transactions
       Then DTUPay receives a report including both transactions
+
+    Scenario: Successful Customer Reporting
+      Given the customer has a bank account
+      And the customer is registering with DTUPay
+      And the merchant has a bank account
+      And the merchant is registered with DTUPay
+      And the merchant and customer perform a successful payment of 10 kr for a "Gulddame"
+      When the customer requests a report of transactions
+      Then the customer receives a report having a transaction of 10 kr for a "Gulddame" to the merchant using the same token

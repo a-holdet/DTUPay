@@ -1,7 +1,8 @@
 package adapters;
 
 import reportservice.IReportService;
-import reportservice.Report;
+import reportservice.Transaction;
+import reportservice.UserReport;
 import reportservice.ReportService;
 
 import javax.ws.rs.Consumes;
@@ -19,8 +20,8 @@ public class ManagerReportingResource {
 
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response getAllReports() {
-        List<Report> reports = reportService.generateAllReports();
-        return Response.ok(reports).build();
+    public Response generateManagerOverview() {
+        List<Transaction> transactions = reportService.generateManagerOverview();
+        return Response.ok(transactions).build();
     }
 }

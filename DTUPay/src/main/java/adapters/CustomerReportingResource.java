@@ -1,8 +1,8 @@
 package adapters;
 
 import reportservice.IReportService;
-import reportservice.UserReport;
 import reportservice.ReportService;
+import reportservice.UserReport;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -11,16 +11,17 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/merchantapi/reports")
-public class MerchantReportingResource {
+@Path("/customerapi/reports")
+public class CustomerReportingResource {
+
     IReportService reportService = ReportService.instance;
-    public MerchantReportingResource() {}
+
+    public CustomerReportingResource() {}
 
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response getReportForMerchant(@QueryParam("id") String merchantId) {
-        UserReport report = reportService.generateReportForMerchant(merchantId);
+    public Response getReportForCustomer(@QueryParam("id") String customerId) {
+        UserReport report = reportService.generateReportForCustomer(customerId);
         return Response.ok(report).build();
     }
 }
-

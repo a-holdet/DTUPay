@@ -8,5 +8,13 @@ public class Payment {
     public UUID customerToken;
     public String merchantId;
     public String description;
-    public Payment(){}
+
+    public Payment(BigDecimal amount, UUID customerToken, String merchantId, String description) {
+        this.amount = amount;
+        this.customerToken = customerToken;
+        this.merchantId = merchantId;
+        this.description = description;
+    }
+
+    public Payment() {}
 }

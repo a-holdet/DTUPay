@@ -38,4 +38,14 @@ public class LocalCustomerService implements ICustomerService {
                 return customer.accountId;
         return null;
     }
+
+    @Override
+    public Customer getCustomerWith(String customerId) {
+        if(customerId==null)
+            return null;
+        for(Customer customer : customerRepository.getAllCustomers())
+            if(customer.id.equals(customerId))
+                return customer;
+        return null;
+    }
 }
