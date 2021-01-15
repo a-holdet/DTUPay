@@ -29,3 +29,5 @@ Feature: Reporting
       And the other merchant is registered with DTUPay
       And the merchant and customer perform a successful payment of 10 kr for a "Gulddame"
       And the other merchant and customer perform a successful payment of 20 kr for a "Tuborg"
+      When DTUPay requests a report of transactions
+      Then DTUPay receives a report including both transactions

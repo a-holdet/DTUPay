@@ -31,6 +31,7 @@ public class PaymentSteps {
     private final CustomerHolder customerHolder;
     private final MerchantHolder merchantHolder;
     private final OtherMerchantHolder otherMerchantHolder;
+    private PurchasesHolder purchasesHolder;
 
     //Class specifics
     UUID selectedToken;
@@ -38,11 +39,12 @@ public class PaymentSteps {
     //String mostRecentAccountId;
     boolean successful;
 
-    public PaymentSteps(TokenHolder tokenHolder, CustomerHolder customerHolder, MerchantHolder merchantHolder, OtherMerchantHolder otherMerchantHolder) {
+    public PaymentSteps(TokenHolder tokenHolder, CustomerHolder customerHolder, MerchantHolder merchantHolder, OtherMerchantHolder otherMerchantHolder, PurchasesHolder purchasesHolder) {
         this.tokenHolder = tokenHolder;
         this.customerHolder = customerHolder;
         this.merchantHolder = merchantHolder;
         this.otherMerchantHolder = otherMerchantHolder;
+        this.purchasesHolder = purchasesHolder;
     }
 
     @Before
@@ -86,6 +88,7 @@ public class PaymentSteps {
         merchantHolder.reset();
         otherMerchantHolder.reset();
         tokenHolder.reset();
+        purchasesHolder.reset();
     }
 
 
@@ -147,12 +150,14 @@ public class PaymentSteps {
 
     @And("the other merchant and customer perform a successful payment of {int} kr for a {string}")
     public void theOtherMerchantAndCustomerPerformASuccessfulPaymentOfKrForA(int amount, String productDescription) {
+        purchasesHolder.add(amount, productDescription);
         UUID nextTokenUsedInPayment = tokenHolder.getTokens().get(1); // Extract 2nd token
         performPaymentUsing(nextTokenUsedInPayment, otherMerchantHolder, amount, productDescription);
     }
 
     @And("the merchant and customer perform a successful payment of {int} kr for a {string}")
     public void theMerchantAndCustomerPerformASuccessfulPaymentOfKrForA(int amount, String productDescription) throws Exception {
+        this.purchasesHolder.add(amount, productDescription);
         tokenHolder.setTokens(customerAdapter.createTokensForCustomer(customerHolder.getId(), 2)); // Request 2 tokens
         UUID tokenUsedInPayment = tokenHolder.getTokens().get(0); // Extract 1st token
         performPaymentUsing(tokenUsedInPayment, merchantHolder, amount, productDescription);
