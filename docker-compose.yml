@@ -18,6 +18,8 @@ services:
     container_name: tokenmicroservice
     depends_on:
       - "rabbitMq"
+    ports:
+      - "8043:8080"
 
   rabbitMq:
     image: rabbitmq

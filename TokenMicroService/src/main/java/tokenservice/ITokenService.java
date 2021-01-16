@@ -13,4 +13,6 @@ public interface ITokenService {
     void deleteTokensForCustomer(String cpr);
 
     String consumeToken(UUID customerToken) throws TokenDoesNotExistException;
+
+    List<UUID> createTokensForCustomer(String customerId, int amount) throws IllegalTokenGrantingException;
 }
