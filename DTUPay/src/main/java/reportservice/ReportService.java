@@ -56,7 +56,7 @@ public class ReportService implements IReportService {
                         .map(Transaction::toPayment)
                         .collect(Collectors.toList());
 
-        Merchant merchant = merchantService.getMerchantWith(merchantId);
+        Merchant merchant = merchantService.getMerchant(merchantId);
         DTUPayUser merchantAsUser = new DTUPayUser(merchant.firstName, merchant.lastName, merchant.cprNumber, merchant.accountId);
         UserReport report = new UserReport();
         report.setPayments(payments);
