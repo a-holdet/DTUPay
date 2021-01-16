@@ -1,12 +1,10 @@
 package org.acme;
 
 import customerservice.Customer;
-import customerservice.CustomerDoesNotExcistException;
+import customerservice.CustomerDoesNotExistException;
 import customerservice.ICustomerService;
-import customerservice.LocalCustomerService;
 import io.quarkus.test.junit.QuarkusTest;
 import merchantservice.IMerchantService;
-import merchantservice.LocalMerchantService;
 import merchantservice.Merchant;
 import merchantservice.MerchantDoesNotExistException;
 import org.junit.jupiter.api.Test;
@@ -59,12 +57,12 @@ public class ReportingResourceTest {
         }
 
         @Override
-        public String getCustomerAccountId(String customerId) throws CustomerDoesNotExcistException {
+        public String getCustomerAccountId(String customerId) throws CustomerDoesNotExistException {
             return customer.accountId;
         }
 
         @Override
-        public Customer getCustomer(String customerId) throws CustomerDoesNotExcistException {
+        public Customer getCustomer(String customerId) throws CustomerDoesNotExistException {
             return customer;
         }
     }
