@@ -5,6 +5,7 @@ import DTUPay.Holders.CustomerHolder;
 import DTUPay.Holders.ExceptionHolder;
 import dtu.ws.fastmoney.*;
 import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -16,7 +17,7 @@ import static org.junit.Assert.*;
 public class CustomerRegistrationSteps {
     //Adapters
     BankService bankService = new BankServiceService().getBankServicePort();
-    CustomerAdapter customerAdapter = new CustomerAdapter();
+    CustomerAdapter customerAdapter;
 
     //Holders
     private final CustomerHolder customerHolder;
@@ -27,8 +28,14 @@ public class CustomerRegistrationSteps {
         this.exceptionHolder = exceptionHolder;
     }
 
+    @Before
+    public void before() {
+        customerAdapter = new CustomerAdapter();
+    }
+
     @After
     public void after() {
+        customerAdapter.close();
         try {
             if (customerHolder.getAccountId() != null)
                 bankService.retireAccount(customerHolder.getAccountId());

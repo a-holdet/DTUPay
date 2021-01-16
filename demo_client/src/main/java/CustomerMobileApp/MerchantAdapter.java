@@ -11,14 +11,16 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public class MerchantAdapter {
+public class MerchantAdapter implements AutoCloseable {
+    Client client;
     WebTarget baseUrl;
 
     public MerchantAdapter(){
-        Client client = ClientBuilder.newClient();
+        client = ClientBuilder.newClient();
         baseUrl = client.target("http://localhost:8042/merchantapi");
     }
 
@@ -59,5 +61,10 @@ public class MerchantAdapter {
                 .queryParam("id", merchantId)
                 .request()
                 .get(new GenericType<>() {});
+    }
+
+    @Override
+    public void close() {
+        client.close();
     }
 }

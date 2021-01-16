@@ -1,6 +1,5 @@
 package CustomerMobileApp;
 
-import CustomerMobileApp.DTO.UserReport;
 import CustomerMobileApp.DTO.Transaction;
 
 import javax.ws.rs.client.Client;
@@ -9,19 +8,23 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import java.util.List;
 
-public class DTUManagerAdapter {
+public class DTUManagerAdapter implements AutoCloseable {
 
+    Client client;
     WebTarget baseUrl;
 
     public DTUManagerAdapter() {
-        Client client = ClientBuilder.newClient();
+        client = ClientBuilder.newClient();
         baseUrl = client.target("http://localhost:8042/managerapi");
     }
 
     public List<Transaction> getManagerOverview() {
-        return baseUrl
-                .path("reports")
-                .request()
-                .get(new GenericType<>() {});
+        return baseUrl.path("reports").request().get(new GenericType<>() {
+        });
+    }
+
+    @Override
+    public void close() {  
+        client.close();
     }
 }
