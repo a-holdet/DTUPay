@@ -86,4 +86,9 @@ public class CustomerRegistrationSteps {
     public void theErrorMessageIs(String expectedErrorMessage) {
         assertEquals(expectedErrorMessage, exceptionHolder.getException().getMessage());
     }
+
+    @And("the customer is not registered with DTUPay")
+    public void theCustomerIsNotRegisteredWithDTUPay() {
+        //No call is done as the customer is not registred
+    }
 }

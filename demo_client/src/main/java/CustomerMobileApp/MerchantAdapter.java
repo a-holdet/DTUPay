@@ -56,11 +56,22 @@ public class MerchantAdapter {
     }
 
     public UserReport getMerchantReport(String merchantId) {
-        return baseUrl
+        Response response = baseUrl.path("reports").queryParam("id", merchantId).request().get(new GenericType<>() {
+        });
+        if(response.getStatus() == 422){
+            String errorMessage = response.readEntity(String.class); // error message is in payload
+            response.close();
+            throw new IllegalArgumentException(errorMessage);
+        }
+
+        UserReport report  = response.readEntity(new GenericType<>() {});
+        return report;
+
+        /*return baseUrl
                 .path("reports")
                 .queryParam("id", merchantId)
                 .request()
-                .get(new GenericType<>() {});
+                .get(new GenericType<>() {});*/
     }
 
     public void close() {

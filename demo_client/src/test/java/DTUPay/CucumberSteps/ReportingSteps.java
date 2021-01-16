@@ -28,17 +28,19 @@ public class ReportingSteps {
     private TokenHolder tokenHolder;
     private PurchasesHolder purchasesHolder;
     private CustomerHolder customerHolder;
+    ExceptionHolder exceptionHolder;
     // Class specifics
     private UserReport report;
     private List<Transaction> managerOverview;
 
     public ReportingSteps(MerchantHolder merchant, OtherMerchantHolder otherMerchant, TokenHolder tokenHolder,
-            PurchasesHolder purchasesHolder, CustomerHolder customerHolder) {
+                          PurchasesHolder purchasesHolder, CustomerHolder customerHolder, ExceptionHolder exceptionHolder) {
         this.merchant = merchant;
         this.otherMerchant = otherMerchant;
         this.tokenHolder = tokenHolder;
         this.purchasesHolder = purchasesHolder;
         this.customerHolder = customerHolder;
+        this.exceptionHolder = exceptionHolder;
     }
 
     @Before
@@ -57,13 +59,17 @@ public class ReportingSteps {
 
     @When("the merchant requests a report of transactions")
     public void theMerchantRequestsAReportOfTransactions() {
-        report = merchantAdapter.getMerchantReport(merchant.getId());
-        assertNotNull(report);
+        try {
+            report = merchantAdapter.getMerchantReport(merchant.getId());
+            assertNotNull(report);
+        } catch (IllegalArgumentException e) {
+            this.exceptionHolder.setException(e);
+        }
     }
 
     @Then("the merchant receives a report having a transaction of {int} kr for a {string} to the merchant using the same token")
     public void theMerchantReceivesAReportHavingATransactionOfKrForAToTheMerchantUsingTheSameToken(int amount,
-            String productDescription) {
+                                                                                                   String productDescription) {
         verifyUserReport(merchant, amount, productDescription, tokenHolder.getTokens().get(0));
     }
 
@@ -101,8 +107,14 @@ public class ReportingSteps {
 
     @When("the customer requests a report of transactions")
     public void theCustomerRequestsAReportOfTransactions() {
-        report = customerAdapter.getCustomerReport(customerHolder.getId());
-        assertNotNull(report);
+        try {
+            report = customerAdapter.getCustomerReport(customerHolder.getId());
+            assertNotNull(report);
+            System.out.println("customer no error");
+        } catch (IllegalArgumentException e) {
+            System.out.println("customer error" + e.getMessage());
+            this.exceptionHolder.setException(e);
+        }
     }
 
     @Then("the customer receives a report having a transaction of {int} kr for a {string} to the merchant using the same token")
@@ -120,11 +132,22 @@ public class ReportingSteps {
         // Check transactions is correct
         boolean foundCorrectTransaction = report.getPayments().stream().anyMatch(payment ->
                 payment.customerToken.equals(token) &&
-                payment.amount.equals(BigDecimal.valueOf(amount)) &&
-                payment.description.equals(productDescription)
+                        payment.amount.equals(BigDecimal.valueOf(amount)) &&
+                        payment.description.equals(productDescription)
         );
 
         assertTrue(foundCorrectTransaction);
         assertEquals(report.getPayments().size(), 1);
+    }
+
+    @Then("the merchant does not receive a report")
+    public void theMerchantDoesNotReceiveAReport() {
+        assertNull(report);
+    }
+
+    @Then("the customer does not receive a report")
+    public void theCustomerDoesNotReceiveAReport() {
+        assertNull(report);
+
     }
 }

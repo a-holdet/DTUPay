@@ -7,6 +7,7 @@ import customerservice.LocalCustomerService;
 import merchantservice.IMerchantService;
 import merchantservice.LocalMerchantService;
 import merchantservice.Merchant;
+import paymentservice.MerchantDoesNotExistException;
 import paymentservice.Payment;
 
 import java.time.LocalDate;
@@ -34,7 +35,7 @@ public class ReportService implements IReportService {
 
 
     @Override
-    public UserReport generateReportForCustomer(String customerId, String startTime, String endTime) {
+    public UserReport generateReportForCustomer(String customerId, String startTime, String endTime) throws CustomerDoesNotExistsException {
         LocalDateTime startTimeAsDateTime = startTime != null ? LocalDateTime.parse(startTime) : LocalDateTime.MIN;
         LocalDateTime endTimeAsDateTime = endTime != null ? LocalDateTime.parse(endTime) : LocalDateTime.MAX;
 
@@ -43,6 +44,7 @@ public class ReportService implements IReportService {
                 .map(Transaction::toPayment)
                 .collect(Collectors.toList());
         Customer customer = customerService.getCustomerWith(customerId);
+        if(customer == null) throw new CustomerDoesNotExistsException("The customer does not exists in DTUPay");
         DTUPayUser customerAsUser = new DTUPayUser(customer.firstName, customer.lastName, customer.cprNumber, customer.accountId);
         UserReport report = new UserReport();
         report.setPayments(payments);
@@ -52,7 +54,7 @@ public class ReportService implements IReportService {
     }
 
     @Override
-    public UserReport generateReportForMerchant(String merchantId, String startTime, String endTime) {
+    public UserReport generateReportForMerchant(String merchantId, String startTime, String endTime) throws MerchantDoesNotExistException {
         LocalDateTime startTimeAsDateTime = startTime != null ? LocalDateTime.parse(startTime) : LocalDateTime.MIN;
         LocalDateTime endTimeAsDateTime = endTime != null ? LocalDateTime.parse(endTime) : LocalDateTime.MAX;
 
@@ -63,6 +65,8 @@ public class ReportService implements IReportService {
                         .collect(Collectors.toList());
 
         Merchant merchant = merchantService.getMerchant(merchantId);
+        if(merchant == null) throw new MerchantDoesNotExistException("The merchant does not exists in DTUPay");
+
         DTUPayUser merchantAsUser = new DTUPayUser(merchant.firstName, merchant.lastName, merchant.cprNumber, merchant.accountId);
         UserReport report = new UserReport();
         report.setPayments(payments);

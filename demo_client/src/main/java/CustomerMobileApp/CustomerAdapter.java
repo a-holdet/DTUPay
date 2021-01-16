@@ -65,8 +65,16 @@ public class CustomerAdapter {
     }
 
     public UserReport getCustomerReport(String customerID) {
-        return baseUrl.path("reports").queryParam("id", customerID).request().get(new GenericType<>() {
+        Response response = baseUrl.path("reports").queryParam("id", customerID).request().get(new GenericType<>() {
         });
+        if(response.getStatus() == 422){
+            String errorMessage = response.readEntity(String.class); // error message is in payload
+            response.close();
+            throw new IllegalArgumentException(errorMessage);
+        }
+
+        UserReport report  = response.readEntity(new GenericType<>() {});
+        return report;
     }
 
     public void close() {
