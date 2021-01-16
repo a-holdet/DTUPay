@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.UUID;
 
-public class CustomerAdapter implements AutoCloseable {
+public class CustomerAdapter {
     WebTarget baseUrl;
     Client client;
 
@@ -69,7 +69,6 @@ public class CustomerAdapter implements AutoCloseable {
         });
     }
 
-    @Override
     public void close() {
         client.close();
     }

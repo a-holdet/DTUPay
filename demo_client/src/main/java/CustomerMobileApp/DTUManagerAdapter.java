@@ -8,7 +8,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import java.util.List;
 
-public class DTUManagerAdapter implements AutoCloseable {
+public class DTUManagerAdapter {
 
     Client client;
     WebTarget baseUrl;
@@ -23,7 +23,6 @@ public class DTUManagerAdapter implements AutoCloseable {
         });
     }
 
-    @Override
     public void close() {  
         client.close();
     }

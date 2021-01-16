@@ -165,7 +165,7 @@ public class PaymentSteps {
     }
 
     private void performPaymentUsing(UUID token, UserHolder merchantHolder, int amount, String productDescription) {
-        System.out.println("PERFORMING PAYMENT:" + merchantHolder.getId() + ". " + productDescription);
+        // System.out.println("PERFORMING PAYMENT:" + merchantHolder.getId() + ". " + productDescription);
         merchantAdapter.transferMoneyFromTo(token, merchantHolder.getId(), BigDecimal.valueOf(amount),
         productDescription); // Make payment
     }

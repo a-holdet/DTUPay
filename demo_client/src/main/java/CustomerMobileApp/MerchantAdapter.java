@@ -15,7 +15,7 @@ import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public class MerchantAdapter implements AutoCloseable {
+public class MerchantAdapter {
     Client client;
     WebTarget baseUrl;
 
@@ -63,7 +63,6 @@ public class MerchantAdapter implements AutoCloseable {
                 .get(new GenericType<>() {});
     }
 
-    @Override
     public void close() {
         client.close();
     }
