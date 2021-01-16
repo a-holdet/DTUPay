@@ -21,25 +21,26 @@ import static org.junit.Assert.*;
 
 public class PaymentSteps {
 
-    //Adapters
+    // Adapters
     BankService bankService = new BankServiceService().getBankServicePort();
-    MerchantAdapter merchantAdapter = new MerchantAdapter();
-    CustomerAdapter customerAdapter = new CustomerAdapter();
+    MerchantAdapter merchantAdapter;
+    CustomerAdapter customerAdapter;
 
-    //Holders
+    // Holders
     private final TokenHolder tokenHolder;
     private final CustomerHolder customerHolder;
     private final MerchantHolder merchantHolder;
     private final OtherMerchantHolder otherMerchantHolder;
     private PurchasesHolder purchasesHolder;
 
-    //Class specifics
+    // Class specifics
     UUID selectedToken;
     String errorMessage;
-    //String mostRecentAccountId;
+    // String mostRecentAccountId;
     boolean successful;
 
-    public PaymentSteps(TokenHolder tokenHolder, CustomerHolder customerHolder, MerchantHolder merchantHolder, OtherMerchantHolder otherMerchantHolder, PurchasesHolder purchasesHolder) {
+    public PaymentSteps(TokenHolder tokenHolder, CustomerHolder customerHolder, MerchantHolder merchantHolder,
+            OtherMerchantHolder otherMerchantHolder, PurchasesHolder purchasesHolder) {
         this.tokenHolder = tokenHolder;
         this.customerHolder = customerHolder;
         this.merchantHolder = merchantHolder;
@@ -49,26 +50,27 @@ public class PaymentSteps {
 
     @Before
     public void beforeScenario() {
+        customerAdapter = new CustomerAdapter();
+        merchantAdapter = new MerchantAdapter();
+
         Account acc1 = null;
         try {
             acc1 = bankService.getAccountByCprNumber("290276-7777");
             bankService.retireAccount(acc1.getId());
-        } catch (BankServiceException_Exception e) {
-
-        }
+        } catch (BankServiceException_Exception e) {}
 
         Account acc2 = null;
         try {
             acc2 = bankService.getAccountByCprNumber("207082-0101");
             bankService.retireAccount(acc2.getId());
-        } catch (BankServiceException_Exception e) {
-
-        }
+        } catch (BankServiceException_Exception e) {}
     }
 
     @After
     public void afterScenario() {
-        //System.out.println("Hello from payment teardown");
+        customerAdapter.close();
+        merchantAdapter.close();
+        // System.out.println("Hello from payment teardown");
         Account acc1 = null;
         try {
             acc1 = bankService.getAccountByCprNumber("290276-7777");
@@ -91,7 +93,6 @@ public class PaymentSteps {
         purchasesHolder.reset();
     }
 
-
     @And("the balance of the customer account is {int}")
     public void theBalanceOfTheCustomerAccountIs(int expectedBalance) throws BankServiceException_Exception {
         Account account = bankService.getAccount(customerHolder.getAccountId());
@@ -106,12 +107,13 @@ public class PaymentSteps {
 
     @When("the merchant initiates a payment for {int} kr using the selected customer token")
     public void theMerchantInitiatesAPaymentForKrUsingTheSelectedCustomerToken(int amount) {
-        try{
-            merchantAdapter.transferMoneyFromTo(selectedToken,merchantHolder.getId(),new BigDecimal(amount),"myscription");
-            successful=true;
+        try {
+            merchantAdapter.transferMoneyFromTo(selectedToken, merchantHolder.getId(), new BigDecimal(amount),
+                    "myscription");
+            successful = true;
         } catch (IllegalArgumentException e) {
             successful = false;
-            errorMessage=e.getMessage();
+            errorMessage = e.getMessage();
         }
     }
 
@@ -126,7 +128,6 @@ public class PaymentSteps {
         Account account = bankService.getAccount(merchantHolder.getAccountId());
         assertEquals(new BigDecimal(expectedBalance), account.getBalance());
     }
-
 
     @Then("the payment is successful")
     public void thePaymentIsSuccessful() {
@@ -164,7 +165,8 @@ public class PaymentSteps {
     }
 
     private void performPaymentUsing(UUID token, UserHolder merchantHolder, int amount, String productDescription) {
-        System.out.println("PERFORMING PAYMENT:" + merchantHolder.getId() + ". " + productDescription);
-        merchantAdapter.transferMoneyFromTo(token, merchantHolder.getId(), BigDecimal.valueOf(amount), productDescription); // Make payment
+        // System.out.println("PERFORMING PAYMENT:" + merchantHolder.getId() + ". " + productDescription);
+        merchantAdapter.transferMoneyFromTo(token, merchantHolder.getId(), BigDecimal.valueOf(amount),
+        productDescription); // Make payment
     }
 }
