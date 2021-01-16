@@ -1,10 +1,8 @@
-package messagequeue;
-
-import messaging.rmq.event.objects.Event;
+import merchantservice.MessageQueueMerchantService;
 
 public class StartUp {
 
     public static void main(String[] args) throws Exception {
-        EventService.getInstance();
+        MessageQueueMerchantService.getInstance();
     }
 }

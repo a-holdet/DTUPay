@@ -1,5 +1,6 @@
-package RabbitTest;
+package merchantServiceTests;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import merchantservice.Merchant;
 import messagequeue.EventService;
@@ -8,12 +9,14 @@ import io.cucumber.java.en.When;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 
+import java.util.UUID;
+
 import static org.junit.Assert.*;
 
 public class EventServiceSteps {
 	EventService s;
 	Event event;
-	Merchant validMerchant;
+	Merchant merchant;
 
 	public EventServiceSteps() {
 		s = new EventService(new IEventSender() {
@@ -34,19 +37,19 @@ public class EventServiceSteps {
 		assertEquals(string, event.getEventType());
 	}
 
-	@Given("a valid Merchant")
+	@Given("A valid Merchant")
 	public void aValidMerchant() {
-		validMerchant = new Merchant();
-		validMerchant.accountId = "123123123";
-		validMerchant.cprNumber = "test";
-		validMerchant.firstName = "test";
-		validMerchant.lastName = "test";
-		assertNull(validMerchant.id);
+		merchant = new Merchant();
+		merchant.accountId = "123123123";
+		merchant.cprNumber = "test";
+		merchant.firstName = "test";
+		merchant.lastName = "test";
+		assertNull(merchant.id);
 	}
 
 	@When("I receive event registerMerchant with merchant")
 	public void iReceiveEventRegisterMerchantWithMerchant() throws Exception {
-		s.receiveEvent(new Event("registerMerchant", new Object[] {validMerchant}));
+		s.receiveEvent(new Event("registerMerchant", new Object[] {merchant}));
 	}
 
 	@Then("I have sent event registerMerchantSuccess with registered merchant")
@@ -54,8 +57,36 @@ public class EventServiceSteps {
 		String type = event.getEventType();
 		assertEquals("registerMerchantSuccess", type);
 
-		Object[] arguments = event.getArguments();
-		Merchant merchant = (Merchant) arguments[0];
-		assertNotNull(merchant.id);
+		Merchant eMerchant = event.getArgument(0, Merchant.class);
+
+		assertNotNull(eMerchant.id);
+		assertEquals(eMerchant.accountId, merchant.accountId);
+		assertEquals(eMerchant.cprNumber, merchant.cprNumber);
+		assertEquals(eMerchant.firstName, merchant.firstName);
+		assertEquals(eMerchant.lastName,  merchant.lastName);
 	}
+
+	@Given("An invalid Merchant")
+	public void anInvalidMerchant() {
+		merchant = new Merchant();
+	}
+
+	@And("The Merchant is registered")
+	public void theMerchantIsRegistered() throws Exception {
+		s.registerMerchant(merchant);
+		merchant = event.getArgument(0, Merchant.class);
+		event = null; //overwrite sent event
+	}
+
+	@And("The Merchant is not registered")
+	public void theMerchantIsNotRegistered() {
+		merchant.id = UUID.randomUUID().toString();
+	}
+
+	@When("I receive event getMerchant event with merchantId")
+	public void iReceiveEventGetMerchantEventWithMerchantId() throws Exception {
+		s.receiveEvent(new Event("getMerchant", new Object[] {merchant.id}));
+	}
+
+
 }
