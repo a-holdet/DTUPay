@@ -1,10 +1,11 @@
 package paymentservice;
 
+import DTO.Payment;
+import customerservice.CustomerDoesNotExcistException;
+import merchantservice.MerchantDoesNotExistException;
 import ports.BankException;
 import tokenservice.TokenDoesNotExistException;
 
-import java.util.List;
-
 public interface IPaymentService {
-    void registerPayment(Payment payment) throws TokenDoesNotExistException, MerchantDoesNotExistException, NegativeAmountException, BankException;
+    void registerPayment(Payment payment) throws TokenDoesNotExistException, MerchantDoesNotExistException, CustomerDoesNotExcistException, NegativeAmountException, BankException;
 }

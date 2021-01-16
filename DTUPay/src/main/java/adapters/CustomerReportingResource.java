@@ -1,5 +1,6 @@
 package adapters;
 
+import customerservice.CustomerDoesNotExcistException;
 import reportservice.IReportService;
 import reportservice.ReportService;
 import reportservice.UserReport;
@@ -21,7 +22,12 @@ public class CustomerReportingResource {
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getReportForCustomer(@QueryParam("id") String customerId, @QueryParam("start") String startTime, @QueryParam("end") String endTime) {
-        UserReport report = reportService.generateReportForCustomer(customerId, startTime, endTime);
-        return Response.ok(report).build();
+        try {
+            UserReport report = reportService.generateReportForCustomer(customerId, startTime, endTime);
+            return Response.ok(report).build();
+        } catch (CustomerDoesNotExcistException e) {
+            return Response.status(422).entity(e.getMessage()).build();
+        }
+
     }
 }

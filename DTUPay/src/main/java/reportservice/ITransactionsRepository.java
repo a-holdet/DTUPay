@@ -1,7 +1,5 @@
 package reportservice;
 
-import paymentservice.Payment;
-
 import java.util.List;
 
 public interface ITransactionsRepository {

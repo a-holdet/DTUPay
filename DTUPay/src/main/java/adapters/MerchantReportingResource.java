@@ -1,5 +1,6 @@
 package adapters;
 
+import merchantservice.MerchantDoesNotExistException;
 import reportservice.IReportService;
 import reportservice.UserReport;
 import reportservice.ReportService;
@@ -19,8 +20,12 @@ public class MerchantReportingResource {
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getReportForMerchant(@QueryParam("id") String merchantId, @QueryParam("start") String startTime, @QueryParam("end") String endTime) {
-        UserReport report = reportService.generateReportForMerchant(merchantId,startTime,endTime);
-        return Response.ok(report).build();
+        try {
+            UserReport report = reportService.generateReportForMerchant(merchantId,startTime,endTime);
+            return Response.ok(report).build();
+        } catch (MerchantDoesNotExistException e) {
+            return Response.status(422).entity(e.getMessage()).build();
+        }
     }
 }
 

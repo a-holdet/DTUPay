@@ -15,13 +15,13 @@ import java.math.BigDecimal;
 import static org.junit.Assert.*;
 
 public class CustomerRegistrationSteps {
-    //Adapters
+    // Adapters
     BankService bankService = new BankServiceService().getBankServicePort();
     CustomerAdapter customerAdapter;
 
-    //Holders
+    // Holders
     private final CustomerHolder customerHolder;
-    ExceptionHolder exceptionHolder;
+    private final ExceptionHolder exceptionHolder;
 
     public CustomerRegistrationSteps(CustomerHolder customerHolder, ExceptionHolder exceptionHolder) {
         this.customerHolder = customerHolder;

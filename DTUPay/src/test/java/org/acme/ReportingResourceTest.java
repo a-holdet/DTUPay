@@ -1,20 +1,16 @@
 package org.acme;
 
-import DTO.DTUPayUser;
-import com.google.gson.Gson;
 import customerservice.Customer;
 import customerservice.ICustomerService;
 import customerservice.LocalCustomerService;
-import io.cucumber.messages.IdGenerator;
 import io.quarkus.test.junit.QuarkusTest;
 import merchantservice.IMerchantService;
 import merchantservice.LocalMerchantService;
 import merchantservice.Merchant;
 import org.junit.jupiter.api.Test;
-import paymentservice.Payment;
+import DTO.Payment;
 import reportservice.*;
 
-import java.awt.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,7 +18,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
-import static org.eclipse.persistence.config.QueryType.Report;
 import static org.hamcrest.CoreMatchers.*;
 
 @QuarkusTest
@@ -106,7 +101,7 @@ public class ReportingResourceTest {
         customer.lastName = "Exotic";
         customer.cprNumber = "121294-0014";
 
-        ICustomerService customerService = new LocalCustomerService();
+        ICustomerService customerService = LocalCustomerService.instance;
         customer.id = customerService.registerCustomer(customer);
 
 

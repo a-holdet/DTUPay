@@ -2,14 +2,15 @@ package reportservice;
 
 import DTO.DTUPayUser;
 import customerservice.Customer;
+import customerservice.CustomerDoesNotExcistException;
 import customerservice.ICustomerService;
 import customerservice.LocalCustomerService;
 import merchantservice.IMerchantService;
 import merchantservice.LocalMerchantService;
 import merchantservice.Merchant;
-import paymentservice.Payment;
+import merchantservice.MerchantDoesNotExistException;
+import DTO.Payment;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,9 +19,9 @@ public class ReportService implements IReportService {
 
     public static ReportService instance = new ReportService();
 
-    private ITransactionsRepository transactionsRepository ;
-    private IMerchantService merchantService;
-    private ICustomerService customerService;
+    private final ITransactionsRepository transactionsRepository;
+    private final IMerchantService merchantService;
+    private final ICustomerService customerService;
 
     private ReportService() {
         this(new TransactionsInMemoryRepository(), LocalMerchantService.instance, LocalCustomerService.instance);
@@ -34,7 +35,7 @@ public class ReportService implements IReportService {
 
 
     @Override
-    public UserReport generateReportForCustomer(String customerId, String startTime, String endTime) {
+    public UserReport generateReportForCustomer(String customerId, String startTime, String endTime) throws CustomerDoesNotExcistException {
         LocalDateTime startTimeAsDateTime = startTime != null ? LocalDateTime.parse(startTime) : LocalDateTime.MIN;
         LocalDateTime endTimeAsDateTime = endTime != null ? LocalDateTime.parse(endTime) : LocalDateTime.MAX;
 
@@ -42,7 +43,7 @@ public class ReportService implements IReportService {
                 .filter(t -> t.datetime.isAfter(startTimeAsDateTime) && t.datetime.isBefore(endTimeAsDateTime))
                 .map(Transaction::toPayment)
                 .collect(Collectors.toList());
-        Customer customer = customerService.getCustomerWith(customerId);
+        Customer customer = customerService.getCustomer(customerId);
         DTUPayUser customerAsUser = new DTUPayUser(customer.firstName, customer.lastName, customer.cprNumber, customer.accountId);
         UserReport report = new UserReport();
         report.setPayments(payments);
@@ -52,7 +53,7 @@ public class ReportService implements IReportService {
     }
 
     @Override
-    public UserReport generateReportForMerchant(String merchantId, String startTime, String endTime) {
+    public UserReport generateReportForMerchant(String merchantId, String startTime, String endTime) throws MerchantDoesNotExistException  {
         LocalDateTime startTimeAsDateTime = startTime != null ? LocalDateTime.parse(startTime) : LocalDateTime.MIN;
         LocalDateTime endTimeAsDateTime = endTime != null ? LocalDateTime.parse(endTime) : LocalDateTime.MAX;
 

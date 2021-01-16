@@ -58,18 +58,14 @@ public class CustomerAdapter {
             throw new Exception(errorMessage);
         }
 
-        List<UUID> createdTokens = response.readEntity(new GenericType<List<UUID>>() {
-        });
+        List<UUID> createdTokens = response.readEntity(new GenericType<>() {});
         response.close();
         return createdTokens;
     }
 
     public UserReport getCustomerReport(String customerID) {
-        return baseUrl.path("reports").queryParam("id", customerID).request().get(new GenericType<>() {
-        });
+        return baseUrl.path("reports").queryParam("id", customerID).request().get(new GenericType<>() {});
     }
 
-    public void close() {
-        client.close();
-    }
+    public void close() { client.close(); }
 }
