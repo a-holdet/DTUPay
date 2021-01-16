@@ -1,7 +1,7 @@
 package paymentservice;
 import java.math.BigDecimal;
-import java.util.List;
 
+import merchantservice.Merchant;
 import ports.BankException;
 import ports.DTUBankPort;
 import ports.IBank;
@@ -34,13 +34,14 @@ public class PaymentService implements IPaymentService {
 
     @Override
     public void registerPayment(Payment payment) throws TokenDoesNotExistException, MerchantDoesNotExistException, NegativeAmountException, BankException {
-        String merchantAccountId = merchantService.getMerchantAccountId(payment.merchantId);
-        if(merchantAccountId==null)
+        Merchant merchant = merchantService.getMerchant(payment.merchantId);
+        if(merchant==null)
             throw new MerchantDoesNotExistException("The merchant does not exist in DTUPay");
 
         if(isNegative(payment.amount))
             throw new NegativeAmountException("Cannot transfer a negative amount");
 
+        String merchantAccountId = merchant.accountId;
         String customerId = tokenService.consumeToken(payment.customerToken);
         String customerAccountId = customerService.getCustomerAccountId(customerId);
 

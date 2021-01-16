@@ -17,23 +17,10 @@ public class LocalMerchantService implements IMerchantService{
     }
 
     @Override
-    public String getMerchantAccountId(String merchantId) {
-        for(Merchant Merchant : merchantRepository.getAllMerchants())
-            if(Merchant.id.equals(merchantId))
-                return Merchant.accountId;
-        return null;
-    }
-
-    @Override
-    public Merchant getMerchantWith(String merchantId) {
+    public Merchant getMerchant(String merchantId) {
         for (Merchant m: merchantRepository.getAllMerchants()) {
             if (m.id.equals(merchantId)) return m;
         }
         return null;
-    }
-
-    @Override
-    public List<Merchant> getAllMerchants() {
-        return merchantRepository.getAllMerchants();
     }
 }
