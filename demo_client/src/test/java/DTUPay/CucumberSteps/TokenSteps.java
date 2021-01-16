@@ -13,6 +13,9 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
+import java.util.List;
+import java.util.UUID;
+
 import static org.junit.Assert.*;
 
 public class TokenSteps {
@@ -52,7 +55,10 @@ public class TokenSteps {
     @When("the customer requests {int} tokens")
     public void theCustomerRequestsTokens(int tokenAmount) {
         try {
-            tokenHolder.setTokens(customerAdapter.createTokensForCustomer(customerHolder.getId(), tokenAmount));
+            System.out.println("yo");
+            List<UUID> uuids = customerAdapter.createTokensForCustomer(customerHolder.getId(), tokenAmount);
+            System.out.println("uuids");
+            tokenHolder.setTokens(uuids);
         } catch (Exception e) {
             this.exceptionHolder.setException(e);
         }

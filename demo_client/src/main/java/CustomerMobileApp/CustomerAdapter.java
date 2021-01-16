@@ -40,7 +40,7 @@ public class CustomerAdapter {
         return customerId;
     }
 
-    public List<UUID> createTokensForCustomer(String customerId, int amount) throws Exception {
+    public List<UUID> createTokensForCustomer(String customerId, int amount)  {
         TokenRequestObject request = new TokenRequestObject();
         request.setUserId(customerId);
         request.setTokenAmount(amount);
@@ -49,6 +49,9 @@ public class CustomerAdapter {
                 .request()
                 .post(Entity.entity(request, MediaType.APPLICATION_JSON));
 
+        System.out.println("hmm");
+        System.out.println(response.getStatus());
+
         if (response.getStatus() == 401) { // customer is unauthorized (i.e customer has no bank account)
             String errorMessage = response.readEntity(String.class); // error message is in payload
             response.close();
@@ -56,10 +59,17 @@ public class CustomerAdapter {
         } else if (response.getStatus() == 403) { // Customer not allowed to request more tokens
             String errorMessage = response.readEntity(String.class); // error message is in payload
             response.close();
-            throw new Exception(errorMessage);
+            System.out.println(errorMessage);
+//            throw new Exception(errorMessage);
+        } else if (response.getStatus() < 200 || response.getStatus() >= 300){
+            System.out.println(response.readEntity(String.class));
+            response.close();
         }
 
+//        System.out.println(response.readEntity(String.class));
+//        System.out.println("hmm");
         List<UUID> createdTokens = response.readEntity(new GenericType<List<UUID>>(){});
+        System.out.println(createdTokens);
         response.close();
         return createdTokens;
     }

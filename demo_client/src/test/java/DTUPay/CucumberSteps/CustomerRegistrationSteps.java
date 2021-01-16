@@ -58,6 +58,7 @@ public class CustomerRegistrationSteps {
     public void theCustomerIsRegisteringWithDTUPay() {
         try {
             String customerId = customerAdapter.registerCustomer(customerHolder.getFirstName(), customerHolder.getLastName(), customerHolder.getCpr(), customerHolder.getAccountId());
+            System.out.println("custid" + customerId);
             customerHolder.setId(customerId);
         } catch (IllegalArgumentException e) {
             exceptionHolder.setException(e);
