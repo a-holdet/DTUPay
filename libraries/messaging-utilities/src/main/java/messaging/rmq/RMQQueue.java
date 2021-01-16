@@ -13,11 +13,10 @@ public abstract class RMQQueue {
     public final String routingKey;
     public final RMQExchange parentExchange;
 
-    public RMQQueue(RMQExchange parentExchange, String queueName, String routingKey) {
-        this.queueName = queueName;
+    public RMQQueue(RMQExchange parentExchange, String routingKey) {
         this.routingKey = routingKey;
         this.parentExchange = parentExchange;
-        parentExchange.addQueue(queueName, routingKey);
+        this.queueName = parentExchange.addQueue(routingKey);
     }
 
     public void registerReceiver(IEventReceiver receiver) throws Exception {
@@ -34,13 +33,5 @@ public abstract class RMQQueue {
         CancelCallback cancelCallback = (consumerTag) -> {};
 
         parentExchange.parentChannel.getChannel().basicConsume(queueName, true, deliverCallback, cancelCallback);
-    }
-
-    public IEventSender getSender() {
-        return event -> {
-            String message = new Gson().toJson(event);
-            parentExchange.parentChannel.getChannel().basicPublish(parentExchange.exchangeName, routingKey, null,
-                    message.getBytes("UTF-8"));
-        };
     }
 }

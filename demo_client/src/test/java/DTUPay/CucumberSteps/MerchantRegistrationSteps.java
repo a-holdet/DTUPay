@@ -1,6 +1,5 @@
 package DTUPay.CucumberSteps;
 
-import CustomerMobileApp.CustomerAdapter;
 import CustomerMobileApp.MerchantAdapter;
 import DTUPay.Holders.*;
 import dtu.ws.fastmoney.BankService;
@@ -8,28 +7,41 @@ import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtu.ws.fastmoney.BankServiceService;
 import dtu.ws.fastmoney.User;
 import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 
 import java.math.BigDecimal;
 
-public class MerchantRegistrationSteps {
-    //Adapters
-    BankService bankService = new BankServiceService().getBankServicePort();
-    MerchantAdapter merchantAdapter = new MerchantAdapter();
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
-    //Holders
+public class MerchantRegistrationSteps {
+    // Adapters
+    BankService bankService = new BankServiceService().getBankServicePort();
+    MerchantAdapter merchantAdapter;
+
+    // Holders
     private final MerchantHolder merchantHolder;
     private final OtherMerchantHolder otherMerchantHolder;
     private final ExceptionHolder exceptionHolder;
 
-    public MerchantRegistrationSteps(MerchantHolder merchantHolder, OtherMerchantHolder otherMerchantHolder, ExceptionHolder exceptionHolder) {
+    public MerchantRegistrationSteps(MerchantHolder merchantHolder, OtherMerchantHolder otherMerchantHolder,
+            ExceptionHolder exceptionHolder) {
         this.merchantHolder = merchantHolder;
         this.otherMerchantHolder = otherMerchantHolder;
         this.exceptionHolder = exceptionHolder;
     }
 
+    @Before
+    public void before() {
+        merchantAdapter = new MerchantAdapter();
+    }
+
     @After
     public void after() {
+        merchantAdapter.close();
         try {
             if (merchantHolder.getAccountId() != null)
                 bankService.retireAccount(merchantHolder.getAccountId());
@@ -56,6 +68,12 @@ public class MerchantRegistrationSteps {
         merchantHolder.setAccountId(bankService.createAccountWithBalance(merchantBank, new BigDecimal(2000)));
     }
 
+    @Given("the merchant has no bank account")
+    public void theMerchantHasNoBankAccount() {
+        merchantHolder.setMerchantBasics();
+        // Do not create account
+    }
+
     @And("another merchant has a bank account")
     public void anotherMerchantHasABankAccount() throws BankServiceException_Exception {
         otherMerchantHolder.setMerchantBasics();
@@ -67,23 +85,39 @@ public class MerchantRegistrationSteps {
         otherMerchantHolder.setAccountId(bankService.createAccountWithBalance(merchantBank, new BigDecimal(2000)));
     }
 
-    @And("the merchant is registered with DTUPay")
+    @And("the merchant is registering with DTUPay")
     public void theMerchantIsRegisteredWithDTUPay() {
-        registerMerchantWithDTUPay(merchantHolder);
+        try {
+            registerMerchantWithDTUPay(merchantHolder);
+        } catch (IllegalArgumentException e) {
+            exceptionHolder.setException(e);
+            merchantHolder.setId(null);
+        }
     }
 
     @And("the merchant is not registered with DTUPay")
     public void theMerchantIsNotRegisteredWithDTUPay() {
-        //Do not register merchant with DTUPay
+        // Do not register merchant with DTUPay
     }
 
     @And("the other merchant is registering with DTUPay")
-    public void theOtherMerchantIsRegisteredWithDTUPay() {
+    public void theOtherMerchantIsRegisteredWithDTUPay() throws IllegalArgumentException {
         registerMerchantWithDTUPay(otherMerchantHolder);
     }
 
     private void registerMerchantWithDTUPay(UserHolder merchantHolder) {
-        String createdMerchantId = merchantAdapter.registerMerchant(merchantHolder.getFirstName(), merchantHolder.getLastName(), merchantHolder.getCpr(), merchantHolder.getAccountId());
+        String createdMerchantId = merchantAdapter.registerMerchant(merchantHolder.getFirstName(),
+        merchantHolder.getLastName(), merchantHolder.getCpr(), merchantHolder.getAccountId());
         merchantHolder.setId(createdMerchantId);
+    }
+
+    @Then("the merchant registration is successful")
+    public void theMerchantRegistrationIsSuccessful() {
+        assertNotNull(merchantHolder.getId());
+    }
+
+    @Then("the merchant registration is not successful")
+    public void theMerchantRegistrationIsNotSuccessful() {
+        assertNull(merchantHolder.getId());
     }
 }

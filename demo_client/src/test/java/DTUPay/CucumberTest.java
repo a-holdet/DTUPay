@@ -1,7 +1,5 @@
 package DTUPay;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import io.cucumber.junit.platform.engine.Cucumber;
 
 /* Important: 

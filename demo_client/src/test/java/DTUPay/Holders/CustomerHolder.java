@@ -1,10 +1,8 @@
 package DTUPay.Holders;
 
 public class CustomerHolder extends UserHolder{
-    public void setCustomerBasics(){ //TODO move to holder
-        int fourRandomDigits = getRandomNumberInRange(1000,9999);
-        String cpr = "200167-"+ fourRandomDigits;
-
+    public void setCustomerBasics(){
+        String cpr = getRandomCpr();
         setFirstName("Stein");
         setLastName("Bagger");
         setCpr(cpr);

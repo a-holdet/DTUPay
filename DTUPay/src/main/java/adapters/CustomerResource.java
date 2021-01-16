@@ -1,7 +1,5 @@
 package adapters;
 
-
-
 import customerservice.*;
 
 import javax.ws.rs.*;
@@ -16,6 +14,7 @@ public class CustomerResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(Customer customer) {
         try{
+            ICustomerService.registerCustomer(customer);
             String customerId = ICustomerService.registerCustomer(customer);
             return Response.ok(customerId).build();
         }catch(IllegalArgumentException e){

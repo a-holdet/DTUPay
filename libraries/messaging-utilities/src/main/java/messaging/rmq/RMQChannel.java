@@ -29,12 +29,14 @@ public class RMQChannel {
         }
     }
 
-    public void queueDeclare(String queueName) {
+    public String queueDeclare() {
+        String queueName;
         try {
-            channel.queueDeclare(queueName, true, false, false, null);
+            queueName = channel.queueDeclare().getQueue(); // queueName, true, false, false, null
         } catch (IOException e) {
             throw new Error(e);
         }
+        return queueName;
     }
 
     public void queueBind(String queueName, String exchangeName, String routingKey) {

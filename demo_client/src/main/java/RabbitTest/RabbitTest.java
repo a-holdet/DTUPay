@@ -10,7 +10,8 @@ public class RabbitTest {
 	public boolean doSomething() {
 		Client client = ClientBuilder.newClient();
 	    WebTarget r = client.target("http://localhost:8042/");
-	    var response = r.path("status").request().put(Entity.text("doSomething"),Boolean.class);
+		boolean response = r.path("status").request().put(Entity.text("doSomething"),Boolean.class);
+		client.close();
 	    return response;
 	}
 }

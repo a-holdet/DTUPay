@@ -1,10 +1,8 @@
 package adapters;
 
-
 import merchantservice.*;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
@@ -22,8 +20,12 @@ public class MerchantResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public String create(Merchant merchant) {
-        merchantService.registerMerchant(merchant);
-        return merchant.id;
+    public Response create(Merchant merchant) {
+        try{
+            String merchantId = merchantService.registerMerchant(merchant);
+            return Response.ok(merchantId).build();
+        } catch (IllegalArgumentException e){
+            return Response.status(422).entity(e.getMessage()).build();
+        }
     }
 }
