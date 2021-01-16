@@ -1,12 +1,14 @@
 package org.acme;
 
 import customerservice.Customer;
+import customerservice.CustomerDoesNotExcistException;
 import customerservice.ICustomerService;
 import customerservice.LocalCustomerService;
 import io.quarkus.test.junit.QuarkusTest;
 import merchantservice.IMerchantService;
 import merchantservice.LocalMerchantService;
 import merchantservice.Merchant;
+import merchantservice.MerchantDoesNotExistException;
 import org.junit.jupiter.api.Test;
 import DTO.Payment;
 import reportservice.*;
@@ -23,6 +25,50 @@ import static org.hamcrest.CoreMatchers.*;
 @QuarkusTest
 public class ReportingResourceTest {
 
+    private static class MerchantServiceMock implements IMerchantService {
+
+        private Merchant merchant;
+        @Override
+        public String registerMerchant(Merchant merchant) throws IllegalArgumentException {
+            this.merchant = merchant;
+            String id = "Mock Merchant Id";
+            merchant.id = id;
+            return id;
+        }
+
+        @Override
+        public Merchant getMerchant(String merchantId) throws MerchantDoesNotExistException {
+            return merchant;
+        }
+    }
+
+    private static class CustomerServiceMock implements ICustomerService {
+
+        private Customer customer;
+        @Override
+        public String registerCustomer(Customer customer) throws IllegalArgumentException {
+            this.customer = customer;
+            String id = "Mock Customer id";
+            customer.id = id;
+            return id;
+        }
+
+        @Override
+        public boolean customerExists(String customerId) {
+            return true;
+        }
+
+        @Override
+        public String getCustomerAccountId(String customerId) throws CustomerDoesNotExcistException {
+            return customer.accountId;
+        }
+
+        @Override
+        public Customer getCustomer(String customerId) throws CustomerDoesNotExcistException {
+            return customer;
+        }
+    }
+
     @Test
     public void testMerchantReportWithTimeInterval() {
         LocalDateTime nowMinus4 = LocalDateTime.now().minusDays(4);
@@ -36,7 +82,7 @@ public class ReportingResourceTest {
 
         Merchant merchant = new Merchant("Stein", "Bagger", "121292-0012","ACCOUNTID",null);
 
-        IMerchantService merchantService = new LocalMerchantService();
+        IMerchantService merchantService = new MerchantServiceMock();
         merchant.id = merchantService.registerMerchant(merchant);
 
         Transaction t1 = new Transaction(UUID.randomUUID(),merchant.id,
@@ -55,7 +101,7 @@ public class ReportingResourceTest {
         transactionsRepository.registerTransaction(t1);
         transactionsRepository.registerTransaction(t2);
 
-        ReportService.instance = new ReportService(transactionsRepository,merchantService, LocalCustomerService.instance);
+        ReportService.instance = new ReportService(transactionsRepository,merchantService, new CustomerServiceMock());
 
         given().pathParam("id",merchant.id).pathParam("start",nowMinus4.toString()).pathParam("end",nowMinus3.toString())
                .when().get("/merchantapi/reports?id={id}&start={start}&end={end}")
@@ -101,7 +147,7 @@ public class ReportingResourceTest {
         customer.lastName = "Exotic";
         customer.cprNumber = "121294-0014";
 
-        ICustomerService customerService = LocalCustomerService.instance;
+        ICustomerService customerService = new CustomerServiceMock();
         customer.id = customerService.registerCustomer(customer);
 
 
@@ -116,7 +162,7 @@ public class ReportingResourceTest {
         transactionsRepository.registerTransaction(t1);
         transactionsRepository.registerTransaction(t2);
 
-        ReportService.instance = new ReportService(transactionsRepository,LocalMerchantService.instance, customerService);
+        ReportService.instance = new ReportService(transactionsRepository, new MerchantServiceMock(), customerService);
 
         given().pathParam("id",customer.id).pathParam("start",nowMinus4.toString()).pathParam("end",nowMinus3.toString())
                 .when().get("/customerapi/reports?id={id}&start={start}&end={end}")
