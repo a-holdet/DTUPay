@@ -9,6 +9,7 @@ import merchantservice.LocalMerchantService;
 import merchantservice.Merchant;
 import paymentservice.Payment;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,11 +18,19 @@ public class ReportService implements IReportService {
 
     public static ReportService instance = new ReportService();
 
-    private ITransactionsRepository transactionsRepository = new TransactionsInMemoryRepository();
-    private IMerchantService merchantService = LocalMerchantService.instance;
-    private ICustomerService customerService = LocalCustomerService.instance;
+    private ITransactionsRepository transactionsRepository ;
+    private IMerchantService merchantService;
+    private ICustomerService customerService;
 
-    private ReportService() {}
+    private ReportService() {
+        this(new TransactionsInMemoryRepository(), LocalMerchantService.instance, LocalCustomerService.instance);
+    }
+
+    public ReportService(ITransactionsRepository transactionsRepository, IMerchantService merchantService, ICustomerService customerService) {
+        this.transactionsRepository = transactionsRepository;
+        this.merchantService = merchantService;
+        this.customerService = customerService;
+    }
 
 
     @Override
@@ -37,8 +46,16 @@ public class ReportService implements IReportService {
     }
 
     @Override
-    public UserReport generateReportForMerchant(String merchantId) {
-        List<Payment> payments = transactionsRepository.getTransactionsForMerchant(merchantId).stream().map(Transaction::toPayment).collect(Collectors.toList());
+    public UserReport generateReportForMerchant(String merchantId, String startTime, String endTime) {
+        LocalDateTime startTimeAsDateTime = startTime != null ? LocalDateTime.parse(startTime) : LocalDateTime.MIN;
+        LocalDateTime endTimeAsDateTime = endTime != null ? LocalDateTime.parse(endTime) : LocalDateTime.MAX;
+
+        List<Payment> payments =
+                transactionsRepository.getTransactionsForMerchant(merchantId).stream()
+                        .filter(t -> t.datetime.isAfter(startTimeAsDateTime) && t.datetime.isBefore(endTimeAsDateTime))
+                        .map(Transaction::toPayment)
+                        .collect(Collectors.toList());
+
         Merchant merchant = merchantService.getMerchantWith(merchantId);
         DTUPayUser merchantAsUser = new DTUPayUser(merchant.firstName, merchant.lastName, merchant.cprNumber, merchant.accountId);
         UserReport report = new UserReport();

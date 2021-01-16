@@ -98,14 +98,6 @@ public class ReportingSteps {
 
     private void verifyUserReport(UserHolder userHolder, int amount, String productDescription, UUID token) {
 
-        System.out.println("AAA");
-        System.out.println(tokenHolder.getTokens().size());
-        System.out.println(token);
-        System.out.println(productDescription);
-        System.out.println(report.getPayments().size());
-        System.out.println(report.getPayments().get(0).description);
-        System.out.println(report.getPayments().get(0).customerToken);
-
         // check merchant is correct
         assertEquals(userHolder.getFirstName(), report.getUser().getFirstName());
         assertEquals(userHolder.getLastName(), report.getUser().getLastName());

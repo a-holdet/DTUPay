@@ -18,8 +18,8 @@ public class MerchantReportingResource {
 
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response getReportForMerchant(@QueryParam("id") String merchantId) {
-        UserReport report = reportService.generateReportForMerchant(merchantId);
+    public Response getReportForMerchant(@QueryParam("id") String merchantId, @QueryParam("start") String startTime, @QueryParam("end") String endTime) {
+        UserReport report = reportService.generateReportForMerchant(merchantId,startTime,endTime);
         return Response.ok(report).build();
     }
 }
