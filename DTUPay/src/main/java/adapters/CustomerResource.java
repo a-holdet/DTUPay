@@ -1,7 +1,5 @@
 package adapters;
 
-
-
 import customerservice.*;
 
 import javax.ws.rs.*;
