@@ -34,13 +34,19 @@ public class ReportService implements IReportService {
 
 
     @Override
-    public UserReport generateReportForCustomer(String customerId) {
-        List<Payment> payments = transactionsRepository.getTransactionsForCustomer(customerId).stream().map(Transaction::toPayment).collect(Collectors.toList());
+    public UserReport generateReportForCustomer(String customerId, String startTime, String endTime) {
+        LocalDateTime startTimeAsDateTime = startTime != null ? LocalDateTime.parse(startTime) : LocalDateTime.MIN;
+        LocalDateTime endTimeAsDateTime = endTime != null ? LocalDateTime.parse(endTime) : LocalDateTime.MAX;
+
+        List<Payment> payments = transactionsRepository.getTransactionsForCustomer(customerId).stream()
+                .filter(t -> t.datetime.isAfter(startTimeAsDateTime) && t.datetime.isBefore(endTimeAsDateTime))
+                .map(Transaction::toPayment)
+                .collect(Collectors.toList());
         Customer customer = customerService.getCustomerWith(customerId);
-        DTUPayUser merchantAsUser = new DTUPayUser(customer.firstName, customer.lastName, customer.cprNumber, customer.accountId);
+        DTUPayUser customerAsUser = new DTUPayUser(customer.firstName, customer.lastName, customer.cprNumber, customer.accountId);
         UserReport report = new UserReport();
         report.setPayments(payments);
-        report.setUser(merchantAsUser);
+        report.setUser(customerAsUser);
 
         return report;
     }
