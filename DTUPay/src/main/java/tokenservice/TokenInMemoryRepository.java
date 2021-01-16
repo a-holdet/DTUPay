@@ -20,8 +20,11 @@ public class TokenInMemoryRepository implements ITokenRepository{
     }
 
     @Override
-    public String consumeToken(UUID customerToken) {
+    public String consumeToken(UUID customerToken) throws TokenDoesNotExistException {
         String customerId = persistence.remove(customerToken);
+
+        if (customerId == null) throw new TokenDoesNotExistException("token does not exist");
+
         return customerId;
     }
 }

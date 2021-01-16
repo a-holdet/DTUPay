@@ -1,7 +1,7 @@
 package reportservice;
 
 import DTO.DTUPayUser;
-import paymentservice.Payment;
+import DTO.Payment;
 
 import java.util.List;
 

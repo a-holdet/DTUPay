@@ -58,8 +58,7 @@ public class CustomerAdapter {
             throw new Exception(errorMessage);
         }
 
-        List<UUID> createdTokens = response.readEntity(new GenericType<List<UUID>>() {
-        });
+        List<UUID> createdTokens = response.readEntity(new GenericType<>() {});
         response.close();
         return createdTokens;
     }
@@ -77,7 +76,5 @@ public class CustomerAdapter {
         return report;
     }
 
-    public void close() {
-        client.close();
-    }
+    public void close() { client.close(); }
 }

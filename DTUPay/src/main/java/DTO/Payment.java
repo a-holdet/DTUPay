@@ -1,4 +1,4 @@
-package paymentservice;
+package DTO;
 
 import java.math.BigDecimal;
 import java.util.UUID;
