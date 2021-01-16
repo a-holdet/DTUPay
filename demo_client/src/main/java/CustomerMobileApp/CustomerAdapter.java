@@ -16,13 +16,11 @@ import java.util.List;
 import java.util.UUID;
 
 public class CustomerAdapter {
-    private final WebTarget baseUrl2;
     WebTarget baseUrl;
 
     public CustomerAdapter(){
         Client client = ClientBuilder.newClient();
         baseUrl = client.target("http://localhost:8042/customerapi");
-        baseUrl2 = client.target("http://localhost:8043/customerapi");
     }
 
     public String registerCustomer(String firstName, String lastName, String cprNumber, String accountID) throws IllegalArgumentException {
@@ -45,7 +43,7 @@ public class CustomerAdapter {
         request.setUserId(customerId);
         request.setTokenAmount(amount);
         System.out.println("customeradapter " + customerId);
-        Response response = baseUrl2
+        Response response = baseUrl
                 .path("tokens")
                 .request()
                 .post(Entity.entity(request, MediaType.APPLICATION_JSON));

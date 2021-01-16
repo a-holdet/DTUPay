@@ -39,8 +39,8 @@ public class PaymentPortAdapter implements IEventReceiver {
             String customerId = (String) event.getArguments()[0];
             consumeTokenResult.complete(customerId);
         } else if (event.getEventType().equals("consumeTokenResponseFail")) {
-            Exception e = (Exception) event.getArguments()[0];
-            consumeTokenResult.completeExceptionally(e);
+            String errorMessage = (String) event.getArguments()[0];
+            consumeTokenResult.completeExceptionally(new Exception(errorMessage));
         }
     }
 

@@ -7,40 +7,64 @@ import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class TokenPortAdapter implements IEventReceiver {
 
-    public static TokenPortAdapter instance = null; // startUp(); //cannot be used until after startUp();
-    IEventSender sender;
     private CompletableFuture<Boolean> customerExistsResult;
-    ITokenService tokenService = TokenService.instance;
+    private IEventSender sender;
+    private ITokenService tokenService;
 
-    public TokenPortAdapter(IEventSender sender) {
+    public TokenPortAdapter(ITokenService tokenService, IEventSender sender) {
+        this.tokenService = tokenService;
         this.sender = sender;
     }
-
-    public static void startUp() {
-        if (instance == null) {
-            try {
-                var s = EventExchange.instance.getSender();
-                TokenPortAdapter portAdapter = new TokenPortAdapter(s);
-                new EventQueue().registerReceiver(portAdapter);
-                instance = portAdapter;
-            } catch (Exception e) {
-                throw new Error(e);
-            }
-        }
-    }
-
 
     @Override
     public void receiveEvent(Event event) throws Exception {
         if (event.getEventType().equals("customerExistsResponse")) {
+            System.out.println("customerExcists response token adapter");
             customerExistsResponse(event);
         } else if (event.getEventType().equals("consumeToken")) {
             consumeToken(event);
+        } else if (event.getEventType().equals("createTokensForCustomer")) {
+            createTokensForCustomer(event);
+        }
+    }
+
+    private void createTokensForCustomer(Event event) {
+        System.out.println("reached tokenportadapter");
+        System.out.println(event);
+        String customerId = (String) event.getArguments()[0];
+        System.out.println(customerId);
+        String amount = (String) event.getArguments()[1];
+
+        System.out.println(amount);
+        System.out.println("reached tokenportadapter");
+        // if (!tokenPortAdapter.customerExists(customerId))
+
+        try {
+            customerExistsResult = new CompletableFuture<>();
+            sender.sendEvent(new Event("customerExists", new Object[]{customerId}));
+            boolean customerExists = customerExistsResult.join();
+            if (!customerExists) {
+                Event customerNotFoundEvent = new Event("createTokensForCustomerFailed",
+                        new Object[]{new CustomerNotFoundException("Customer was not found")});
+                sender.sendEvent(customerNotFoundEvent);
+            } else {
+                System.out.println("inside else statement");
+                List<UUID> tokens = tokenService.createTokensForCustomer(customerId, Integer.parseInt(amount));
+                Event createTokensResponse = new Event("createTokensForCustomerResponse", new Object[]{tokens});
+                sender.sendEvent(createTokensResponse);
+            }
+        } catch (IllegalTokenGrantingException e) {
+            e.printStackTrace();
+        } catch (CustomerNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -54,7 +78,7 @@ public class TokenPortAdapter implements IEventReceiver {
             System.out.println("returned tokens for customer " + customerId);
         } catch (TokenDoesNotExistException e) {
             System.out.println("failed " + e.getMessage());
-            sender.sendEvent(new Event("consumeTokenResponseFail", new Object[]{e}));
+            sender.sendEvent(new Event("consumeTokenResponseFail", new Object[]{e.getMessage()}));
             e.printStackTrace();
         }
 
@@ -63,6 +87,7 @@ public class TokenPortAdapter implements IEventReceiver {
     private void customerExistsResponse(Event event) {
 
         boolean customerExists = (boolean) event.getArguments()[0];
+        System.out.println("customerexists res" + customerExists);
         customerExistsResult.complete(customerExists);
     }
 
