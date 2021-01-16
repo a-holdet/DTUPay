@@ -1,7 +1,5 @@
 package customerservice;
 
-import merchantservice.Merchant;
-
 import java.util.UUID;
 
 public class LocalCustomerService implements ICustomerService {
@@ -36,16 +34,16 @@ public class LocalCustomerService implements ICustomerService {
     }
 
     @Override
-    public String getCustomerAccountId(String customerId) throws CustomerDoesNotExcistException {
+    public String getCustomerAccountId(String customerId) throws CustomerDoesNotExistException {
         return getCustomer(customerId).accountId;
     }
 
     @Override
-    public Customer getCustomer(String customerId) throws CustomerDoesNotExcistException {
+    public Customer getCustomer(String customerId) throws CustomerDoesNotExistException {
         for (Customer customer : customerRepository.getAllCustomers()) {
             if (customer.id.equals(customerId)) return customer;
         }
 
-        throw new CustomerDoesNotExcistException(customerId);
+        throw new CustomerDoesNotExistException("The customer does not exists in DTUPay");
     }
 }

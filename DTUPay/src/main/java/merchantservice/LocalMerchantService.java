@@ -32,6 +32,6 @@ public class LocalMerchantService implements IMerchantService{
             if (m.id.equals(merchantId)) return m;
         }
 
-        throw new MerchantDoesNotExistException(merchantId);
+        throw new MerchantDoesNotExistException("The merchant does not exists in DTUPay");
     }
 }

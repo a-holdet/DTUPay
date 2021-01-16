@@ -1,7 +1,7 @@
 package adapters;
 
 import DTO.Payment;
-import customerservice.CustomerDoesNotExcistException;
+import customerservice.CustomerDoesNotExistException;
 import merchantservice.MerchantDoesNotExistException;
 import paymentservice.*;
 import ports.BankException;
@@ -26,7 +26,7 @@ public class PaymentsResource {
             paymentService.registerPayment(payment);
         } catch (BankException e) {
             throw new InternalServerErrorException(e.getMessage());
-        } catch (TokenDoesNotExistException | MerchantDoesNotExistException | CustomerDoesNotExcistException | NegativeAmountException e) {
+        } catch (TokenDoesNotExistException | MerchantDoesNotExistException | CustomerDoesNotExistException | NegativeAmountException e) {
             return Response.status(422).entity(e.getMessage()).build();
         }
         return Response.noContent().build();

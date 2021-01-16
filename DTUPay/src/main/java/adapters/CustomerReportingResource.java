@@ -1,6 +1,6 @@
 package adapters;
 
-import customerservice.CustomerDoesNotExcistException;
+import customerservice.CustomerDoesNotExistException;
 import reportservice.IReportService;
 import reportservice.ReportService;
 import reportservice.UserReport;
@@ -25,7 +25,7 @@ public class CustomerReportingResource {
         try {
             UserReport report = reportService.generateReportForCustomer(customerId, startTime, endTime);
             return Response.ok(report).build();
-        } catch (CustomerDoesNotExcistException e) {
+        } catch (CustomerDoesNotExistException e) {
             return Response.status(422).entity(e.getMessage()).build();
         }
 

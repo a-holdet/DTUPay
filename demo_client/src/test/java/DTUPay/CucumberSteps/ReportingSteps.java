@@ -110,9 +110,7 @@ public class ReportingSteps {
         try {
             report = customerAdapter.getCustomerReport(customerHolder.getId());
             assertNotNull(report);
-            System.out.println("customer no error");
         } catch (IllegalArgumentException e) {
-            System.out.println("customer error" + e.getMessage());
             this.exceptionHolder.setException(e);
         }
     }

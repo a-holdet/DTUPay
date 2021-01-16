@@ -2,7 +2,7 @@ package reportservice;
 
 import DTO.DTUPayUser;
 import customerservice.Customer;
-import customerservice.CustomerDoesNotExcistException;
+import customerservice.CustomerDoesNotExistException;
 import customerservice.ICustomerService;
 import customerservice.LocalCustomerService;
 import merchantservice.IMerchantService;
@@ -35,7 +35,7 @@ public class ReportService implements IReportService {
 
 
     @Override
-    public UserReport generateReportForCustomer(String customerId, String startTime, String endTime) throws CustomerDoesNotExcistException {
+    public UserReport generateReportForCustomer(String customerId, String startTime, String endTime) throws CustomerDoesNotExistException {
         LocalDateTime startTimeAsDateTime = startTime != null ? LocalDateTime.parse(startTime) : LocalDateTime.MIN;
         LocalDateTime endTimeAsDateTime = endTime != null ? LocalDateTime.parse(endTime) : LocalDateTime.MAX;
 
@@ -43,9 +43,7 @@ public class ReportService implements IReportService {
                 .filter(t -> t.datetime.isAfter(startTimeAsDateTime) && t.datetime.isBefore(endTimeAsDateTime))
                 .map(Transaction::toPayment)
                 .collect(Collectors.toList());
-        //TODO Refactoer methodname
-        Customer customer = customerService.getCustomerWith(customerId);
-        if(customer == null) throw new CustomerDoesNotExistsException("The customer does not exists in DTUPay");
+        Customer customer = customerService.getCustomer(customerId);
         DTUPayUser customerAsUser = new DTUPayUser(customer.firstName, customer.lastName, customer.cprNumber, customer.accountId);
         UserReport report = new UserReport();
         report.setPayments(payments);
@@ -66,7 +64,6 @@ public class ReportService implements IReportService {
                         .collect(Collectors.toList());
 
         Merchant merchant = merchantService.getMerchant(merchantId);
-        if(merchant == null) throw new MerchantDoesNotExistException("The merchant does not exists in DTUPay");
 
         DTUPayUser merchantAsUser = new DTUPayUser(merchant.firstName, merchant.lastName, merchant.cprNumber, merchant.accountId);
         UserReport report = new UserReport();

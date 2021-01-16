@@ -2,7 +2,7 @@ package paymentservice;
 import java.math.BigDecimal;
 
 import DTO.Payment;
-import customerservice.CustomerDoesNotExcistException;
+import customerservice.CustomerDoesNotExistException;
 import merchantservice.Merchant;
 import merchantservice.MerchantDoesNotExistException;
 import ports.BankException;
@@ -45,7 +45,7 @@ public class PaymentService implements IPaymentService {
     }
 
     @Override
-    public void registerPayment(Payment payment) throws TokenDoesNotExistException, MerchantDoesNotExistException, NegativeAmountException, BankException, CustomerDoesNotExcistException {
+    public void registerPayment(Payment payment) throws TokenDoesNotExistException, MerchantDoesNotExistException, NegativeAmountException, BankException, CustomerDoesNotExistException {
         if (isNegative(payment.amount)) throw new NegativeAmountException("Cannot transfer a negative amount");
 
         Merchant merchant = merchantService.getMerchant(payment.merchantId);

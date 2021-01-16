@@ -5,7 +5,7 @@ public interface ICustomerService {
 
     boolean customerExists(String customerId);
 
-    String getCustomerAccountId(String customerId) throws CustomerDoesNotExcistException;
+    String getCustomerAccountId(String customerId) throws CustomerDoesNotExistException;
 
-    Customer getCustomer(String customerId) throws CustomerDoesNotExcistException;
+    Customer getCustomer(String customerId) throws CustomerDoesNotExistException;
 }
