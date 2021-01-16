@@ -56,6 +56,7 @@ public class TokenSteps {
     public void theCustomerRequestsTokens(int tokenAmount) {
         try {
             System.out.println("yo");
+            System.out.println("customerholder id " + customerHolder.getId());
             List<UUID> uuids = customerAdapter.createTokensForCustomer(customerHolder.getId(), tokenAmount);
             System.out.println("uuids");
             tokenHolder.setTokens(uuids);

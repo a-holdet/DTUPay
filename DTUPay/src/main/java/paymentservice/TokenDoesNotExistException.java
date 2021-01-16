@@ -1,4 +1,4 @@
-package tokenservice;
+package paymentservice;
 
 public class TokenDoesNotExistException extends Exception {
 

@@ -40,17 +40,16 @@ public class CustomerAdapter {
         return customerId;
     }
 
-    public List<UUID> createTokensForCustomer(String customerId, int amount)  {
+    public List<UUID> createTokensForCustomer(String customerId, int amount) throws Exception {
         TokenRequestObject request = new TokenRequestObject();
         request.setUserId(customerId);
         request.setTokenAmount(amount);
+        System.out.println("customeradapter " + customerId);
         Response response = baseUrl2
                 .path("tokens")
                 .request()
                 .post(Entity.entity(request, MediaType.APPLICATION_JSON));
 
-        System.out.println("hmm");
-        System.out.println(response.getStatus());
 
         if (response.getStatus() == 401) { // customer is unauthorized (i.e customer has no bank account)
             String errorMessage = response.readEntity(String.class); // error message is in payload
@@ -60,10 +59,12 @@ public class CustomerAdapter {
             String errorMessage = response.readEntity(String.class); // error message is in payload
             response.close();
             System.out.println(errorMessage);
-//            throw new Exception(errorMessage);
+            throw new Exception(errorMessage);
         } else if (response.getStatus() < 200 || response.getStatus() >= 300){
             System.out.println(response.readEntity(String.class));
+            String errorMessage = response.readEntity(String.class);
             response.close();
+            throw new Exception(errorMessage);
         }
 
 //        System.out.println(response.readEntity(String.class));

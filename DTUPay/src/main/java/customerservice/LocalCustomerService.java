@@ -8,8 +8,6 @@ public class LocalCustomerService implements ICustomerService {
     public static ICustomerService instance = new LocalCustomerService();
     ICustomerRepository customerRepository = new CustomerInMemoryRepository();
 
-    public LocalCustomerService(){}
-
     @Override
     public String registerCustomer(Customer customer) throws IllegalArgumentException {
         if(customer.accountId==null || customer.accountId.length()==0)
@@ -21,11 +19,16 @@ public class LocalCustomerService implements ICustomerService {
 
     @Override
     public boolean customerExists(String customerId){
-        if(customerId==null)
+        if(customerId==null){
+            System.out.println("wut");
             return false;
-        for(Customer customer : customerRepository.getAllCustomers())
+        }
+        for(Customer customer : customerRepository.getAllCustomers()){
+
             if(customer.id.equals(customerId))
                 return true;
+        }
+
         return false;
     }
 

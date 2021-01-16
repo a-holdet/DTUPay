@@ -2,7 +2,6 @@ package adapters;
 
 import paymentservice.*;
 import ports.BankException;
-import tokenservice.TokenDoesNotExistException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -10,9 +9,12 @@ import javax.ws.rs.core.Response;
 
 @Path("/merchantapi/payments")
 public class PaymentsResource {
-    IPaymentService paymentService = PaymentService.instance;
+    IPaymentService paymentService;
 
     public PaymentsResource(){
+        System.out.println("this is run");
+        PaymentPortAdapter.startUp();
+        paymentService = PaymentService.instance;
     }
 
     @POST

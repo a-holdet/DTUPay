@@ -7,16 +7,19 @@ import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class TokenPortAdapter implements IEventReceiver {
 
     public static TokenPortAdapter instance = null; // startUp(); //cannot be used until after startUp();
+    IEventSender sender;
+    private CompletableFuture<Boolean> customerExistsResult;
+    ITokenService tokenService = TokenService.instance;
 
     public TokenPortAdapter(IEventSender sender) {
         this.sender = sender;
     }
-
 
     public static void startUp() {
         if (instance == null) {
@@ -31,24 +34,43 @@ public class TokenPortAdapter implements IEventReceiver {
         }
     }
 
-    IEventSender sender;
-    private CompletableFuture<Boolean> customerExistsResult;
 
     @Override
     public void receiveEvent(Event event) throws Exception {
-        if (event.getEventType().equals("customerExists")){
-            sender.sendEvent(new Event("customerExistsResponse"));
-        } else if (event.getEventType().equals("customerExistsResponse")) {
-            customerExistsResult.complete(true);
-            System.out.println("yay");
+        if (event.getEventType().equals("customerExistsResponse")) {
+            customerExistsResponse(event);
+        } else if (event.getEventType().equals("consumeToken")) {
+            consumeToken(event);
         }
     }
 
+    private void consumeToken(Event event) throws Exception {
+        UUID customerToken = UUID.fromString((String) event.getArguments()[0]);
+
+        try {
+            System.out.println("tokenservice " + tokenService);
+            String customerId = tokenService.consumeToken(customerToken);
+            sender.sendEvent(new Event("consumeTokenResponse", new Object[]{customerId}));
+            System.out.println("returned tokens for customer " + customerId);
+        } catch (TokenDoesNotExistException e) {
+            System.out.println("failed " + e.getMessage());
+            sender.sendEvent(new Event("consumeTokenResponseFail", new Object[]{e}));
+            e.printStackTrace();
+        }
+
+    }
+
+    private void customerExistsResponse(Event event) {
+
+        boolean customerExists = (boolean) event.getArguments()[0];
+        customerExistsResult.complete(customerExists);
+    }
 
     public boolean customerExists(String customerId) {
         try {
             customerExistsResult = new CompletableFuture<>();
-            sender.sendEvent(new Event("customerExists"));
+            if (customerId == null) return false;
+            sender.sendEvent(new Event("customerExists", new Object[]{customerId}));
             return customerExistsResult.join(); // Blocking
         } catch (Exception e) {
             e.printStackTrace();

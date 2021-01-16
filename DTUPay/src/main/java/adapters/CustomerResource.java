@@ -10,6 +10,10 @@ import javax.ws.rs.core.Response;
 public class CustomerResource {
     ICustomerService ICustomerService = LocalCustomerService.instance;
 
+    public CustomerResource(){
+        CustomerPortAdapter.startUp();
+    }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(Customer customer) {

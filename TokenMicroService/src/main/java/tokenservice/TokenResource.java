@@ -22,8 +22,10 @@ public class TokenResource {
             List<UUID> tokens = tokenService.createTokensForCustomer(customerId, amount);
             return Response.ok(tokens).build();
         } catch (UnauthorizedException e) {
+            System.out.println("unauth" + e.getMessage());
             return Response.status(401).entity(e.getMessage()).build(); // 401 = Unauthorized operation (i.e. user with 'cpr' has no bank account.
         } catch (IllegalTokenGrantingException e) {
+            System.out.println("IllegalTokenGrantingException" + e.getMessage());
             return Response.status(403).entity(e.getMessage()).build(); // Forbidden operation (i.e. user tries to request more tokens than allowed"
         }
     }
