@@ -6,3 +6,4 @@ WORKDIR /usr/src/
 # RUN apt-get update
 # RUN apt-get install -y netcat 
 CMD java -Xmx32m -jar reportmicroservice-1.0.0.jar
+

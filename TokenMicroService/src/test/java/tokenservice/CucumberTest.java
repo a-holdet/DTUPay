@@ -1,4 +1,4 @@
-package RabbitTest;
+package tokenservice;
 
 import io.cucumber.junit.platform.engine.Cucumber;
 

@@ -4,8 +4,8 @@ import DTO.Payment;
 import customerservice.CustomerDoesNotExistException;
 import merchantservice.MerchantDoesNotExistException;
 import ports.BankException;
-import tokenservice.TokenDoesNotExistException;
+import tokenservice.ConsumeTokenException;
 
 public interface IPaymentService {
-    void registerPayment(Payment payment) throws TokenDoesNotExistException, MerchantDoesNotExistException, CustomerDoesNotExistException, NegativeAmountException, BankException;
+    void registerPayment(Payment payment) throws Exception, MerchantDoesNotExistException, NegativeAmountException, BankException, ConsumeTokenException;
 }

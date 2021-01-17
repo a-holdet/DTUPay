@@ -6,6 +6,7 @@
     <groupId>org.acme</groupId>
     <artifactId>dtupay</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <name>dtupay</name>
     <properties>
         <surefire-plugin.version>2.22.1</surefire-plugin.version>
         <maven.compiler.target>11</maven.compiler.target>
@@ -181,6 +182,7 @@
                             </execution>
                         </executions>
                     </plugin>
+
                 </plugins>
             </build>
             <properties>

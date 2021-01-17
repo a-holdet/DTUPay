@@ -1,4 +1,4 @@
-package tokenservice;
+package DTO;
 
 public class TokenCreationDTO {
     private String userId;

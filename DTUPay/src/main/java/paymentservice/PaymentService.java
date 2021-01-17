@@ -9,9 +9,10 @@ import ports.DTUBankPort;
 import ports.IBank;
 import reportservice.IReportService;
 import reportservice.ReportService;
+import tokenservice.ConsumeTokenException;
 import tokenservice.ITokenService;
+import tokenservice.MessageQueueTokenService;
 import tokenservice.TokenDoesNotExistException;
-import tokenservice.TokenService;
 import customerservice.LocalCustomerService;
 import customerservice.ICustomerService;
 
@@ -24,7 +25,7 @@ public class PaymentService implements IPaymentService {
             instance = new PaymentService(
                     MessageQueueAccountService.getInstance(),
                     MessageQueueAccountService.getInstance(),
-                    TokenService.instance,
+                    MessageQueueTokenService.getInstance(),
                     new DTUBankPort(),
                     ReportService.getInstance()
             );
@@ -52,14 +53,16 @@ public class PaymentService implements IPaymentService {
     }
 
     @Override
-    public void registerPayment(Payment payment) throws TokenDoesNotExistException, MerchantDoesNotExistException, NegativeAmountException, BankException, CustomerDoesNotExistException {
+    public void registerPayment(Payment payment) throws Exception, MerchantDoesNotExistException, NegativeAmountException, BankException, ConsumeTokenException {
         System.out.println("-");
         if (isNegative(payment.amount)) throw new NegativeAmountException("Cannot transfer a negative amount");
 
         Merchant merchant = merchantService.getMerchant(payment.merchantId);
         String merchantAccountId = merchant.accountId;
 
+
         String customerId = tokenService.consumeToken(payment.customerToken);
+
         String customerAccountId = customerService.getCustomer(customerId).accountId;
 
         bank.transferMoneyFromTo(

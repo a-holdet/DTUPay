@@ -14,6 +14,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
+import javax.ws.rs.ForbiddenException;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -111,7 +112,7 @@ public class PaymentSteps {
             merchantAdapter.transferMoneyFromTo(selectedToken, merchantHolder.getId(), new BigDecimal(amount),
                     "myscription");
             successful = true;
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | ForbiddenException e) {
             successful = false;
             errorMessage = e.getMessage();
         }
