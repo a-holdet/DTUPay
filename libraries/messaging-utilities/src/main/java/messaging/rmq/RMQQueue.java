@@ -31,6 +31,6 @@ public abstract class RMQQueue {
 
         CancelCallback cancelCallback = (consumerTag) -> {};
 
-        parentExchange.parentChannel.getChannel().basicConsume(queueName, true, deliverCallback, cancelCallback);
+        parentExchange.parentChannel.getConsumerChannel().basicConsume(queueName, true, deliverCallback, cancelCallback);
     }
 }

@@ -1,10 +1,11 @@
 package customerservice;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class CustomerInMemoryRepository implements ICustomerRepository {
-    List<Customer> customers = new ArrayList<>();
+    List<Customer> customers = Collections.synchronizedList(new ArrayList<>());
 
     @Override
     public void addCustomer(Customer customer) {
@@ -13,6 +14,6 @@ public class CustomerInMemoryRepository implements ICustomerRepository {
 
     @Override
     public List<Customer> getAllCustomers() {
-        return customers;
+        return List.copyOf(customers);
     }
 }

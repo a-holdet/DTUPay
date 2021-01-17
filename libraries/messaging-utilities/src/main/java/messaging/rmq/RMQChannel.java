@@ -8,14 +8,17 @@ import com.rabbitmq.client.ConnectionFactory;
 public class RMQChannel {
     public static final RMQChannel instance = new RMQChannel();
 
-    private final Channel channel;
+    private final Channel consumerChannel;
+    private final Channel producerChannel;
 
     public RMQChannel() {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("rabbitMq");
         try {
-            Connection connection = factory.newConnection();
-            this.channel = connection.createChannel();
+            Connection producerConnection = factory.newConnection();
+            Connection consumerConnection = factory.newConnection();
+            this.consumerChannel = producerConnection.createChannel();
+            this.producerChannel = consumerConnection.createChannel();
         } catch (Exception e) {
             throw new Error(e);
         }
@@ -23,7 +26,7 @@ public class RMQChannel {
 
     public void exchangeDeclare(String exchangeName, String exchangeType) {
         try {
-            this.channel.exchangeDeclare(exchangeName, exchangeType);
+            this.producerChannel.exchangeDeclare(exchangeName, exchangeType);
         } catch (IOException e) {
             throw new Error(e);
         }
@@ -32,7 +35,7 @@ public class RMQChannel {
     public String queueDeclare() {
         String queueName;
         try {
-            queueName = channel.queueDeclare().getQueue(); // queueName, true, false, false, null
+            queueName = consumerChannel.queueDeclare().getQueue(); // queueName, true, false, false, null
         } catch (IOException e) {
             throw new Error(e);
         }
@@ -41,14 +44,17 @@ public class RMQChannel {
 
     public void queueBind(String queueName, String exchangeName, String routingKey) {
         try {
-            channel.queueBind(queueName, exchangeName, routingKey);
+            consumerChannel.queueBind(queueName, exchangeName, routingKey);
         } catch (IOException e) {
             throw new Error(e);
         }
     }
 
-    public Channel getChannel() {
-        return channel;
+    public Channel getProducerChannel() {
+        return producerChannel;
+    }
+    public Channel getConsumerChannel() {
+        return consumerChannel;
     }
 
 }
