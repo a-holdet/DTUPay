@@ -1,49 +1,27 @@
 package adapters;
 
-import DTO.TokenCreationDTO;
 import customerservice.*;
-import messaging.rmq.event.EventExchange;
-import messaging.rmq.event.EventQueue;
+import merchantservice.IMerchantService;
+import merchantservice.MessageQueueAccountService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
-import java.util.UUID;
 
-@Path("/customerapi")
+@Path("/customerapi/customers")
 public class CustomerResource {
-    CustomerPA customerPA;
 
-    public CustomerResource(){
-        System.out.println("inside customer resource parent channel" + EventExchange.instance.parentChannel);
-        ICustomerService service = new LocalCustomerService();
-        CustomerPortAdapter cpa = new CustomerPortAdapter(service, EventExchange.instance.getSender());
-        customerPA = new CustomerPA(EventExchange.instance.getSender());
-        try {
-            new EventQueue().registerReceiver(cpa);
-            new EventQueue().registerReceiver(customerPA);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("customerResource constructor called");
-    }
+    ICustomerService customerService = MessageQueueAccountService.getInstance();
 
     @POST
-    @Path("/customers")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(Customer customer) {
-        System.out.println("customer resource called POST ");
         try{
-            String customerId = customerPA.registerCustomer(customer);
-            System.out.println("customer resource inside try catch and customer "+customerId);
+            customerService.registerCustomer(customer);
+            String customerId = customerService.registerCustomer(customer);
             return Response.ok(customerId).build();
         }catch(IllegalArgumentException e){
             return Response.status(422).entity(e.getMessage()).build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Response.status(500).entity(e.getMessage()).build();
         }
     }
 

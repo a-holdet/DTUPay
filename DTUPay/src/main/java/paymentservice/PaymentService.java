@@ -9,19 +9,22 @@ import ports.DTUBankPort;
 import ports.IBank;
 import reportservice.IReportService;
 import reportservice.ReportService;
+import tokenservice.ITokenService;
+import tokenservice.TokenDoesNotExistException;
+import tokenservice.TokenService;
 import customerservice.LocalCustomerService;
 import customerservice.ICustomerService;
 
 
 public class PaymentService implements IPaymentService {
-    private final PaymentPortAdapter portAdapter = PaymentPortAdapter.instance;
-    private static PaymentService instance;
 
+    private static PaymentService instance;
     public static PaymentService getInstance() {
         if(instance == null) {
             instance = new PaymentService(
-                    MessageQueueMerchantService.getInstance(),
-                    LocalCustomerService.instance,
+                    MessageQueueAccountService.getInstance(),
+                    MessageQueueAccountService.getInstance(),
+                    TokenService.instance,
                     new DTUBankPort(),
                     ReportService.getInstance()
             );
@@ -31,12 +34,14 @@ public class PaymentService implements IPaymentService {
 
     private final IMerchantService merchantService;
     private final ICustomerService customerService;
+    private final ITokenService tokenService;
     private final IBank bank;
     private final IReportService reportService;
 
-    public PaymentService(IMerchantService merchantService, ICustomerService customerService, IBank bank, IReportService reportService) {
+    public PaymentService(IMerchantService merchantService, ICustomerService customerService, ITokenService tokenService, IBank bank, IReportService reportService) {
         this.merchantService = merchantService;
         this.customerService = customerService;
+        this.tokenService = tokenService;
         this.bank = bank;
         this.reportService = reportService;
         instance = this; // needed for service tests!
@@ -54,18 +59,8 @@ public class PaymentService implements IPaymentService {
         Merchant merchant = merchantService.getMerchant(payment.merchantId);
         String merchantAccountId = merchant.accountId;
 
-
-        String customerId = null;
-        try {
-            System.out.println("portadapter" + portAdapter);
-            customerId = portAdapter.consumeToken(payment.customerToken);
-        } catch (Exception e) {
-            System.out.println("shouldnt happen");
-            e.printStackTrace();
-        }
-
-
-        String customerAccountId = customerService.getCustomerAccountId(customerId);
+        String customerId = tokenService.consumeToken(payment.customerToken);
+        String customerAccountId = customerService.getCustomer(customerId).accountId;
 
         bank.transferMoneyFromTo(
                 customerAccountId,

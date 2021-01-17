@@ -57,11 +57,6 @@ public class ReportingResourceTest {
         }
 
         @Override
-        public String getCustomerAccountId(String customerId) throws CustomerDoesNotExistException {
-            return customer.accountId;
-        }
-
-        @Override
         public Customer getCustomer(String customerId) throws CustomerDoesNotExistException {
             return customer;
         }
