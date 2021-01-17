@@ -37,11 +37,6 @@ pushd libraries/messaging-utilities
 mvn clean install
 popd
 
-pushd RabbitTest
-mvn clean package
-docker build -t rabbittest .
-popd
-
 pushd TokenMicroService
 mvn clean package
 docker build -t tokenmicroservice .

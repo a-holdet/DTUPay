@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.rabbitmq.client.DeliverCallback;
 import com.rabbitmq.client.CancelCallback;
 import messaging.rmq.event.interfaces.IEventReceiver;
-import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 
 public abstract class RMQQueue {
@@ -32,6 +31,6 @@ public abstract class RMQQueue {
 
         CancelCallback cancelCallback = (consumerTag) -> {};
 
-        parentExchange.parentChannel.getChannel().basicConsume(queueName, true, deliverCallback, cancelCallback);
+        parentExchange.parentChannel.getConsumerChannel().basicConsume(queueName, true, deliverCallback, cancelCallback);
     }
 }

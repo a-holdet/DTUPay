@@ -10,9 +10,11 @@ import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 public class MessageQueueAccountService implements IMerchantService, ICustomerService, IEventReceiver {
 
@@ -45,97 +47,82 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
         instance = this; // needed for service tests!
     }
 
-    private final ConcurrentHashMap<UUID, CompletableFuture<Event>> responses = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, CompletableFuture<Event>> requests = new ConcurrentHashMap<>();
 
-/*    private <S, F> S handle(Object payload, EventType eventType) {
-        ...
-    }*/
+    private <S> Result<S, String> handle(Object payload, EventType eventType, Class<S> successClass) throws Error {
+        Event response = sendRequestAndAwaitReponse(payload,eventType);
+        if(response.isSuccessReponse()){
+            S success = response.getArgument(0, successClass);
+            return new Result<>(success, null, Result.ResultState.SUCCESS);
+        } else {
+            String exceptionType = response.getArgument(0, String.class); // TODO: remove?
+            String failure = response.getArgument(1, String.class);
+            return new Result<>(null, failure, Result.ResultState.FAILURE);
+        }
+    }
 
-    private Event sendPayloadAndWait(Object payload, EventType eventType) {
-        Event event = new Event(eventType.getName(), new Object[] {payload}, UUID.randomUUID());
-        responses.put(event.getUUID(), new CompletableFuture<>());
+    private Event sendRequestAndAwaitReponse(Object payload, EventType eventType){
+        Event request = new Event(eventType.getName(), new Object[] {payload}, UUID.randomUUID());
+        requests.put(request.getUUID(), new CompletableFuture<>());
 
         try {
-            this.sender.sendEvent(event);
+            this.sender.sendEvent(request);
         } catch (Exception e) {
             throw new Error(e);
         }
 
-        return responses.get(event.getUUID()).join();
+        Event response = requests.get(request.getUUID()).join();
+        return response;
     }
 
     @Override
     public String registerMerchant(Merchant merchant) throws IllegalArgumentException {
-        Event event = sendPayloadAndWait(merchant, registerMerchant);
-        String type = event.getEventType();
-
-        if(type.equals(registerMerchant.succeeded())) {
-            return event.getArgument(0, String.class); // merchantId
-        }
-
-        String exceptionType = event.getArgument(0, String.class);
-        String exceptionMsg  = event.getArgument(1, String.class);
-        throw new IllegalArgumentException(exceptionMsg);
+        Event response = sendRequestAndAwaitReponse(merchant,registerMerchant);
+        if(response.isSuccessReponse())
+            return response.getPayloadAs(String.class);
+        else
+            throw new IllegalArgumentException(response.getErrorMessage());
     }
-
 
     @Override
     public Merchant getMerchant(String merchantId) throws MerchantDoesNotExistException {
-        Event event = sendPayloadAndWait(merchantId, getMerchant);
-        String type = event.getEventType();
-
-        if(type.equals(getMerchant.succeeded())) {
-            return event.getArgument(0, Merchant.class); // merchant
+        Result<Merchant, String> res = handle(merchantId, getMerchant, Merchant.class);
+        if (res.state == Result.ResultState.FAILURE) {
+            throw new MerchantDoesNotExistException(res.failureValue);
+        } else {
+            return res.successValue;
         }
-
-        String exceptionType = event.getArgument(0, String.class);
-        String exceptionMsg  = event.getArgument(1, String.class);
-        throw new MerchantDoesNotExistException(exceptionMsg);
     }
 
     @Override
     public String registerCustomer(Customer customer) throws IllegalArgumentException {
-        Event event = sendPayloadAndWait(customer, registerCustomer);
-        String type = event.getEventType();
-
-        if(type.equals(registerCustomer.succeeded())) {
-            return event.getArgument(0, String.class); // customerId
+        Result<String, String> res = handle(customer, registerCustomer, String.class);
+        if (res.state == Result.ResultState.FAILURE) {
+            throw new IllegalArgumentException(res.failureValue);
+        } else {
+            return res.successValue;
         }
-
-        System.out.println("XXXX");
-        System.out.println(type);
-        System.out.println(registerCustomer.succeeded());
-        System.out.println(registerCustomer.failed());
-
-        String exceptionType = event.getArgument(0, String.class);
-        String exceptionMsg  = event.getArgument(1, String.class);
-        throw new IllegalArgumentException(exceptionMsg);
     }
 
     @Override
     public boolean customerExists(String customerId)  {
-        Event event = sendPayloadAndWait(customerId, customerExists);
-        String type = event.getEventType();
-
-        if (type.equals(customerExists.succeeded())) {
-            return event.getArgument(0, Boolean.class); // wether customer exists or not
+        Result<Boolean, String> res = handle(customerId, customerExists, Boolean.class);
+        if (res.state == Result.ResultState.FAILURE) {
+            return false;
         } else {
-            return false; // some error happened. Interpreted as customer does not exist.
+            return res.successValue;
         }
     }
 
     @Override
     public Customer getCustomer(String customerId) throws CustomerDoesNotExistException {
-        Event event = sendPayloadAndWait(customerId, getCustomer);
-        String type = event.getEventType();
+        Result<Customer, String> res = handle(customerId, getCustomer, Customer.class);
 
-        if(type.equals(getCustomer.succeeded())) {
-            return event.getArgument(0, Customer.class); // customer
+        if (res.state == Result.ResultState.FAILURE) {
+            throw new CustomerDoesNotExistException(res.failureValue);
+        } else {
+            return res.successValue;
         }
-
-        String exceptionType = event.getArgument(0, String.class);
-        String exceptionMsg  = event.getArgument(1, String.class);
-        throw new CustomerDoesNotExistException(exceptionMsg);
     }
 
     @Override
@@ -144,8 +131,9 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
         System.out.println("Event received! : " + event);
 
         if (Arrays.stream(supportedEventTypes).anyMatch(eventType -> eventType.matches(event.getEventType()))) {
-            CompletableFuture<Event> cf = responses.get(event.getUUID());
-            if (cf != null) cf.complete(event);
+            CompletableFuture<Event> cf = requests.get(event.getUUID());
+            if (cf != null)
+                cf.complete(event);
         }
 
         System.out.println("--------------------------------------------------------");

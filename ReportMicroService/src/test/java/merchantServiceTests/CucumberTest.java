@@ -1,4 +1,4 @@
-package RabbitTest;
+package merchantServiceTests;
 
 import io.cucumber.junit.platform.engine.Cucumber;
 
