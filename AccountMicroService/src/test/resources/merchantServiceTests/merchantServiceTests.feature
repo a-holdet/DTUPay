@@ -11,12 +11,6 @@ Feature: merchant service tests
     When I receive event registerMerchant with merchant
     Then I have sent event "registerMerchantFail"
 
-#  Scenario: merchant already registered
-#    Given A valid Merchant
-#    And The Merchant is registered
-#    When I receive event registerMerchant with merchant
-#    Then I have sent event "registerMerchantFail"
-
   Scenario: successful get merchant
     Given A valid Merchant
     And The Merchant is registered

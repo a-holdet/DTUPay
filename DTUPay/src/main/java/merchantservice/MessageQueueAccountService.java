@@ -64,13 +64,11 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
     private Event sendRequestAndAwaitReponse(Object payload, EventType eventType){
         Event request = new Event(eventType.getName(), new Object[] {payload}, UUID.randomUUID());
         requests.put(request.getUUID(), new CompletableFuture<>());
-
         try {
             this.sender.sendEvent(request);
         } catch (Exception e) {
             throw new Error(e);
         }
-
         Event response = requests.get(request.getUUID()).join();
         return response;
     }
