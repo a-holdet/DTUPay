@@ -1,4 +1,0 @@
-*
-!target/*.jar
-!target/lib/*
-!wait-for-it.sh
