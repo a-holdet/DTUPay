@@ -5,10 +5,7 @@ import customerservice.Customer;
 import customerservice.CustomerDoesNotExistException;
 import customerservice.ICustomerService;
 import customerservice.LocalCustomerService;
-import merchantservice.IMerchantService;
-import merchantservice.LocalMerchantService;
-import merchantservice.Merchant;
-import merchantservice.MerchantDoesNotExistException;
+import merchantservice.*;
 import DTO.Payment;
 
 import java.time.LocalDateTime;
@@ -17,20 +14,27 @@ import java.util.stream.Collectors;
 
 public class ReportService implements IReportService {
 
-    public static ReportService instance = new ReportService();
+    private static ReportService instance;
+    public static ReportService getInstance() {
+        if(instance == null) {
+            instance = new ReportService(
+                    new TransactionsInMemoryRepository(),
+                    MessageQueueMerchantService.getInstance(),
+                    LocalCustomerService.instance
+            );
+        }
+        return instance;
+    }
 
     private final ITransactionsRepository transactionsRepository;
     private final IMerchantService merchantService;
     private final ICustomerService customerService;
 
-    private ReportService() {
-        this(new TransactionsInMemoryRepository(), LocalMerchantService.instance, LocalCustomerService.instance);
-    }
-
     public ReportService(ITransactionsRepository transactionsRepository, IMerchantService merchantService, ICustomerService customerService) {
         this.transactionsRepository = transactionsRepository;
         this.merchantService = merchantService;
         this.customerService = customerService;
+        instance = this; // needed for service tests!
     }
 
 

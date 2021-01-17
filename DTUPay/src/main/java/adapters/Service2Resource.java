@@ -8,7 +8,6 @@ import javax.ws.rs.Path;
 
 @Path("/status")
 public class Service2Resource {
-
 	IEventService eventService = RabbitMQEventService.getInstance();
 
 	@PUT

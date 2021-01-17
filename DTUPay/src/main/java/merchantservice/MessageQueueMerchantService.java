@@ -9,6 +9,7 @@ import messaging.rmq.event.objects.Event;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MessageQueueMerchantService implements IMerchantService, IEventReceiver {
 
@@ -31,86 +32,83 @@ public class MessageQueueMerchantService implements IMerchantService, IEventRece
     IEventSender sender;
     public MessageQueueMerchantService(IEventSender sender) {
         this.sender = sender;
+        instance = this; // needed for service tests!
     }
 
     static final String registerMerchant = "registerMerchant";
-    CompletableFuture<Event> registerMerchantCF;
+    ConcurrentHashMap<UUID, CompletableFuture<Event>> registerMerchantCF = new ConcurrentHashMap<>();
     @Override
     public String registerMerchant(Merchant merchant) throws IllegalArgumentException {
-        registerMerchantCF = new CompletableFuture<>();
-        // make request
-        Event event = new Event(registerMerchant, new Object[] {merchant});
+        Event event = new Event(registerMerchant, new Object[] {merchant}, UUID.randomUUID());
         try {
+            registerMerchantCF.put(event.getUUID(), new CompletableFuture<>());
             this.sender.sendEvent(event);
         } catch (Exception e) {
             throw new Error(e);
         }
-        // wait for response
-        event = registerMerchantCF.join();
-        String type = event.getEventType();
-        Object[] arguments = event.getArguments();
-        if(type.equals(type+"Success")) {
-            Merchant m = (Merchant) arguments[0];
-            return m.id;
-        }
-        else //if(type.equals(type+"Fail"))
-        {
-            String exceptionType = (String) arguments[0];
-            String exceptionMsg = (String) arguments[1];
 
-            //if(exceptionType.equals(IllegalArgumentException.class.getSimpleName()))
-            throw new IllegalArgumentException(exceptionMsg);
+        event = registerMerchantCF.get(event.getUUID()).join();
+        String type = event.getEventType();
+
+        if(type.equals(registerMerchant+"Success")) {
+            String merchantId = event.getArgument(0, String.class);
+            return merchantId;
         }
+
+        String exceptionType = event.getArgument(0, String.class);
+        String exceptionMsg  = event.getArgument(1, String.class);
+        throw new IllegalArgumentException(exceptionMsg);
     }
 
     static final String getMerchant = "getMerchant";
-    CompletableFuture<Event> getMerchantCF;
+    ConcurrentHashMap<UUID, CompletableFuture<Event>> getMerchantCF = new ConcurrentHashMap<>();
     @Override
-    public Merchant getMerchant(String merchantId) {
-        getMerchantCF = new CompletableFuture<>();
-
-        Event event = new Event(getMerchant, new Object[] {merchantId});
+    public Merchant getMerchant(String merchantId) throws MerchantDoesNotExistException {
+        Event event = new Event(getMerchant, new Object[] {merchantId}, UUID.randomUUID());
         try {
+            getMerchantCF.put(event.getUUID(), new CompletableFuture<>());
             this.sender.sendEvent(event);
         } catch (Exception e) {
             throw new Error(e);
         }
 
-        event = getMerchantCF.join();
+        event = getMerchantCF.get(event.getUUID()).join();
         String type = event.getEventType();
-        Object[] arguments = event.getArguments();
-        if(type.equals(type+"Success")) {
-            Merchant m = (Merchant) arguments[0];
-            return m;
-        }
-        else //if(type.equals(type+"Fail"))
-        {
-            String exceptionType = (String) arguments[0];
-            String exceptionMsg = (String) arguments[1];
 
-            //if(exceptionType.equals(IllegalArgumentException.class.getSimpleName()))
-            throw new IllegalArgumentException(exceptionMsg);
+        if(type.equals(getMerchant+"Success")) {
+            Merchant merchant = event.getArgument(0, Merchant.class);
+            return merchant;
         }
+
+        String exceptionType = event.getArgument(0, String.class);
+        String exceptionMsg  = event.getArgument(1, String.class);
+        throw new MerchantDoesNotExistException(exceptionMsg);
     }
 
     @Override
     public void receiveEvent(Event event) throws Exception {
-        System.out.println("Event received! : " + event.getEventType());
+        System.out.println("--------------------------------------------------------");
+        System.out.println("Event received! : " + event);
 
+        CompletableFuture<Event> cf;
         switch (event.getEventType()) {
             case registerMerchant+"Success":
             case registerMerchant+"Fail":
-                registerMerchantCF.complete(event);
+                cf = registerMerchantCF.getOrDefault(event.getUUID(), null);
+                if(cf != null)
+                    cf.complete(event);
                 break;
             case getMerchant+"Success":
             case getMerchant+"Fail":
-                getMerchantCF.complete(event);
+                cf = getMerchantCF.getOrDefault(event.getUUID(), null);
+                if(cf != null)
+                    cf.complete(event);
                 break;
             default:
                 //ignore, do nothing
                 break;
         }
 
-        System.out.println("Event handled! : " + event.getEventType());
+        System.out.println("--------------------------------------------------------");
     }
 }

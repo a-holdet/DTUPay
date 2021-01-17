@@ -12,9 +12,7 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 @Path("/managerapi/reports")
 public class ManagerReportingResource {
-    IReportService reportService = ReportService.instance;
-
-    public ManagerReportingResource() {}
+    IReportService reportService = ReportService.getInstance();
 
     @GET
     @Consumes(MediaType.APPLICATION_JSON)

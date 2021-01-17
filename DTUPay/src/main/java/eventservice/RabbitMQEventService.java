@@ -10,7 +10,6 @@ import messaging.rmq.event.objects.Event;
 
 public class RabbitMQEventService implements IEventService, IEventReceiver {
 
-	// Singleton as method due to serviceTest
 	private static RabbitMQEventService instance;
 	public static RabbitMQEventService getInstance() {
 		if (instance == null) {
@@ -31,6 +30,7 @@ public class RabbitMQEventService implements IEventService, IEventReceiver {
 
 	public RabbitMQEventService(IEventSender eventSender) {
 		this.eventSender = eventSender;
+		instance = this; // needed for service tests!
 	}
 
 	@Override
@@ -46,14 +46,14 @@ public class RabbitMQEventService implements IEventService, IEventReceiver {
 	@Override
 	public void receiveEvent(Event event) throws Exception {
 		if (event.getEventType().equals("RabbitTest b")) {
-			System.out.println("event handled: " + event);
+			//System.out.println("event handled: " + event);
 
 			result.complete(true);	// set the future value to true which completes the future.
 
 			event = new Event("TokenTest a");
 			eventSender.sendEvent(new Event("TokenTest a"));
 		} else {
-			System.out.println("event ignored: " + event);
+			//System.out.println("event ignored: " + event);
 		}
 	}
 

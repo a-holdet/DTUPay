@@ -14,8 +14,7 @@ import javax.ws.rs.core.Response;
 
 @Path("/merchantapi/reports")
 public class MerchantReportingResource {
-    IReportService reportService = ReportService.instance;
-    public MerchantReportingResource() {}
+    IReportService reportService = ReportService.getInstance();
 
     @GET
     @Consumes(MediaType.APPLICATION_JSON)

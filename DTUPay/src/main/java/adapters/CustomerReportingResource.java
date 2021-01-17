@@ -14,10 +14,7 @@ import javax.ws.rs.core.Response;
 
 @Path("/customerapi/reports")
 public class CustomerReportingResource {
-
-    IReportService reportService = ReportService.instance;
-
-    public CustomerReportingResource() {}
+    IReportService reportService = ReportService.getInstance();
 
     @GET
     @Consumes(MediaType.APPLICATION_JSON)

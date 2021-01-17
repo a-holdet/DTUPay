@@ -4,7 +4,7 @@ Feature: merchant service tests
     Given A valid Merchant
     And The Merchant is not registered
     When I receive event registerMerchant with merchant
-    Then I have sent event registerMerchantSuccess with registered merchant
+    Then I have sent event registerMerchantSuccess with registered merchantId
 
   Scenario: failed merchant register
     Given An invalid Merchant

@@ -13,10 +13,7 @@ import javax.ws.rs.core.Response;
 
 @Path("/merchantapi/payments")
 public class PaymentsResource {
-    IPaymentService paymentService = PaymentService.instance;
-
-    public PaymentsResource(){
-    }
+    IPaymentService paymentService = PaymentService.getInstance();
 
     @POST
     //@Produces(MediaType.TEXT_PLAIN)

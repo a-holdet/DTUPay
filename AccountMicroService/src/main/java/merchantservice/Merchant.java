@@ -6,4 +6,14 @@ public class Merchant {
     public String cprNumber;
     public String accountId;
     public String id;
+
+    public Merchant(){};
+
+    public Merchant(String firstName, String lastName, String cprNumber, String accountId, String id) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.cprNumber = cprNumber;
+        this.accountId = accountId;
+        this.id = id;
+    }
 }

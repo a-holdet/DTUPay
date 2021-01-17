@@ -1,5 +1,6 @@
 package merchantServiceTests;
 
+import com.google.gson.Gson;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import merchantservice.Merchant;
@@ -13,12 +14,12 @@ import java.util.UUID;
 
 import static org.junit.Assert.*;
 
-public class EventServiceSteps {
+public class MerchantServiceTestsSteps {
 	EventService s;
 	Event event;
 	Merchant merchant;
 
-	public EventServiceSteps() {
+	public MerchantServiceTestsSteps() {
 		s = new EventService(new IEventSender() {
 			@Override
 			public void sendEvent(Event ev) {
@@ -52,18 +53,14 @@ public class EventServiceSteps {
 		s.receiveEvent(new Event("registerMerchant", new Object[] {merchant}));
 	}
 
-	@Then("I have sent event registerMerchantSuccess with registered merchant")
-	public void iHaveSentEventRegisterMerchantSuccessWithRegisteredMerchant() {
+	@Then("I have sent event registerMerchantSuccess with registered merchantId")
+	public void iHaveSentEventRegisterMerchantSuccessWithRegisteredMerchantId() {
 		String type = event.getEventType();
 		assertEquals("registerMerchantSuccess", type);
 
-		Merchant eMerchant = event.getArgument(0, Merchant.class);
+		String merchantId = event.getArgument(0, String.class);
 
-		assertNotNull(eMerchant.id);
-		assertEquals(eMerchant.accountId, merchant.accountId);
-		assertEquals(eMerchant.cprNumber, merchant.cprNumber);
-		assertEquals(eMerchant.firstName, merchant.firstName);
-		assertEquals(eMerchant.lastName,  merchant.lastName);
+		assertNotNull(merchantId);
 	}
 
 	@Given("An invalid Merchant")
@@ -73,8 +70,8 @@ public class EventServiceSteps {
 
 	@And("The Merchant is registered")
 	public void theMerchantIsRegistered() throws Exception {
-		s.registerMerchant(merchant);
-		merchant = event.getArgument(0, Merchant.class);
+		s.registerMerchant(merchant, null);
+		merchant.id = event.getArgument(0, String.class);
 		event = null; //overwrite sent event
 	}
 
