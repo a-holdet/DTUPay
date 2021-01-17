@@ -10,6 +10,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -60,7 +61,7 @@ public class ReportingSteps {
     @When("the merchant requests a report of transactions")
     public void theMerchantRequestsAReportOfTransactions() {
         try {
-            report = merchantAdapter.getMerchantReport(merchant.getId());
+            report = merchantAdapter.getMerchantReport(merchant.getId(), null, null);
             assertNotNull(report);
         } catch (IllegalArgumentException e) {
             this.exceptionHolder.setException(e);
@@ -147,5 +148,15 @@ public class ReportingSteps {
     public void theCustomerDoesNotReceiveAReport() {
         assertNull(report);
 
+    }
+
+    @When("the merchant requests a report of transactions in a time interval")
+    public void theMerchantRequestsAReportOfTransactionsInATimeInterval() {
+        try {
+            report = merchantAdapter.getMerchantReport(merchant.getId(), LocalDateTime.of(2009,01,01,12,12), LocalDateTime.now());
+            assertNotNull(report);
+        } catch (IllegalArgumentException e) {
+            this.exceptionHolder.setException(e);
+        }
     }
 }

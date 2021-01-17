@@ -54,3 +54,13 @@ Feature: Reporting
     When the customer requests a report of transactions
     Then the customer does not receive a report
     And the error message is "The customer does not exists in DTUPay"
+
+
+  Scenario: Successful Merchant Reporting with time interval
+    Given the customer has a bank account
+    And the customer is registering with DTUPay
+    And the merchant has a bank account
+    And the merchant is registering with DTUPay
+    And the merchant and customer perform a successful payment of 10 kr for a "Gulddame"
+    When the merchant requests a report of transactions in a time interval
+    Then the merchant receives a report having a transaction of 10 kr for a "Gulddame" to the merchant using the same token

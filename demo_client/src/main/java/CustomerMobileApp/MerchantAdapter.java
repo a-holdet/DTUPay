@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class MerchantAdapter {
@@ -55,8 +56,11 @@ public class MerchantAdapter {
         response.close();
     }
 
-    public UserReport getMerchantReport(String merchantId) {
-        Response response = baseUrl.path("reports").queryParam("id", merchantId).request().get(new GenericType<>() {
+    public UserReport getMerchantReport(String merchantId, LocalDateTime start, LocalDateTime end) {
+        if(start== null) start= LocalDateTime.MIN;
+        if(end==null) end = LocalDateTime.MAX;
+        Response response = baseUrl.path("reports").queryParam("id", merchantId).queryParam("start",start
+        .toString()).queryParam("end",end.toString()).request().get(new GenericType<>() {
         });
         if(response.getStatus() == 422){
             String errorMessage = response.readEntity(String.class); // error message is in payload
