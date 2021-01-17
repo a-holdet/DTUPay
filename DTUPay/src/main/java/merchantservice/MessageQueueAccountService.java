@@ -50,9 +50,8 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
     private final ConcurrentHashMap<UUID, CompletableFuture<Event>> requests = new ConcurrentHashMap<>();
 
     private <S> Result<S, String> handle(Object payload, EventType eventType, Class<S> successClass) throws Error {
-        UUID requestID = UUID.randomUUID();
-        Event request = new Event(eventType.getName(), new Object[] {payload}, requestID);
-        requests.put(requestID, new CompletableFuture<>());
+        Event request = new Event(eventType.getName(), new Object[] {payload}, UUID.randomUUID());
+        requests.put(request.getUUID(), new CompletableFuture<>());
 
         try {
             this.sender.sendEvent(request);
@@ -61,9 +60,7 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
         }
 
         Event response = requests.get(request.getUUID()).join();
-        String type = response.getEventType();
-
-        if (type.equals(eventType.succeeded())) {
+        if(response.isSuccessReponse()){
             S success = response.getArgument(0, successClass);
             return new Result<>(success, null, Result.ResultState.SUCCESS);
         } else {
@@ -131,7 +128,8 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
 
         if (Arrays.stream(supportedEventTypes).anyMatch(eventType -> eventType.matches(event.getEventType()))) {
             CompletableFuture<Event> cf = requests.get(event.getUUID());
-            if (cf != null) cf.complete(event);
+            if (cf != null)
+                cf.complete(event);
         }
 
         System.out.println("--------------------------------------------------------");

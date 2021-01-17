@@ -6,7 +6,7 @@ import messaging.rmq.event.objects.Event;
 
 public abstract class RMQExchange {
 
-    public static final String FIXED_ROUTING_KEY = "route_key";
+    public static final String FIXED_ROUTING_KEY = "route_key"; // todo delete later?
     private static final Object SYNC_LOCK = new Object();
 
     public final RMQChannel parentChannel = RMQChannel.instance;

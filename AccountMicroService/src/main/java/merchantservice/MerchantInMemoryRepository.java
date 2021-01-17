@@ -1,10 +1,11 @@
 package merchantservice;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MerchantInMemoryRepository implements IMerchantRepository {
-    List<Merchant> merchants = new ArrayList<>();
+    List<Merchant> merchants =  Collections.synchronizedList(new ArrayList<>());
     @Override
     public void addMerchant(Merchant merchant) {
         merchants.add(merchant);
@@ -12,6 +13,6 @@ public class MerchantInMemoryRepository implements IMerchantRepository {
 
     @Override
     public List<Merchant> getAllMerchants() {
-        return merchants;
+        return List.copyOf(merchants);
     }
 }

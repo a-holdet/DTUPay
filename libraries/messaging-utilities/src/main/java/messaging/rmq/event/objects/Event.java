@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class Event {
 
@@ -43,8 +44,21 @@ public class Event {
 		return gson.fromJson(gson.toJson(arguments[idx]), clazz);
 	}
 
+	public <T> T getArgument(Integer idx, TypeToken<T> clazz) {
+		Gson gson = new Gson();
+		return gson.fromJson(gson.toJson(arguments[idx]), clazz.getType());
+	}
+
 	public UUID getUUID() {
 		return uuid;
+	}
+
+	public boolean isSuccessReponse() {
+		return eventType.endsWith("Success");
+	}
+
+	public boolean isFailureReponse() {
+		return eventType.endsWith("Fail");
 	}
 
 	public boolean equals(Object o) {
