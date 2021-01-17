@@ -45,9 +45,9 @@ public class PaymentPortAdapter  {
 //        }
 //    }
 
-    public String consumeToken(UUID customerToken) throws Exception {
-        consumeTokenResult = new CompletableFuture<>();
-        sender.sendEvent(new Event("consumeToken", new Object[]{customerToken}));
-        return consumeTokenResult.join();
-    }
+//    public String consumeToken(UUID customerToken) throws Exception {
+//        consumeTokenResult = new CompletableFuture<>();
+//        sender.sendEvent(new Event("consumeToken", new Object[]{customerToken}));
+//        return consumeTokenResult.join();
+//    }
 }
