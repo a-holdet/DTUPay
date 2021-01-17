@@ -119,6 +119,7 @@ public class EventService implements IEventReceiver {
 		String type = event.getEventType();
 		UUID eventId = event.getUUID();
 
+		//TODO: By Jakob: Refactor this to avoid high coupling
 		try {
 			if (type.equals(registerMerchant.getName())) {
 				Merchant merchant = event.getArgument(0, Merchant.class);
