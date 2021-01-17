@@ -1,15 +1,18 @@
-package paymentservice;
+package messagequeue;
 
 
 import DTO.Customer;
 import DTO.Merchant;
-import messagequeue.EventType;
 import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 import messaging.rmq.event.objects.Result;
+import paymentservice.CustomerDoesNotExistException;
+import paymentservice.ICustomerService;
+import paymentservice.IMerchantService;
+import paymentservice.MerchantDoesNotExistException;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -34,12 +37,9 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
         return instance;
     }
 
-    private static final EventType registerMerchant = new EventType("registerMerchant");
     private static final EventType getMerchant = new EventType("getMerchant");
-    private static final EventType registerCustomer = new EventType("registerCustomer");
-    private static final EventType customerExists = new EventType("customerExists");
     private static final EventType getCustomer = new EventType("getCustomer");
-    private static final EventType[] supportedEventTypes = {registerMerchant, getMerchant, registerCustomer, customerExists, getCustomer};
+    private static final EventType[] supportedEventTypes = {getMerchant, getCustomer};
 
     private final IEventSender sender;
     public MessageQueueAccountService(IEventSender sender) {
@@ -74,40 +74,10 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
     }
 
     @Override
-    public String registerMerchant(Merchant merchant) throws IllegalArgumentException {
-        Result<String, String> res = handle(merchant, registerMerchant, String.class);
-        if (res.state == Result.ResultState.FAILURE) {
-            throw new IllegalArgumentException(res.failureValue);
-        } else {
-            return res.successValue;
-        }
-    }
-
-    @Override
     public Merchant getMerchant(String merchantId) throws MerchantDoesNotExistException {
         Result<Merchant, String> res = handle(merchantId, getMerchant, Merchant.class);
         if (res.state == Result.ResultState.FAILURE) {
             throw new MerchantDoesNotExistException(res.failureValue);
-        } else {
-            return res.successValue;
-        }
-    }
-
-    @Override
-    public String registerCustomer(Customer customer) throws IllegalArgumentException {
-        Result<String, String> res = handle(customer, registerCustomer, String.class);
-        if (res.state == Result.ResultState.FAILURE) {
-            throw new IllegalArgumentException(res.failureValue);
-        } else {
-            return res.successValue;
-        }
-    }
-
-    @Override
-    public boolean customerExists(String customerId)  {
-        Result<Boolean, String> res = handle(customerId, customerExists, Boolean.class);
-        if (res.state == Result.ResultState.FAILURE) {
-            return false;
         } else {
             return res.successValue;
         }

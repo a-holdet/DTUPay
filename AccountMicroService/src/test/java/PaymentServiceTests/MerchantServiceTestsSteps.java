@@ -83,6 +83,4 @@ public class MerchantServiceTestsSteps {
 	public void iReceiveEventGetMerchantEventWithMerchantId() throws Exception {
 		s.receiveEvent(new Event("getMerchant", new Object[] {merchant.id}));
 	}
-
-
 }

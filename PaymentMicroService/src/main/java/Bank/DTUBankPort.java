@@ -1,9 +1,9 @@
 package Bank;
 
 
-import fastmoney.BankService;
-import fastmoney.BankServiceException_Exception;
-import fastmoney.BankServiceService;
+import dtu.ws.fastmoney.BankService;
+import dtu.ws.fastmoney.BankServiceException_Exception;
+import dtu.ws.fastmoney.BankServiceService;
 
 import java.math.BigDecimal;
 public class DTUBankPort implements IBank{

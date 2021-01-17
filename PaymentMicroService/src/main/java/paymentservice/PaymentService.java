@@ -5,6 +5,10 @@ import Bank.BankException;
 import Bank.DTUBankPort;
 import Bank.IBank;
 import DTO.Merchant;
+import DTO.Payment;
+import messagequeue.MessageQueueAccountService;
+import messagequeue.MessageQueueReportService;
+import messagequeue.MessageQueueTokenService;
 
 import java.math.BigDecimal;
 
@@ -17,9 +21,9 @@ public class PaymentService implements IPaymentService {
             instance = new PaymentService(
                     MessageQueueAccountService.getInstance(),
                     MessageQueueAccountService.getInstance(),
-                    new TokenServiceMock(),
+                    MessageQueueTokenService.getInstance(),
                     new DTUBankPort(),
-                    new ReportServiceMock()
+                    MessageQueueReportService.getInstance()
             );
         }
         return instance;

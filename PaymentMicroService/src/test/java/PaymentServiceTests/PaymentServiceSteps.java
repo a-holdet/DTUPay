@@ -1,3 +1,5 @@
+/*
+
 package PaymentServiceTests;
 
 import Bank.DTUBankPort;
@@ -20,9 +22,8 @@ import static org.junit.Assert.assertTrue;
 
 public class PaymentServiceSteps {
 
-    BankService bankService = new BankServiceService().getBankServicePort();
-    ICustomerService customerService = MessageQueueAccountService.getInstance();
-    IMerchantService merchantService = MessageQueueAccountService.getInstance();
+    ICustomerService customerService = new MockCustomerService();
+    IMerchantService merchantService = new MockMerchantService();
     IPaymentService paymentService = PaymentService.getInstance();
     Customer customer;
     Merchant merchant;
@@ -39,10 +40,6 @@ public class PaymentServiceSteps {
         merchant.setLastName("mlast");
         merchant.setCprNumber("123456-7853");
 
-        // register at bank
-        String customerAccountId = bankService.createAccountWithBalance(customer, BigDecimal.ZERO);
-        String merchantAccountId = bankService.createAccountWithBalance(merchant, BigDecimal.ZERO);
-
         this.customer = new Customer();
         this.customer.firstName = customer.getFirstName();
         this.customer.lastName = customer.getLastName();
@@ -55,6 +52,9 @@ public class PaymentServiceSteps {
         this.merchant.cprNumber = merchant.getCprNumber();
         this.merchant.accountId = merchantAccountId;
 
+        System.out.println("XXX");
+        System.out.println(customerAccountId);
+        System.out.println(merchantAccountId);
         assertNotNull(customerAccountId);
         assertNotNull(merchantAccountId);
     }
@@ -62,11 +62,12 @@ public class PaymentServiceSteps {
     @When("I receive a valid payment")
     public void iReceiveAValidPayment() {
         assertTrue(true);
-
     }
 
     @Then("I send back a valid response")
     public void iSendBackAValidResponse() {
+
         assertTrue(true);
     }
 }
+*/
