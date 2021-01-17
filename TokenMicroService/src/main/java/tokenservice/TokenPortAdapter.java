@@ -1,5 +1,7 @@
 package tokenservice;
 
+import messaging.rmq.event.EventExchange;
+import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
@@ -14,9 +16,28 @@ public class TokenPortAdapter implements IEventReceiver {
     private IEventSender sender;
     static final ITokenService tokenService = TokenService.instance;
 
-    public TokenPortAdapter(ITokenService tokenService, IEventSender sender) {
-        this.tokenService = tokenService;
-        this.sender = sender;
+//    public TokenPortAdapter(ITokenService tokenService, IEventSender sender) {
+//        this.tokenService = tokenService;
+//        this.sender = sender;
+//    }
+
+    public TokenPortAdapter(IEventSender sender) { this.sender = sender; }
+
+    private static TokenPortAdapter instance;
+    public static TokenPortAdapter getInstance() {
+        if (instance == null) {
+            try {
+                System.out.println("tokenportadapter parent channel");
+                System.out.println(EventExchange.instance.parentChannel);
+                var ies = EventExchange.instance.getSender();
+                TokenPortAdapter service = new TokenPortAdapter(ies);
+                new EventQueue().registerReceiver(service);
+                instance = service;
+            } catch (Exception e) {
+                throw new Error(e);
+            }
+        }
+        return instance;
     }
 
     @Override
@@ -43,7 +64,9 @@ public class TokenPortAdapter implements IEventReceiver {
             customerExistsResult = new CompletableFuture<>();
 
             sender.sendEvent(new Event("customerExists", new Object[]{customerId}));
+            System.out.println("before customer exists result");
             boolean customerExists = customerExistsResult.join();
+            System.out.println("after customer exists result");
             if (!customerExists) {
                 Event customerNotFoundEvent = new Event("createTokensForCustomerFailed",
                         new Object[]{new CustomerNotFoundException("Customer was not found")});

@@ -5,7 +5,7 @@ import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 
 public class CustomerPortAdapter implements IEventReceiver {
-    //    public static CustomerPortAdapter instance = null; // startUp(); //cannot be used until after startUp();
+
     private final ICustomerService customerService;
     private final IEventSender sender;
 
@@ -40,7 +40,7 @@ public class CustomerPortAdapter implements IEventReceiver {
 
     private boolean customerExists(Event event) {
         // TODO: Error handling that checks if cust id has been sent in event
-        String customerId = (String) event.getArguments()[0];
+        String customerId = event.getArgument(0, String.class);
 
         System.out.println("Cust id customerportadapter" + customerId);
 

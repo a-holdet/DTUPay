@@ -1,6 +1,5 @@
 package RabbitTest;
 
-import messaging.rmq.RMQQueue;
 import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.interfaces.IEventReceiver;

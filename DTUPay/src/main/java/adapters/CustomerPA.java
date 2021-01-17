@@ -55,7 +55,6 @@ public class CustomerPA implements IEventReceiver {
         Event event = new Event("createTokensForCustomer", new Object[]{customerId, amount});
         System.out.println("evente cpa " + event);
         sender.sendEvent(event);
-        System.out.println("didSEndEvent in createTokenForCustomers");
         return createTokensForCustomerResult.join();
     }
 

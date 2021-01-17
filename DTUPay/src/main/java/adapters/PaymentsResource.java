@@ -14,7 +14,6 @@ import javax.ws.rs.core.Response;
 public class PaymentsResource {
     IPaymentService paymentService = PaymentService.getInstance();
 
-
     public PaymentsResource(){
         System.out.println("this is run");
         PaymentPortAdapter.startUp();

@@ -44,6 +44,8 @@ public class CustomerAdapter {
             throw new IllegalArgumentException(errorMessage);
         }
 
+        System.out.println("this is the response status" + response.getStatus());
+        System.out.println(response);
         String customerId = response.readEntity(String.class);
         if (customerId.equals("")) {
             System.out.println("lookatthis");
