@@ -4,7 +4,7 @@ import DTO.Payment;
 import customerservice.CustomerDoesNotExistException;
 import merchantservice.MerchantDoesNotExistException;
 import paymentservice.*;
-import ports.BankException;
+import Bank.BankException;
 import tokenservice.TokenDoesNotExistException;
 
 import javax.ws.rs.*;

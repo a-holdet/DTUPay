@@ -1,6 +1,5 @@
-package merchantServiceTests;
+package PaymentServiceTests;
 
-import com.google.gson.Gson;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import merchantservice.Merchant;

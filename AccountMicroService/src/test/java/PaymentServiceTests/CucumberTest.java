@@ -1,4 +1,4 @@
-package merchantServiceTests;
+package PaymentServiceTests;
 
 import io.cucumber.junit.platform.engine.Cucumber;
 

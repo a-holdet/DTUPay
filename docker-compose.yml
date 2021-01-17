@@ -25,6 +25,12 @@ services:
     depends_on:
       - "rabbitMq"
 
+  PaymentMicroService:
+    image: paymentmicroservice
+    container_name: paymentmicroservice
+    depends_on:
+      - "rabbitMq"
+
   rabbitMq:
     image: rabbitmq
     container_name: rabbitMq_container

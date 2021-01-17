@@ -1,18 +1,12 @@
 package paymentservice;
-import java.math.BigDecimal;
 
-import DTO.Payment;
-import customerservice.CustomerDoesNotExistException;
-import merchantservice.*;
+
 import Bank.BankException;
 import Bank.DTUBankPort;
 import Bank.IBank;
-import reportservice.IReportService;
-import reportservice.ReportService;
-import tokenservice.ITokenService;
-import tokenservice.TokenDoesNotExistException;
-import tokenservice.TokenService;
-import customerservice.ICustomerService;
+import DTO.Merchant;
+
+import java.math.BigDecimal;
 
 
 public class PaymentService implements IPaymentService {
@@ -23,9 +17,9 @@ public class PaymentService implements IPaymentService {
             instance = new PaymentService(
                     MessageQueueAccountService.getInstance(),
                     MessageQueueAccountService.getInstance(),
-                    TokenService.instance,
+                    new TokenServiceMock(),
                     new DTUBankPort(),
-                    ReportService.getInstance()
+                    new ReportServiceMock()
             );
         }
         return instance;
