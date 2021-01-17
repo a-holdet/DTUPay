@@ -1,4 +1,4 @@
-package merchantservice;
+package messagequeue;
 
 public class EventType implements Resultable {
 
