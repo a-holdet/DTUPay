@@ -50,16 +50,7 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
     private final ConcurrentHashMap<UUID, CompletableFuture<Event>> requests = new ConcurrentHashMap<>();
 
     private <S> Result<S, String> handle(Object payload, EventType eventType, Class<S> successClass) throws Error {
-        Event request = new Event(eventType.getName(), new Object[] {payload}, UUID.randomUUID());
-        requests.put(request.getUUID(), new CompletableFuture<>());
-
-        try {
-            this.sender.sendEvent(request);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
-
-        Event response = requests.get(request.getUUID()).join();
+        Event response = sendRequestAndAwaitReponse(payload,eventType);
         if(response.isSuccessReponse()){
             S success = response.getArgument(0, successClass);
             return new Result<>(success, null, Result.ResultState.SUCCESS);
@@ -70,14 +61,27 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
         }
     }
 
+    private Event sendRequestAndAwaitReponse(Object payload, EventType eventType){
+        Event request = new Event(eventType.getName(), new Object[] {payload}, UUID.randomUUID());
+        requests.put(request.getUUID(), new CompletableFuture<>());
+
+        try {
+            this.sender.sendEvent(request);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
+
+        Event response = requests.get(request.getUUID()).join();
+        return response;
+    }
+
     @Override
     public String registerMerchant(Merchant merchant) throws IllegalArgumentException {
-        Result<String, String> res = handle(merchant, registerMerchant, String.class);
-        if (res.state == Result.ResultState.FAILURE) {
-            throw new IllegalArgumentException(res.failureValue);
-        } else {
-            return res.successValue;
-        }
+        Event response = sendRequestAndAwaitReponse(merchant,registerMerchant);
+        if(response.isSuccessReponse())
+            return response.getPayloadAs(String.class);
+        else
+            throw new IllegalArgumentException(response.getErrorMessage());
     }
 
     @Override
