@@ -15,7 +15,7 @@ import java.util.UUID;
 import static org.junit.Assert.*;
 
 public class MerchantServiceTestsSteps {
-	EventService s;
+	/*EventService s;
 	Event event;
 	Merchant merchant;
 
@@ -83,7 +83,7 @@ public class MerchantServiceTestsSteps {
 	@When("I receive event getMerchant event with merchantId")
 	public void iReceiveEventGetMerchantEventWithMerchantId() throws Exception {
 		s.receiveEvent(new Event("getMerchant", new Object[] {merchant.id}));
-	}
+	}*/
 
 
 }

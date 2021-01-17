@@ -1,6 +1,6 @@
-package merchantservice;
+package AccountService;
 
-public class MerchantDoesNotExistException extends Exception {
+public class MerchantDoesNotExistException extends Throwable {
     public MerchantDoesNotExistException(String errormsg) {
         super(errormsg);
     }

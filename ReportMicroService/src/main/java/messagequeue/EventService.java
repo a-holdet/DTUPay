@@ -1,25 +1,19 @@
 package messagequeue;
 
-import customerservice.Customer;
-import customerservice.CustomerDoesNotExistException;
-import customerservice.ICustomerService;
-import customerservice.LocalCustomerService;
-import merchantservice.IMerchantService;
-import merchantservice.LocalMerchantService;
-import merchantservice.Merchant;
-import merchantservice.MerchantDoesNotExistException;
+
+import AccountService.Merchant;
 import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 
-import com.google.gson.Gson;
+import reportservice.IReportService;
+import reportservice.ReportService;
 
-import java.util.List;
 import java.util.UUID;
 
-public class EventService implements IEventReceiver {
+/*public class EventService implements IEventReceiver {
 
 	// Singleton as method due to serviceTest
 	private static EventService instance;
@@ -37,8 +31,7 @@ public class EventService implements IEventReceiver {
 		return instance;
 	}
 
-	private static final IMerchantService merchantService = LocalMerchantService.instance;
-	private static final ICustomerService customerService = LocalCustomerService.instance;
+	private static final IReportService reportService = ReportService.instance;
 	IEventSender sender;
 
 	public EventService(IEventSender sender) { this.sender = sender; }
@@ -147,4 +140,6 @@ public class EventService implements IEventReceiver {
 
 		System.out.println("--------------------------------------------------------");
 	}
-}
+
+
+}*/

@@ -1,5 +1,6 @@
-package merchantservice;
+package AccountService;
 
+//TODO: Refactor to DTUPayUser instead?
 public class Merchant {
     public String firstName;
     public String lastName;
