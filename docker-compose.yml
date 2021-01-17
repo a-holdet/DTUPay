@@ -1,5 +1,9 @@
 version: '3'
-services:    
+services: 
+  # rabbitMq:
+  #   image: rabbitmq
+  #   container_name: rabbitMq_container
+
   dtupay:
     image: dtupay
     container_name: dtupay
@@ -26,15 +30,10 @@ services:
       - "rabbitMq"
 
   rabbitMq:
-    image: rabbitmq
+    image: rabbitmq:management
     container_name: rabbitMq_container
-
-
-  # rabbitMq:
-  #   image: rabbitmq:management
-  #   container_name: rabbitMq_container
-  #   ports:
-  #    - "8080:15672"
+    ports:
+     - "8080:15672"
 
   # Nginx:
   #   image: nginx:latest

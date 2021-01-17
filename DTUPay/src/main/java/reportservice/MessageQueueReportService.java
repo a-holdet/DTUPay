@@ -37,7 +37,7 @@ public class MessageQueueReportService implements IReportService, IEventReceiver
             try {
                 var ies = EventExchange.instance.getSender();
                 MessageQueueReportService service = new MessageQueueReportService(ies,
-                        MessageQueueMerchantService.getInstance(), LocalCustomerService.instance);
+                        MessageQueueAccountService.getInstance(), MessageQueueAccountService.getInstance());
                 new EventQueue().registerReceiver(service);
                 instance = service;
             } catch (Exception e) {
@@ -153,7 +153,6 @@ public class MessageQueueReportService implements IReportService, IEventReceiver
         Gson gson = new Gson();
         event = generateManagerOverviewCF.get(event.getUUID()).join();
         return Arrays.asList(gson.fromJson(event.getArgument(0, String.class), Transaction[].class));
-
     }
 
     @Override
@@ -186,10 +185,8 @@ public class MessageQueueReportService implements IReportService, IEventReceiver
                     cf.complete(event);
                 break;
             default:
-                // ignore, do nothing
                 break;
         }
-
         System.out.println("--------------------------------------------------------");
     }
 }
