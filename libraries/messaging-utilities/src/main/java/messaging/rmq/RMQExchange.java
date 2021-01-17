@@ -32,7 +32,7 @@ public abstract class RMQExchange {
             public void sendEvent(Event event) throws Exception {
                 String message = new Gson().toJson(event);
                 synchronized (SYNC_LOCK) {
-                    parentChannel.getChannel().basicPublish(exchangeName, FIXED_ROUTING_KEY, null,
+                    parentChannel.getProducerChannel().basicPublish(exchangeName, FIXED_ROUTING_KEY, null,
                             message.getBytes("UTF-8"));
                 }
             }
