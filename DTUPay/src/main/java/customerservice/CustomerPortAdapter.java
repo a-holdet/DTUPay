@@ -1,34 +1,18 @@
 package customerservice;
 
-import io.cucumber.java.an.E;
-import messaging.rmq.event.EventExchange;
-import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 
 public class CustomerPortAdapter implements IEventReceiver {
-    public static CustomerPortAdapter instance = null; // startUp(); //cannot be used until after startUp();
-    private ICustomerService customerService = LocalCustomerService.instance;
+    //    public static CustomerPortAdapter instance = null; // startUp(); //cannot be used until after startUp();
+    private final ICustomerService customerService;
+    private final IEventSender sender;
 
-    public CustomerPortAdapter(IEventSender sender) {
+    public CustomerPortAdapter(ICustomerService customerService, IEventSender sender) {
+        this.customerService = customerService;
         this.sender = sender;
     }
-
-    public static void startUp() {
-        if (instance == null) {
-            try {
-                var s = EventExchange.instance.getSender();
-                CustomerPortAdapter portAdapter = new CustomerPortAdapter(s);
-                new EventQueue().registerReceiver(portAdapter);
-                instance = portAdapter;
-            } catch (Exception e) {
-                throw new Error(e);
-            }
-        }
-    }
-
-    IEventSender sender;
 
     @Override
     public void receiveEvent(Event event) throws Exception {

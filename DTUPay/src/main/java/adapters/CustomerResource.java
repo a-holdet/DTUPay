@@ -4,7 +4,6 @@ import DTO.TokenCreationDTO;
 import customerservice.*;
 import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.EventQueue;
-import messaging.rmq.event.interfaces.IEventSender;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -17,10 +16,10 @@ public class CustomerResource {
     ICustomerService ICustomerService = LocalCustomerService.instance;
 
     public CustomerResource(){
-        CustomerPortAdapter.startUp();
+//        CustomerPortAdapter.startUp();
+//        custPortAdapter = new CustomerPortAdapter(customerService, EventExchange.instance.getSender());
+        customerPA = new CustomerPA(EventExchange.instance.getSender());
 
-        IEventSender sender = EventExchange.instance.getSender();
-        customerPA = new CustomerPA(sender);
         try {
             new EventQueue().registerReceiver(customerPA);
         } catch (Exception e) {
@@ -35,7 +34,7 @@ public class CustomerResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(Customer customer) {
         try{
-            String customerId = ICustomerService.registerCustomer(customer);
+            String customerId = customerPA.registerCustomer(customer);
             return Response.ok(customerId).build();
         }catch(IllegalArgumentException e){
             return Response.status(422).entity(e.getMessage()).build();

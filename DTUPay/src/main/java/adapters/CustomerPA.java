@@ -1,5 +1,6 @@
 package adapters;
 
+import customerservice.Customer;
 import customerservice.ICustomerService;
 import customerservice.LocalCustomerService;
 import io.cucumber.java.an.E;
@@ -22,8 +23,12 @@ public class CustomerPA implements IEventReceiver {
 
     @Override
     public void receiveEvent(Event event) throws Exception {
-        if (event.getEventType().equals("createTokensForCustomerResponse")) {
+        if (event.getEventType().equals("createTokensForCustomerResponse") ) {
             createTokensResponse(event);
+        } else if (event.getEventType().equals("createTokensForCustomerFailed")) {
+            System.out.println("received");
+        } else {
+            System.out.println("customerPA " + event);
         }
     }
 
@@ -40,5 +45,10 @@ public class CustomerPA implements IEventReceiver {
         sender.sendEvent(event);
         System.out.println("didSEndEvent in createTokenForCustomers");
         return createTokensForCustomerResult.join();
+    }
+
+    public String registerCustomer(Customer customer) {
+//        TODO: Call customer micro service to register customer
+        return null;
     }
 }
