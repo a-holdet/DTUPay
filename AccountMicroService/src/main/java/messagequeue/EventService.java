@@ -37,8 +37,8 @@ public class EventService implements IEventReceiver {
 		return instance;
 	}
 
-	static final IMerchantService merchantService = LocalMerchantService.instance;
-	static final ICustomerService customerService = LocalCustomerService.instance;
+	private static final IMerchantService merchantService = LocalMerchantService.instance;
+	private static final ICustomerService customerService = LocalCustomerService.instance;
 	IEventSender sender;
 
 	public EventService(IEventSender sender) { this.sender = sender; }
@@ -147,6 +147,4 @@ public class EventService implements IEventReceiver {
 
 		System.out.println("--------------------------------------------------------");
 	}
-
-
 }

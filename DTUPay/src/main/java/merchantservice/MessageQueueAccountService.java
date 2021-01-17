@@ -9,6 +9,7 @@ import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,32 +32,45 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
         return instance;
     }
 
-    IEventSender sender;
+    private static final EventType registerMerchant = new EventType("registerMerchant");
+    private static final EventType getMerchant = new EventType("getMerchant");
+    private static final EventType registerCustomer = new EventType("registerCustomer");
+    private static final EventType customerExists = new EventType("customerExists");
+    private static final EventType getCustomer = new EventType("getCustomer");
+    private static final EventType[] supportedEventTypes = {registerMerchant, getMerchant, registerCustomer, customerExists, getCustomer};
+
+    private final IEventSender sender;
     public MessageQueueAccountService(IEventSender sender) {
         this.sender = sender;
         instance = this; // needed for service tests!
     }
 
-    static final String registerMerchant = "registerMerchant";
-    ConcurrentHashMap<UUID, CompletableFuture<Event>> registerMerchantCF = new ConcurrentHashMap<>();
-    @Override
-    public String registerMerchant(Merchant merchant) throws IllegalArgumentException {
-        Event event = new Event(registerMerchant, new Object[] {merchant}, UUID.randomUUID());
+    private final ConcurrentHashMap<UUID, CompletableFuture<Event>> responses = new ConcurrentHashMap<>();
+
+/*    private <S, F> S handle(Object payload, EventType eventType) {
+        ...
+    }*/
+
+    private Event sendPayloadAndWait(Object payload, EventType eventType) {
+        Event event = new Event(eventType.getName(), new Object[] {payload}, UUID.randomUUID());
+        responses.put(event.getUUID(), new CompletableFuture<>());
+
         try {
-            registerMerchantCF.put(event.getUUID(), new CompletableFuture<>());
             this.sender.sendEvent(event);
         } catch (Exception e) {
             throw new Error(e);
         }
 
-        System.out.println("A");
-        event = registerMerchantCF.get(event.getUUID()).join();
-        String type = event.getEventType();
-        System.out.println("A");
+        return responses.get(event.getUUID()).join();
+    }
 
-        if(type.equals(registerMerchant+"Success")) {
-            String merchantId = event.getArgument(0, String.class);
-            return merchantId;
+    @Override
+    public String registerMerchant(Merchant merchant) throws IllegalArgumentException {
+        Event event = sendPayloadAndWait(merchant, registerMerchant);
+        String type = event.getEventType();
+
+        if(type.equals(registerMerchant.succeeded())) {
+            return event.getArgument(0, String.class); // merchantId
         }
 
         String exceptionType = event.getArgument(0, String.class);
@@ -64,26 +78,14 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
         throw new IllegalArgumentException(exceptionMsg);
     }
 
-    static final String getMerchant = "getMerchant";
-    ConcurrentHashMap<UUID, CompletableFuture<Event>> getMerchantCF = new ConcurrentHashMap<>();
+
     @Override
     public Merchant getMerchant(String merchantId) throws MerchantDoesNotExistException {
-        Event event = new Event(getMerchant, new Object[] {merchantId}, UUID.randomUUID());
-        try {
-            getMerchantCF.put(event.getUUID(), new CompletableFuture<>());
-            this.sender.sendEvent(event);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
-
-        System.out.println("B");
-        event = getMerchantCF.get(event.getUUID()).join();
+        Event event = sendPayloadAndWait(merchantId, getMerchant);
         String type = event.getEventType();
-        System.out.println("B");
 
-        if(type.equals(getMerchant+"Success")) {
-            Merchant merchant = event.getArgument(0, Merchant.class);
-            return merchant;
+        if(type.equals(getMerchant.succeeded())) {
+            return event.getArgument(0, Merchant.class); // merchant
         }
 
         String exceptionType = event.getArgument(0, String.class);
@@ -92,127 +94,60 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
     }
 
     @Override
-    public void receiveEvent(Event event) throws Exception {
-        System.out.println("--------------------------------------------------------");
-        System.out.println("Event received! : " + event);
-
-        CompletableFuture<Event> cf;
-        switch (event.getEventType()) {
-            case registerMerchant+"Success":
-            case registerMerchant+"Fail":
-                cf = registerMerchantCF.getOrDefault(event.getUUID(), null);
-                if(cf != null)
-                    cf.complete(event);
-                break;
-            case getMerchant+"Success":
-            case getMerchant+"Fail":
-                cf = getMerchantCF.getOrDefault(event.getUUID(), null);
-                if(cf != null)
-                    cf.complete(event);
-                break;
-            case getCustomer+"Success":
-            case getCustomer+"Fail":
-                cf = getCustomerCF.getOrDefault(event.getUUID(), null);
-                if(cf != null)
-                    cf.complete(event);
-                break;
-            case registerCustomer+"Success":
-            case registerCustomer+"Fail":
-                cf = registerCustomerCF.getOrDefault(event.getUUID(), null);
-                if(cf != null)
-                    cf.complete(event);
-                break;
-            case customerExists+"Success":
-            case customerExists+"Fail":
-                cf = customerExistsCF.getOrDefault(event.getUUID(), null);
-                if(cf != null)
-                    cf.complete(event);
-                break;
-            default:
-                //ignore, do nothing
-                System.out.println("AAAA " + event.getEventType());
-                break;
-        }
-
-        System.out.println("--------------------------------------------------------");
-    }
-
-    private static final String registerCustomer = "registerCustomer";
-    ConcurrentHashMap<UUID, CompletableFuture<Event>> registerCustomerCF = new ConcurrentHashMap<>();
-    @Override
     public String registerCustomer(Customer customer) throws IllegalArgumentException {
-        Event event = new Event(registerCustomer, new Object[] {customer}, UUID.randomUUID());
-        try {
-            registerCustomerCF.put(event.getUUID(), new CompletableFuture<>());
-            this.sender.sendEvent(event);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
-
-        System.out.println("C");
-        event = registerCustomerCF.get(event.getUUID()).join();
+        Event event = sendPayloadAndWait(customer, registerCustomer);
         String type = event.getEventType();
-        System.out.println("C");
 
-        if(type.equals(registerCustomer+"Success")) {
-            String customerId = event.getArgument(0, String.class);
-            return customerId;
+        if(type.equals(registerCustomer.succeeded())) {
+            return event.getArgument(0, String.class); // customerId
         }
+
+        System.out.println("XXXX");
+        System.out.println(type);
+        System.out.println(registerCustomer.succeeded());
+        System.out.println(registerCustomer.failed());
 
         String exceptionType = event.getArgument(0, String.class);
         String exceptionMsg  = event.getArgument(1, String.class);
         throw new IllegalArgumentException(exceptionMsg);
     }
 
-    private static final String customerExists = "customerExists";
-    ConcurrentHashMap<UUID, CompletableFuture<Event>> customerExistsCF = new ConcurrentHashMap<>();
     @Override
     public boolean customerExists(String customerId)  {
-        Event event = new Event(customerExists, new Object[] {customerId}, UUID.randomUUID());
-        try {
-            customerExistsCF.put(event.getUUID(), new CompletableFuture<>());
-            this.sender.sendEvent(event);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
-
-        System.out.println("D");
-        event = customerExistsCF.get(event.getUUID()).join();
+        Event event = sendPayloadAndWait(customerId, customerExists);
         String type = event.getEventType();
-        System.out.println("D");
 
-        if (type.equals(customerExists+"Success")) {
-            boolean exists = event.getArgument(0, Boolean.class);
-            return exists;
+        if (type.equals(customerExists.succeeded())) {
+            return event.getArgument(0, Boolean.class); // wether customer exists or not
         } else {
-            return false;
+            return false; // some error happened. Interpreted as customer does not exist.
         }
     }
 
-    private static final String getCustomer = "getCustomer";
-    ConcurrentHashMap<UUID, CompletableFuture<Event>> getCustomerCF = new ConcurrentHashMap<>();
     @Override
     public Customer getCustomer(String customerId) throws CustomerDoesNotExistException {
-        Event event = new Event(getCustomer, new Object[] {customerId}, UUID.randomUUID());
-        try {
-            getCustomerCF.put(event.getUUID(), new CompletableFuture<>());
-            this.sender.sendEvent(event);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
-
-        System.out.println("E");
-        event = getCustomerCF.get(event.getUUID()).join();
+        Event event = sendPayloadAndWait(customerId, getCustomer);
         String type = event.getEventType();
-        System.out.println("E");
 
-        if(type.equals(getCustomer+"Success")) {
-            Customer customer = event.getArgument(0, Customer.class);
-            return customer;
+        if(type.equals(getCustomer.succeeded())) {
+            return event.getArgument(0, Customer.class); // customer
         }
 
         String exceptionType = event.getArgument(0, String.class);
         String exceptionMsg  = event.getArgument(1, String.class);
         throw new CustomerDoesNotExistException(exceptionMsg);
+    }
+
+    @Override
+    public void receiveEvent(Event event) throws Exception {
+        System.out.println("--------------------------------------------------------");
+        System.out.println("Event received! : " + event);
+
+        if (Arrays.stream(supportedEventTypes).anyMatch(eventType -> eventType.matches(event.getEventType()))) {
+            CompletableFuture<Event> cf = responses.get(event.getUUID());
+            if (cf != null) cf.complete(event);
+        }
+
+        System.out.println("--------------------------------------------------------");
     }
 }
