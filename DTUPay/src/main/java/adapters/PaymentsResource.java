@@ -1,5 +1,8 @@
 package adapters;
 
+import DTO.Payment;
+import customerservice.CustomerDoesNotExistException;
+import merchantservice.MerchantDoesNotExistException;
 import paymentservice.*;
 import ports.BankException;
 
@@ -9,7 +12,8 @@ import javax.ws.rs.core.Response;
 
 @Path("/merchantapi/payments")
 public class PaymentsResource {
-    IPaymentService paymentService;
+    IPaymentService paymentService = PaymentService.getInstance();
+
 
     public PaymentsResource(){
         System.out.println("this is run");
@@ -29,7 +33,7 @@ public class PaymentsResource {
             paymentService.registerPayment(payment);
         } catch (BankException e) {
             throw new InternalServerErrorException(e.getMessage());
-        } catch (TokenDoesNotExistException | MerchantDoesNotExistException | NegativeAmountException e) {
+        } catch (TokenDoesNotExistException | MerchantDoesNotExistException | CustomerDoesNotExistException | NegativeAmountException e) {
             return Response.status(422).entity(e.getMessage()).build();
         }
         return Response.noContent().build();

@@ -3,24 +3,32 @@ package messaging.rmq.event.objects;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
+import com.google.gson.Gson;
 
 public class Event {
 
 	private String eventType;
-	private Object[] arguments = null;
+	private Object[] arguments;
+	private UUID uuid;
 
-	public Event() {
-	};
-
-	public Event(String eventType, Object[] arguments) {
+	public Event(String eventType, Object[] arguments, UUID uuid) {
 		this.eventType = eventType;
 		this.arguments = arguments;
+		this.uuid = uuid;
 	}
 
-	public Event(String type) {
-		this.eventType = type;
+	public Event(String eventType, Object[] arguments) {
+		this(eventType, arguments, UUID.randomUUID());
 	}
+
+	public Event(String eventType) {
+		this(eventType, new Object[]{});
+	}
+
+	public Event() {}
 
 	public String getEventType() {
 		return eventType;
@@ -28,6 +36,15 @@ public class Event {
 
 	public Object[] getArguments() {
 		return arguments;
+	}
+
+	public <T> T getArgument(Integer idx, Class<T> clazz) {
+		Gson gson = new Gson();
+		return gson.fromJson(gson.toJson(arguments[idx]), clazz);
+	}
+
+	public UUID getUUID() {
+		return uuid;
 	}
 
 	public boolean equals(Object o) {
@@ -48,9 +65,9 @@ public class Event {
 		List<String> strs = new ArrayList<>();
 		if (arguments != null) {
 			List<Object> objs = Arrays.asList(arguments);
-			strs = objs.stream().map(o -> o.toString()).collect(Collectors.toList());
+			strs = objs.stream().map(o -> o == null ? "<N/A>" : o.toString()).collect(Collectors.toList());
 		}
 
-		return String.format("event(%s,%s)", eventType, String.join(",", strs));
+		return String.format("event(%s,%s,%s)", eventType, String.join(",", strs), uuid == null ? "<N/A>" : uuid.toString());
 	}
 }

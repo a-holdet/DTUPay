@@ -1,6 +1,5 @@
 package DTUPay.CucumberSteps;
 
-import CustomerMobileApp.CustomerAdapter;
 import CustomerMobileApp.MerchantAdapter;
 import DTUPay.Holders.*;
 import dtu.ws.fastmoney.BankService;
@@ -8,6 +7,7 @@ import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtu.ws.fastmoney.BankServiceService;
 import dtu.ws.fastmoney.User;
 import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -18,23 +18,30 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class MerchantRegistrationSteps {
-    //Adapters
+    // Adapters
     BankService bankService = new BankServiceService().getBankServicePort();
-    MerchantAdapter merchantAdapter = new MerchantAdapter();
+    MerchantAdapter merchantAdapter;
 
-    //Holders
+    // Holders
     private final MerchantHolder merchantHolder;
     private final OtherMerchantHolder otherMerchantHolder;
     private final ExceptionHolder exceptionHolder;
 
-    public MerchantRegistrationSteps(MerchantHolder merchantHolder, OtherMerchantHolder otherMerchantHolder, ExceptionHolder exceptionHolder) {
+    public MerchantRegistrationSteps(MerchantHolder merchantHolder, OtherMerchantHolder otherMerchantHolder,
+            ExceptionHolder exceptionHolder) {
         this.merchantHolder = merchantHolder;
         this.otherMerchantHolder = otherMerchantHolder;
         this.exceptionHolder = exceptionHolder;
     }
 
+    @Before
+    public void before() {
+        merchantAdapter = new MerchantAdapter();
+    }
+
     @After
     public void after() {
+        merchantAdapter.close();
         try {
             if (merchantHolder.getAccountId() != null)
                 bankService.retireAccount(merchantHolder.getAccountId());
@@ -64,7 +71,7 @@ public class MerchantRegistrationSteps {
     @Given("the merchant has no bank account")
     public void theMerchantHasNoBankAccount() {
         merchantHolder.setMerchantBasics();
-        //Do not create account
+        // Do not create account
     }
 
     @And("another merchant has a bank account")
@@ -79,7 +86,7 @@ public class MerchantRegistrationSteps {
     }
 
     @And("the merchant is registering with DTUPay")
-    public void theMerchantIsRegisteredWithDTUPay(){
+    public void theMerchantIsRegisteredWithDTUPay() {
         try {
             registerMerchantWithDTUPay(merchantHolder);
         } catch (IllegalArgumentException e) {
@@ -90,16 +97,17 @@ public class MerchantRegistrationSteps {
 
     @And("the merchant is not registered with DTUPay")
     public void theMerchantIsNotRegisteredWithDTUPay() {
-        //Do not register merchant with DTUPay
+        // Do not register merchant with DTUPay
     }
 
     @And("the other merchant is registering with DTUPay")
-    public void theOtherMerchantIsRegisteredWithDTUPay() throws IllegalArgumentException{
+    public void theOtherMerchantIsRegisteredWithDTUPay() throws IllegalArgumentException {
         registerMerchantWithDTUPay(otherMerchantHolder);
     }
 
-    private void registerMerchantWithDTUPay(UserHolder merchantHolder) throws IllegalArgumentException{
-        String createdMerchantId = merchantAdapter.registerMerchant(merchantHolder.getFirstName(), merchantHolder.getLastName(), merchantHolder.getCpr(), merchantHolder.getAccountId());
+    private void registerMerchantWithDTUPay(UserHolder merchantHolder) {
+        String createdMerchantId = merchantAdapter.registerMerchant(merchantHolder.getFirstName(),
+        merchantHolder.getLastName(), merchantHolder.getCpr(), merchantHolder.getAccountId());
         merchantHolder.setId(createdMerchantId);
     }
 

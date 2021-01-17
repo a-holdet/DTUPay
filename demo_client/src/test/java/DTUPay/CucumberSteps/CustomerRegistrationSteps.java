@@ -5,6 +5,7 @@ import DTUPay.Holders.CustomerHolder;
 import DTUPay.Holders.ExceptionHolder;
 import dtu.ws.fastmoney.*;
 import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -14,21 +15,27 @@ import java.math.BigDecimal;
 import static org.junit.Assert.*;
 
 public class CustomerRegistrationSteps {
-    //Adapters
+    // Adapters
     BankService bankService = new BankServiceService().getBankServicePort();
-    CustomerAdapter customerAdapter = new CustomerAdapter();
+    CustomerAdapter customerAdapter;
 
-    //Holders
+    // Holders
     private final CustomerHolder customerHolder;
-    ExceptionHolder exceptionHolder;
+    private final ExceptionHolder exceptionHolder;
 
     public CustomerRegistrationSteps(CustomerHolder customerHolder, ExceptionHolder exceptionHolder) {
         this.customerHolder = customerHolder;
         this.exceptionHolder = exceptionHolder;
     }
 
+    @Before
+    public void before() {
+        customerAdapter = new CustomerAdapter();
+    }
+
     @After
     public void after() {
+        customerAdapter.close();
         try {
             if (customerHolder.getAccountId() != null)
                 bankService.retireAccount(customerHolder.getAccountId());
@@ -79,5 +86,10 @@ public class CustomerRegistrationSteps {
     @And("the error message is {string}")
     public void theErrorMessageIs(String expectedErrorMessage) {
         assertEquals(expectedErrorMessage, exceptionHolder.getException().getMessage());
+    }
+
+    @And("the customer is not registered with DTUPay")
+    public void theCustomerIsNotRegisteredWithDTUPay() {
+        //No call is done as the customer is not registred
     }
 }

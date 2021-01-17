@@ -10,27 +10,27 @@ import messaging.rmq.event.objects.Event;
 
 public class RabbitMQEventService implements IEventService, IEventReceiver {
 
-	static EventExchange exchange = EventExchange.instance;
-	static EventQueue queue = EventQueue.instance;
-
-	private static RabbitMQEventService setUpInstance() {
-		IEventSender ies = exchange.getSender();
-		var service2 = new RabbitMQEventService(ies);
-		try {
-			queue.registerReceiver(service2);
-		} catch (Exception e) {
-			throw new Error(e);
+	private static RabbitMQEventService instance;
+	public static RabbitMQEventService getInstance() {
+		if (instance == null) {
+			try {
+				var ies = EventExchange.instance.getSender();
+				RabbitMQEventService service = new RabbitMQEventService(ies);
+				new EventQueue().registerReceiver(service);
+				instance = service;
+			} catch (Exception e) {
+				throw new Error(e);
+			}
 		}
-		return service2;
+		return instance;
 	}
-
-	public static RabbitMQEventService instance = setUpInstance();
 
 	private IEventSender eventSender;
 	private CompletableFuture<Boolean> result;
 
 	public RabbitMQEventService(IEventSender eventSender) {
 		this.eventSender = eventSender;
+		instance = this; // needed for service tests!
 	}
 
 	@Override
@@ -46,14 +46,14 @@ public class RabbitMQEventService implements IEventService, IEventReceiver {
 	@Override
 	public void receiveEvent(Event event) throws Exception {
 		if (event.getEventType().equals("RabbitTest b")) {
-			System.out.println("event handled: " + event);
+			//System.out.println("event handled: " + event);
 
 			result.complete(true);	// set the future value to true which completes the future.
 
 			event = new Event("TokenTest a");
 			eventSender.sendEvent(new Event("TokenTest a"));
 		} else {
-			System.out.println("event ignored: " + event);
+			//System.out.println("event ignored: " + event);
 		}
 	}
 

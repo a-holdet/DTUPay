@@ -22,7 +22,7 @@ public class TokenSteps {
 
     //Adapters
     BankService bankService;
-    CustomerAdapter customerAdapter = new CustomerAdapter();
+    CustomerAdapter customerAdapter;
 
     //Holders
     private final TokenHolder tokenHolder;
@@ -37,11 +37,13 @@ public class TokenSteps {
 
     @Before
     public void setup() {
+        this.customerAdapter = new CustomerAdapter();
         this.bankService = new BankServiceService().getBankServicePort();
     }
 
     @After
     public void teardown() {
+        this.customerAdapter.close();
         if (customerHolder.getId() != null) {
             tokenHolder.reset();
         }

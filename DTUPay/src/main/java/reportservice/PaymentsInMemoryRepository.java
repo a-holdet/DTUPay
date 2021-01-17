@@ -1,6 +1,6 @@
 package reportservice;
 
-import paymentservice.Payment;
+import DTO.Payment;
 
 import java.util.ArrayList;
 import java.util.List;

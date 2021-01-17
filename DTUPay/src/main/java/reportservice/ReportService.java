@@ -2,12 +2,11 @@ package reportservice;
 
 import DTO.DTUPayUser;
 import customerservice.Customer;
+import customerservice.CustomerDoesNotExistException;
 import customerservice.ICustomerService;
 import customerservice.LocalCustomerService;
-import merchantservice.IMerchantService;
-import merchantservice.LocalMerchantService;
-import merchantservice.Merchant;
-import paymentservice.Payment;
+import merchantservice.*;
+import DTO.Payment;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,31 +14,61 @@ import java.util.stream.Collectors;
 
 public class ReportService implements IReportService {
 
-    public static ReportService instance = new ReportService();
+    private static ReportService instance;
+    public static ReportService getInstance() {
+        if(instance == null) {
+            instance = new ReportService(
+                    new TransactionsInMemoryRepository(),
+                    MessageQueueMerchantService.getInstance(),
+                    LocalCustomerService.instance
+            );
+        }
+        return instance;
+    }
 
-    private ITransactionsRepository transactionsRepository = new TransactionsInMemoryRepository();
-    private IMerchantService merchantService = LocalMerchantService.instance;
-    private ICustomerService customerService = LocalCustomerService.instance;
+    private final ITransactionsRepository transactionsRepository;
+    private final IMerchantService merchantService;
+    private final ICustomerService customerService;
 
-    private ReportService() {}
+    public ReportService(ITransactionsRepository transactionsRepository, IMerchantService merchantService, ICustomerService customerService) {
+        this.transactionsRepository = transactionsRepository;
+        this.merchantService = merchantService;
+        this.customerService = customerService;
+        instance = this; // needed for service tests!
+    }
 
 
     @Override
-    public UserReport generateReportForCustomer(String customerId) {
-        List<Payment> payments = transactionsRepository.getTransactionsForCustomer(customerId).stream().map(Transaction::toPayment).collect(Collectors.toList());
-        Customer customer = customerService.getCustomerWith(customerId);
-        DTUPayUser merchantAsUser = new DTUPayUser(customer.firstName, customer.lastName, customer.cprNumber, customer.accountId);
+    public UserReport generateReportForCustomer(String customerId, String startTime, String endTime) throws CustomerDoesNotExistException {
+        LocalDateTime startTimeAsDateTime = startTime != null ? LocalDateTime.parse(startTime) : LocalDateTime.MIN;
+        LocalDateTime endTimeAsDateTime = endTime != null ? LocalDateTime.parse(endTime) : LocalDateTime.MAX;
+
+        List<Payment> payments = transactionsRepository.getTransactionsForCustomer(customerId).stream()
+                .filter(t -> t.datetime.isAfter(startTimeAsDateTime) && t.datetime.isBefore(endTimeAsDateTime))
+                .map(Transaction::toPayment)
+                .collect(Collectors.toList());
+        Customer customer = customerService.getCustomer(customerId);
+        DTUPayUser customerAsUser = new DTUPayUser(customer.firstName, customer.lastName, customer.cprNumber, customer.accountId);
         UserReport report = new UserReport();
         report.setPayments(payments);
-        report.setUser(merchantAsUser);
+        report.setUser(customerAsUser);
 
         return report;
     }
 
     @Override
-    public UserReport generateReportForMerchant(String merchantId) {
-        List<Payment> payments = transactionsRepository.getTransactionsForMerchant(merchantId).stream().map(Transaction::toPayment).collect(Collectors.toList());
-        Merchant merchant = merchantService.getMerchantWith(merchantId);
+    public UserReport generateReportForMerchant(String merchantId, String startTime, String endTime) throws MerchantDoesNotExistException  {
+        LocalDateTime startTimeAsDateTime = startTime != null ? LocalDateTime.parse(startTime) : LocalDateTime.MIN;
+        LocalDateTime endTimeAsDateTime = endTime != null ? LocalDateTime.parse(endTime) : LocalDateTime.MAX;
+
+        List<Payment> payments =
+                transactionsRepository.getTransactionsForMerchant(merchantId).stream()
+                        .filter(t -> t.datetime.isAfter(startTimeAsDateTime) && t.datetime.isBefore(endTimeAsDateTime))
+                        .map(Transaction::toPayment)
+                        .collect(Collectors.toList());
+
+        Merchant merchant = merchantService.getMerchant(merchantId);
+
         DTUPayUser merchantAsUser = new DTUPayUser(merchant.firstName, merchant.lastName, merchant.cprNumber, merchant.accountId);
         UserReport report = new UserReport();
         report.setPayments(payments);

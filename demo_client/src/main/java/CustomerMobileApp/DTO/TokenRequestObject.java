@@ -4,8 +4,7 @@ public class TokenRequestObject {
     private String userId;
     private int tokenAmount;
 
-    public TokenRequestObject() {
-    }
+    public TokenRequestObject() {}
 
     public void setUserId(String userId) {
         this.userId = userId;

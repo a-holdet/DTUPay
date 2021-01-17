@@ -21,6 +21,12 @@ services:
     ports:
       - "8043:8080"
 
+  AccountMicroService:
+    image: accountmicroservice
+    container_name: accountmicroservice
+    depends_on:
+      - "rabbitMq"
+
   rabbitMq:
     image: rabbitmq
     container_name: rabbitMq_container

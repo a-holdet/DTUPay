@@ -11,14 +11,17 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class MerchantAdapter {
+    Client client;
     WebTarget baseUrl;
 
     public MerchantAdapter(){
-        Client client = ClientBuilder.newClient();
+        client = ClientBuilder.newClient();
         baseUrl = client.target("http://localhost:8042/merchantapi");
     }
 
@@ -53,11 +56,29 @@ public class MerchantAdapter {
         response.close();
     }
 
-    public UserReport getMerchantReport(String merchantId) {
-        return baseUrl
+    public UserReport getMerchantReport(String merchantId, LocalDateTime start, LocalDateTime end) {
+        if(start== null) start= LocalDateTime.MIN;
+        if(end==null) end = LocalDateTime.MAX;
+        Response response = baseUrl.path("reports").queryParam("id", merchantId).queryParam("start",start
+        .toString()).queryParam("end",end.toString()).request().get(new GenericType<>() {
+        });
+        if(response.getStatus() == 422){
+            String errorMessage = response.readEntity(String.class); // error message is in payload
+            response.close();
+            throw new IllegalArgumentException(errorMessage);
+        }
+
+        UserReport report  = response.readEntity(new GenericType<>() {});
+        return report;
+
+        /*return baseUrl
                 .path("reports")
                 .queryParam("id", merchantId)
                 .request()
-                .get(new GenericType<>() {});
+                .get(new GenericType<>() {});*/
+    }
+
+    public void close() {
+        client.close();
     }
 }
