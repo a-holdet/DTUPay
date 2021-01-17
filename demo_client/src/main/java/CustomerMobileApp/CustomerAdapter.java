@@ -27,6 +27,7 @@ public class CustomerAdapter {
 
     public String registerCustomer(String firstName, String lastName, String cprNumber, String accountID)
             throws IllegalArgumentException {
+        System.out.println("lets see");
         DTUPayUser customer = new DTUPayUser(firstName, lastName, cprNumber, accountID);
         Response response = baseUrl.path("customers").request()
                 .post(Entity.entity(customer, MediaType.APPLICATION_JSON));
@@ -35,9 +36,20 @@ public class CustomerAdapter {
             String errorMessage = response.readEntity(String.class); // error message is in payload
             response.close();
             throw new IllegalArgumentException(errorMessage);
+        } else if (response.getStatus() >= 300) {
+            String errorMessage = response.readEntity(String.class); // error message is in payload
+            response.close();
+            System.out.println("above 300");
+            System.out.println(errorMessage);
+            throw new IllegalArgumentException(errorMessage);
         }
 
         String customerId = response.readEntity(String.class);
+        if (customerId.equals("")) {
+            System.out.println("lookatthis");
+            throw new RuntimeException("wtf");
+        }
+
         response.close();
         return customerId;
     }

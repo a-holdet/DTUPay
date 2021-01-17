@@ -16,12 +16,12 @@ import customerservice.ICustomerService;
 public class PaymentService implements IPaymentService {
     private final PaymentPortAdapter portAdapter = PaymentPortAdapter.instance;
     private static PaymentService instance;
+
     public static PaymentService getInstance() {
         if(instance == null) {
             instance = new PaymentService(
                     MessageQueueMerchantService.getInstance(),
                     LocalCustomerService.instance,
-                    TokenService.instance,
                     new DTUBankPort(),
                     ReportService.getInstance()
             );
@@ -31,14 +31,12 @@ public class PaymentService implements IPaymentService {
 
     private final IMerchantService merchantService;
     private final ICustomerService customerService;
-    private final ITokenService tokenService;
     private final IBank bank;
     private final IReportService reportService;
 
-    public PaymentService(IMerchantService merchantService, ICustomerService customerService, ITokenService tokenService, IBank bank, IReportService reportService) {
+    public PaymentService(IMerchantService merchantService, ICustomerService customerService, IBank bank, IReportService reportService) {
         this.merchantService = merchantService;
         this.customerService = customerService;
-        this.tokenService = tokenService;
         this.bank = bank;
         this.reportService = reportService;
         instance = this; // needed for service tests!

@@ -5,8 +5,6 @@ import java.util.UUID;
 public class TokenService implements ITokenService {
 
     public static TokenService instance = new TokenService();
-    private TokenPortAdapter tokenPortAdapter;
-
     public ITokenRepository tokenRepository = new TokenInMemoryRepository();
 //    private ICustomerService customerService = LocalCustomerService.instance;
 
@@ -20,8 +18,8 @@ public class TokenService implements ITokenService {
             throw new IllegalTokenGrantingException("Customer cannot request more tokens");
         if (currentCustomerTokenAmount + amount > 6)
             throw new IllegalTokenGrantingException("Customer requested too many tokens");
-        if (!tokenPortAdapter.customerExists(customerId))
-            throw new CustomerNotFoundException("Customer must have a customer id to request tokens");
+//        if (!tokenPortAdapter.customerExists(customerId))
+//            throw new CustomerNotFoundException("Customer must have a customer id to request tokens");
 
         System.out.println("shouldnt be null" + customerId);
 

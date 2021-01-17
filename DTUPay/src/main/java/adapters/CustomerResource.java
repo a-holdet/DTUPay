@@ -22,6 +22,7 @@ public class CustomerResource {
         customerPA = new CustomerPA(EventExchange.instance.getSender());
 
         try {
+            new EventQueue().registerReceiver(cpa);
             new EventQueue().registerReceiver(customerPA);
         } catch (Exception e) {
             e.printStackTrace();
@@ -34,11 +35,15 @@ public class CustomerResource {
     @Path("/customers")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(Customer customer) {
+        System.out.println("customer resource called POST ");
         try{
             String customerId = customerPA.registerCustomer(customer);
             return Response.ok(customerId).build();
         }catch(IllegalArgumentException e){
             return Response.status(422).entity(e.getMessage()).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(500).entity(e.getMessage()).build();
         }
     }
 

@@ -12,7 +12,7 @@ public class TokenPortAdapter implements IEventReceiver {
 
     private CompletableFuture<Boolean> customerExistsResult;
     private IEventSender sender;
-    private ITokenService tokenService;
+    static final ITokenService tokenService = TokenService.instance;
 
     public TokenPortAdapter(ITokenService tokenService, IEventSender sender) {
         this.tokenService = tokenService;
@@ -35,16 +35,13 @@ public class TokenPortAdapter implements IEventReceiver {
     private void createTokensForCustomer(Event event) {
         System.out.println("reached tokenportadapter");
         System.out.println(event);
-        String customerId = (String) event.getArguments()[0];
+        String customerId = event.getArgument(0, String.class);
         System.out.println(customerId);
-        String amount = (String) event.getArguments()[1];
-
-        System.out.println(amount);
-        System.out.println("reached tokenportadapter");
-        // if (!tokenPortAdapter.customerExists(customerId))
+        int amount = event.getArgument(1, int.class);
 
         try {
             customerExistsResult = new CompletableFuture<>();
+
             sender.sendEvent(new Event("customerExists", new Object[]{customerId}));
             boolean customerExists = customerExistsResult.join();
             if (!customerExists) {
@@ -53,7 +50,7 @@ public class TokenPortAdapter implements IEventReceiver {
                 sender.sendEvent(customerNotFoundEvent);
             } else {
                 System.out.println("inside else statement");
-                List<UUID> tokens = tokenService.createTokensForCustomer(customerId, Integer.parseInt(amount));
+                List<UUID> tokens = tokenService.createTokensForCustomer(customerId, amount);
                 Event createTokensResponse = new Event("createTokensForCustomerResponse", new Object[]{tokens});
                 sender.sendEvent(createTokensResponse);
             }
@@ -89,16 +86,4 @@ public class TokenPortAdapter implements IEventReceiver {
         customerExistsResult.complete(customerExists);
     }
 
-    public boolean customerExists(String customerId) {
-        try {
-            customerExistsResult = new CompletableFuture<>();
-            if (customerId == null) return false;
-            sender.sendEvent(new Event("customerExists", new Object[]{customerId}));
-            return customerExistsResult.join(); // Blocking
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
 }

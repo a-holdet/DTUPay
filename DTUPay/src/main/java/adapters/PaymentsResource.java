@@ -18,7 +18,7 @@ public class PaymentsResource {
     public PaymentsResource(){
         System.out.println("this is run");
         PaymentPortAdapter.startUp();
-        paymentService = PaymentService.instance;
+        paymentService = PaymentService.getInstance();
     }
 
     // -- HER //
@@ -27,7 +27,6 @@ public class PaymentsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(Payment payment) {
         // Send Payment Out
-
 
         try {
             paymentService.registerPayment(payment);

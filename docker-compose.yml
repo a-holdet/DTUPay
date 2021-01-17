@@ -18,8 +18,6 @@ services:
     container_name: tokenmicroservice
     depends_on:
       - "rabbitMq"
-    ports:
-      - "8043:8080"
 
   AccountMicroService:
     image: accountmicroservice
