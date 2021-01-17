@@ -55,22 +55,25 @@ public class MessageQueueReportService implements IReportService, IEventReceiver
         instance = this; // needed for service tests!
     }
 
-    static final String generateReportForCustomer = "generateReportForCustomer";
-    ConcurrentHashMap<UUID, CompletableFuture<Event>> generateReportForCustomerCF = new ConcurrentHashMap<>();
+    private static final EventType generateReportForCustomer = new EventType("generateReportForCustomer");
+    private static final EventType generateReportForMerchant = new EventType("generateReportForMerchant");
+    private static final EventType registerTransaction = new EventType("registerTransaction");
+    private static final EventType generateManagerOverview = new EventType("generateManagerOverview");
+    private static final EventType[] supportedEventTypes = {generateReportForCustomer, generateReportForMerchant, registerTransaction, generateManagerOverview};
+
+    private final ConcurrentHashMap<UUID, CompletableFuture<Event>> requests = new ConcurrentHashMap<>();
 
     @Override
-    public UserReport generateReportForCustomer(String customerId, String startTime, String endTime)
-            throws CustomerDoesNotExistException {
-        Event event = new Event(generateReportForCustomer, new Object[] { customerId, startTime, endTime },
-                UUID.randomUUID());
+    public UserReport generateReportForCustomer(String customerId, String startTime, String endTime) throws CustomerDoesNotExistException {
+        Event event = new Event(generateReportForCustomer.getName(), new Object[] { customerId, startTime, endTime });
         try {
-            generateReportForCustomerCF.put(event.getUUID(), new CompletableFuture<>());
+            requests.put(event.getUUID(), new CompletableFuture<>());
             this.sender.sendEvent(event);
         } catch (Exception e) {
             throw new Error(e);
         }
 
-        event = generateReportForCustomerCF.get(event.getUUID()).join();
+        event = requests.get(event.getUUID()).join();
         String type = event.getEventType();
 
         if (type.equals(generateReportForCustomer + "Success")) {
@@ -88,21 +91,18 @@ public class MessageQueueReportService implements IReportService, IEventReceiver
         throw new CustomerDoesNotExistException(exceptionMsg);
     }
 
-    static final String generateReportForMerchant = "generateReportForMerchant";
-    ConcurrentHashMap<UUID, CompletableFuture<Event>> generateReportForMerchantCF = new ConcurrentHashMap<>();
-
     @Override
     public UserReport generateReportForMerchant(String merchantId, String startTime, String endTime)
             throws MerchantDoesNotExistException {
-        Event event = new Event(generateReportForMerchant, new Object[] { merchantId, startTime, endTime });
+        Event event = new Event(generateReportForMerchant.getName(), new Object[] { merchantId, startTime, endTime });
         try {
-            generateReportForMerchantCF.put(event.getUUID(), new CompletableFuture<>());
+            requests.put(event.getUUID(), new CompletableFuture<>());
             this.sender.sendEvent(event);
         } catch (Exception e) {
             throw new Error(e);
         }
 
-        event = generateReportForMerchantCF.get(event.getUUID()).join();
+        event = requests.get(event.getUUID()).join();
         String type = event.getEventType();
 
         if (type.equals(generateReportForMerchant + "Success")) {
@@ -122,36 +122,30 @@ public class MessageQueueReportService implements IReportService, IEventReceiver
         return report;
     }
 
-    static final String registerTransaction = "registerTransaction";
-    ConcurrentHashMap<UUID, CompletableFuture<Event>> registerTransactionCF = new ConcurrentHashMap<>();
-
     @Override
     public void registerTransaction(Payment payment, String customerId) {
-        Event event = new Event(registerTransaction, new Object[] { payment, customerId });
+        Event event = new Event(registerTransaction.getName(), new Object[] { payment, customerId });
         try {
-            registerTransactionCF.put(event.getUUID(), new CompletableFuture<>());
+            requests.put(event.getUUID(), new CompletableFuture<>());
             this.sender.sendEvent(event);
         } catch (Exception e) {
             throw new Error(e);
         }
-        registerTransactionCF.get(event.getUUID()).join();
+        requests.get(event.getUUID()).join();
     }
-
-    static final String generateManagerOverview = "generateManagerOverview";
-    ConcurrentHashMap<UUID, CompletableFuture<Event>> generateManagerOverviewCF = new ConcurrentHashMap<>();
 
     @Override
     public List<Transaction> generateManagerOverview() {
-        Event event = new Event(generateManagerOverview);
+        Event event = new Event(generateManagerOverview.getName());
         try {
-            generateManagerOverviewCF.put(event.getUUID(), new CompletableFuture<>());
+            requests.put(event.getUUID(), new CompletableFuture<>());
             this.sender.sendEvent(event);
         } catch (Exception e) {
             throw new Error(e);
         }
 
         Gson gson = new Gson();
-        event = generateManagerOverviewCF.get(event.getUUID()).join();
+        event = requests.get(event.getUUID()).join();
         return Arrays.asList(gson.fromJson(event.getArgument(0, String.class), Transaction[].class));
     }
 
@@ -160,33 +154,12 @@ public class MessageQueueReportService implements IReportService, IEventReceiver
         System.out.println("--------------------------------------------------------");
         System.out.println("Event received! : " + event);
 
-        CompletableFuture<Event> cf;
-        switch (event.getEventType()) {
-            case generateReportForCustomer + "Success":
-            case generateReportForCustomer + "Fail":
-                cf = generateReportForCustomerCF.getOrDefault(event.getUUID(), null);
-                if (cf != null)
-                    cf.complete(event);
-                break;
-            case generateReportForMerchant + "Success":
-            case generateReportForMerchant + "Fail":
-                cf = generateReportForMerchantCF.getOrDefault(event.getUUID(), null);
-                if (cf != null)
-                    cf.complete(event);
-                break;
-            case registerTransaction:
-                cf = registerTransactionCF.getOrDefault(event.getUUID(), null);
-                if (cf != null)
-                    cf.complete(event);
-                break;
-            case generateManagerOverview:
-                cf = generateManagerOverviewCF.getOrDefault(event.getUUID(), null);
-                if (cf != null)
-                    cf.complete(event);
-                break;
-            default:
-                break;
+        if (Arrays.stream(supportedEventTypes).anyMatch(eventType -> eventType.matches(event.getEventType()))) {
+            CompletableFuture<Event> cf = requests.get(event.getUUID());
+            if (cf != null)
+                cf.complete(event);
         }
+
         System.out.println("--------------------------------------------------------");
     }
 }

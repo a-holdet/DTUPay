@@ -47,6 +47,14 @@ public class Event {
 		return uuid;
 	}
 
+	public boolean isSuccessReponse() {
+		return eventType.endsWith("Success");
+	}
+
+	public boolean isFailureReponse() {
+		return eventType.endsWith("Fail");
+	}
+
 	public boolean equals(Object o) {
 		if (!this.getClass().equals(o.getClass())) {
 			return false;
