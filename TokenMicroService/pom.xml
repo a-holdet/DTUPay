@@ -38,7 +38,7 @@
 			<version>5.7.0</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- This is needed to provide the @Cucumber annotation needed for Cucumber 
+		<!-- This is needed to provide the @Cucumber annotation needed for Cucumber
 			scenarios to run with the JUnit 5 test runner. -->
 		<dependency>
 			<groupId>io.cucumber</groupId>
@@ -76,7 +76,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>RabbitTest.StartUp</mainClass>
+							<mainClass>tokenservice.StartUp</mainClass>
 							<classpathPrefix>lib/</classpathPrefix>
 						</manifest>
 					</archive>

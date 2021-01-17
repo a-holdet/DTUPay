@@ -24,4 +24,6 @@ public class CustomerResource {
             return Response.status(422).entity(e.getMessage()).build();
         }
     }
+
 }
+
