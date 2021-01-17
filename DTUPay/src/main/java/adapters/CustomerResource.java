@@ -13,7 +13,8 @@ import java.util.UUID;
 
 @Path("/customerapi")
 public class CustomerResource {
-    ICustomerService ICustomerService = LocalCustomerService.instance;
+//    ICustomerService ICustomerService = LocalCustomerService.instance;
+    CustomerPA customerPA;
 
     public CustomerResource(){
 //        CustomerPortAdapter.startUp();
@@ -62,3 +63,4 @@ public class CustomerResource {
         return Response.ok(tokens).build();
     }
 }
+

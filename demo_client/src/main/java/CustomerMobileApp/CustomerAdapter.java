@@ -26,7 +26,6 @@ public class CustomerAdapter {
     public String registerCustomer(String firstName, String lastName, String cprNumber, String accountID) throws IllegalArgumentException {
         DTUPayUser customer = new DTUPayUser(firstName, lastName, cprNumber, accountID);
         Response response = baseUrl.path("customers").request().post(Entity.entity(customer, MediaType.APPLICATION_JSON));
-
         if(response.getStatus()==422){
             String errorMessage = response.readEntity(String.class); //error message is in payload
             response.close();

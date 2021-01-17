@@ -1,8 +1,5 @@
 package tokenservice;
 
-import io.cucumber.java.an.E;
-import messaging.rmq.event.EventExchange;
-import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
@@ -24,6 +21,7 @@ public class TokenPortAdapter implements IEventReceiver {
 
     @Override
     public void receiveEvent(Event event) throws Exception {
+        System.out.println("event type in tokenportadapter "+event.getEventType());
         if (event.getEventType().equals("customerExistsResponse")) {
             System.out.println("customerExcists response token adapter");
             customerExistsResponse(event);
@@ -85,7 +83,7 @@ public class TokenPortAdapter implements IEventReceiver {
     }
 
     private void customerExistsResponse(Event event) {
-
+        System.out.println(event);
         boolean customerExists = (boolean) event.getArguments()[0];
         System.out.println("customerexists res" + customerExists);
         customerExistsResult.complete(customerExists);

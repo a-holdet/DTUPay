@@ -1,11 +1,4 @@
 package tokenservice;
-
-//import customerservice.ICustomerService;
-//import customerservice.LocalCustomerService;
-//import io.quarkus.security.UnauthorizedException;
-
-import io.quarkus.security.UnauthorizedException;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -16,11 +9,6 @@ public class TokenService implements ITokenService {
 
     public ITokenRepository tokenRepository = new TokenInMemoryRepository();
 //    private ICustomerService customerService = LocalCustomerService.instance;
-
-    private TokenService() {
-        TokenPortAdapter.startUp();
-        tokenPortAdapter = TokenPortAdapter.instance;
-    }
 
     @Override
     // Creates tokens for user with 'customerId' iff they are registered at the bank and they have 0 or 1 active tokens.

@@ -17,10 +17,14 @@ public class PaymentsResource {
         paymentService = PaymentService.instance;
     }
 
+    // -- HER //
     @POST
     //@Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(Payment payment) {
+        // Send Payment Out
+
+
         try {
             paymentService.registerPayment(payment);
         } catch (BankException e) {
