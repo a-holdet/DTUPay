@@ -55,7 +55,7 @@ public class TokenPortAdapter implements IEventReceiver {
     }
 
     private void createTokensForCustomer(Event event) {
-        System.out.println("reached tokenportadapter");
+        // System.out.println("reached tokenportadapter");
         System.out.println(event);
         String customerId = event.getArgument(0, String.class);
         System.out.println(customerId);
@@ -64,9 +64,9 @@ public class TokenPortAdapter implements IEventReceiver {
         try {
             customerExistsResult = new CompletableFuture<>();
             sender.sendEvent(new Event("customerExists", new Object[]{customerId}));
-            System.out.println("before customer exists result");
+            // System.out.println("before customer exists result");
             boolean customerExists = customerExistsResult.join();
-            System.out.println("after customer exists result");
+            // System.out.println("after customer exists result");
             if (!customerExists) {
                 Event customerNotFoundEvent = new Event("createTokensForCustomerFailed",
                         new Object[]{new CustomerNotFoundException("Customer was not found")});
