@@ -19,8 +19,8 @@ public class ReportService implements IReportService {
         if(instance == null) {
             instance = new ReportService(
                     new TransactionsInMemoryRepository(),
-                    MessageQueueMerchantService.getInstance(),
-                    LocalCustomerService.instance
+                    MessageQueueAccountService.getInstance(),
+                    MessageQueueAccountService.getInstance()
             );
         }
         return instance;

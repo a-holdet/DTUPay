@@ -1,7 +1,6 @@
 package adapters;
 
 import merchantservice.*;
-import reportservice.ReportService;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -17,7 +16,7 @@ OR
 
 @Path("/merchantapi/merchants")
 public class MerchantResource {
-    IMerchantService merchantService = MessageQueueMerchantService.getInstance();
+    IMerchantService merchantService = MessageQueueAccountService.getInstance();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
