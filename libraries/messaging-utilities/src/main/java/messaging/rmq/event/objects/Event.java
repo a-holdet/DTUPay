@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class Event {
 
@@ -18,6 +19,7 @@ public class Event {
 		this.eventType = eventType;
 		this.arguments = arguments;
 		this.uuid = uuid;
+		ArrayList<UUID> list = getArgument(0, new TypeToken<ArrayList<UUID>>(){} );
 	}
 
 	public Event(String eventType, Object[] arguments) {
@@ -40,8 +42,15 @@ public class Event {
 
 	public <T> T getArgument(Integer idx, Class<T> clazz) {
 		Gson gson = new Gson();
-		return gson.fromJson(gson.toJson(arguments[idx]), clazz);
+		gson.fromJson(gson.toJson(arguments[idx]), clazz);
 	}
+
+	public <T> T getArgument(Integer idx, TypeToken<T> clazz) {
+		Gson gson = new Gson();
+		gson.fromJson(gson.toJson(arguments[idx]), clazz.getType());
+	}
+
+
 
 	public UUID getUUID() {
 		return uuid;
