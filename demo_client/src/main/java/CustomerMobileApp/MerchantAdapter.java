@@ -4,6 +4,7 @@ import CustomerMobileApp.DTO.DTUPayUser;
 import CustomerMobileApp.DTO.Payment;
 import CustomerMobileApp.DTO.UserReport;
 
+import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -52,6 +53,10 @@ public class MerchantAdapter {
             String errorMessage = response.readEntity(String.class); //error message is in payload
             response.close();
             throw new IllegalArgumentException(errorMessage);
+        } else if (response.getStatus() == 403){
+            String errorMessage = response.readEntity(String.class);
+            response.close();
+            throw new ForbiddenException(errorMessage);
         }
         response.close();
     }

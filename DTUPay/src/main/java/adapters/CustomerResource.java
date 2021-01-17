@@ -25,25 +25,5 @@ public class CustomerResource {
         }
     }
 
-    @POST
-    @Path("/tokens")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response createTokensForCustomer(TokenCreationDTO request) {
-        String customerId = request.getUserId();
-        int amount = request.getTokenAmount();
-        System.out.println(customerId);
-        System.out.println(amount);
-        System.out.println("hey");
-        List<UUID> tokens = null;
-        try {
-            tokens = customerPA.createTokensForCustomer(customerId, amount);
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            // send 500
-        }
-        return Response.ok(tokens).build();
-    }
 }
 

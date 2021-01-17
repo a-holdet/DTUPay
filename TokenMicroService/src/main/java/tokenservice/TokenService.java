@@ -10,7 +10,7 @@ public class TokenService implements ITokenService {
 
     @Override
     // Creates tokens for user with 'customerId' iff they are registered at the bank and they have 0 or 1 active tokens.
-    public List<UUID> createTokensForCustomer(String customerId, int amount) throws CustomerNotFoundException, IllegalTokenGrantingException {
+    public List<UUID> createTokensForCustomer(String customerId, int amount) throws IllegalTokenGrantingException {
         System.out.println("createtokensforcustomer token service");
         int currentCustomerTokenAmount = readTokensForCustomer(customerId).size();
         System.out.println("gets here");

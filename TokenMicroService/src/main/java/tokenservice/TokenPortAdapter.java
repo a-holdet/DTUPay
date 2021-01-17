@@ -42,14 +42,15 @@ public class TokenPortAdapter implements IEventReceiver {
 
     @Override
     public void receiveEvent(Event event) throws Exception {
-        System.out.println("event type in tokenportadapter "+event.getEventType());
-        if (event.getEventType().equals("customerExistsResponse")) {
-            System.out.println("customerExcists response token adapter");
+
+        System.out.println("event type in tokenportadapter " + event.getEventType() + " " + event.getUUID());
+        if (event.getEventType().equals("customerExistsSuccess")) {
+            // System.out.println("customerExcists response token adapter");
             customerExistsResponse(event);
         } else if (event.getEventType().equals("consumeToken")) {
             consumeToken(event);
         } else if (event.getEventType().equals("createTokensForCustomer")) {
-            createTokensForCustomer(event);
+            new Thread(() -> createTokensForCustomer(event)).start();
         }
     }
 
@@ -62,7 +63,6 @@ public class TokenPortAdapter implements IEventReceiver {
 
         try {
             customerExistsResult = new CompletableFuture<>();
-
             sender.sendEvent(new Event("customerExists", new Object[]{customerId}));
             System.out.println("before customer exists result");
             boolean customerExists = customerExistsResult.join();
@@ -78,6 +78,12 @@ public class TokenPortAdapter implements IEventReceiver {
                 sender.sendEvent(createTokensResponse);
             }
         } catch (IllegalTokenGrantingException e) {
+            Event createTokensResponse = new Event("createTokensForCustomerFailed", new Object[]{e.getMessage()});
+            try {
+                sender.sendEvent(createTokensResponse);
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
             e.printStackTrace();
         } catch (CustomerNotFoundException e) {
             e.printStackTrace();
@@ -95,9 +101,7 @@ public class TokenPortAdapter implements IEventReceiver {
             sender.sendEvent(new Event("consumeTokenResponse", new Object[]{customerId}));
             System.out.println("returned tokens for customer " + customerId);
         } catch (TokenDoesNotExistException e) {
-            System.out.println("failed " + e.getMessage());
-            sender.sendEvent(new Event("consumeTokenResponseFail", new Object[]{e.getMessage()}));
-            e.printStackTrace();
+            sender.sendEvent(new Event("consumeTokenResponseFailed", new Object[]{e.getMessage()}));
         }
 
     }

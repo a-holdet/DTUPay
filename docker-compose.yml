@@ -25,16 +25,16 @@ services:
     depends_on:
       - "rabbitMq"
 
+#  rabbitMq:
+#    image: rabbitmq
+#    container_name: rabbitMq_container
+
+
   rabbitMq:
-    image: rabbitmq
+    image: rabbitmq:management
     container_name: rabbitMq_container
-
-
-  # rabbitMq:
-  #   image: rabbitmq:management
-  #   container_name: rabbitMq_container
-  #   ports:
-  #    - "8080:15672"
+    ports:
+      - "8080:15672"
 
   # Nginx:
   #   image: nginx:latest
