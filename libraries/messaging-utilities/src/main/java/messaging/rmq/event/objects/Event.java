@@ -51,6 +51,15 @@ public class Event {
 		return eventType.endsWith("Success");
 	}
 
+	public <T> T getPayloadAs(Class<T> payloadType){
+		return getArgument(0,payloadType);
+	}
+
+	//Errormessage are transferred with error type at index 0 and error message at index 1
+	public String getErrorMessage(){
+		return getArgument(1, String.class);
+	}
+
 	public boolean isFailureReponse() {
 		return eventType.endsWith("Fail");
 	}
