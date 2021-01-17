@@ -16,7 +16,7 @@ OR
 
 @Path("/merchantapi/merchants")
 public class MerchantResource {
-    IMerchantService merchantService = MessageQueueMerchantService.getInstance();
+    IMerchantService merchantService = MessageQueueAccountService.getInstance();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

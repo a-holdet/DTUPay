@@ -22,8 +22,8 @@ public class PaymentService implements IPaymentService {
     public static PaymentService getInstance() {
         if(instance == null) {
             instance = new PaymentService(
-                    MessageQueueMerchantService.getInstance(),
-                    LocalCustomerService.instance,
+                    MessageQueueAccountService.getInstance(),
+                    MessageQueueAccountService.getInstance(),
                     TokenService.instance,
                     new DTUBankPort(),
                     ReportService.getInstance()
@@ -60,7 +60,7 @@ public class PaymentService implements IPaymentService {
         String merchantAccountId = merchant.accountId;
 
         String customerId = tokenService.consumeToken(payment.customerToken);
-        String customerAccountId = customerService.getCustomerAccountId(customerId);
+        String customerAccountId = customerService.getCustomer(customerId).accountId;
 
         bank.transferMoneyFromTo(
                 customerAccountId,

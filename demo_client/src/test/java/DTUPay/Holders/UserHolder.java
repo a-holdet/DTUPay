@@ -65,8 +65,8 @@ public abstract class UserHolder {
 
     public String getRandomCpr(){
         int fourRandomDigits = getRandomNumberInRange(1000,9999);
-        int anotherFourRandomDigits = getRandomNumberInRange(1000,9999);
+        int twoRandomDigits = getRandomNumberInRange(10,99);
         int lastFourRandomDigits = getRandomNumberInRange(1000,9999);
-        return fourRandomDigits + anotherFourRandomDigits + "-" + lastFourRandomDigits;
+        return Integer.toString(fourRandomDigits) + Integer.toString(twoRandomDigits) + "-" + lastFourRandomDigits;
     }
 }

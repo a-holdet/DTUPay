@@ -3,6 +3,7 @@ package tokenservice;
 import customerservice.ICustomerService;
 import customerservice.LocalCustomerService;
 import io.quarkus.security.UnauthorizedException;
+import merchantservice.MessageQueueAccountService;
 
 import java.util.*;
 
@@ -14,7 +15,7 @@ public class TokenService implements ITokenService {
     private final ICustomerService customerService;
 
     public TokenService() {
-        this(new TokenInMemoryRepository(), LocalCustomerService.instance);
+        this(new TokenInMemoryRepository(), MessageQueueAccountService.getInstance());
     }
 
     public TokenService(ITokenRepository tokenRepository, ICustomerService customerService) {

@@ -4,7 +4,6 @@ import DTO.DTUPayUser;
 import customerservice.Customer;
 import customerservice.CustomerDoesNotExistException;
 import customerservice.ICustomerService;
-import customerservice.LocalCustomerService;
 import merchantservice.*;
 import DTO.Payment;
 
@@ -17,9 +16,12 @@ public class ReportService implements IReportService {
     private static ReportService instance;
 
     public static ReportService getInstance() {
-        if (instance == null) {
-            instance = new ReportService(new TransactionsInMemoryRepository(),
-                    MessageQueueMerchantService.getInstance(), LocalCustomerService.instance);
+        if(instance == null) {
+            instance = new ReportService(
+                    new TransactionsInMemoryRepository(),
+                    MessageQueueAccountService.getInstance(),
+                    MessageQueueAccountService.getInstance()
+            );
         }
         return instance;
     }
