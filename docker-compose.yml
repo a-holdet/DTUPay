@@ -33,7 +33,7 @@ services:
     image: rabbitmq:management
     container_name: rabbitMq_container
     ports:
-     - "8080:15672"
+     - "8041:15672"
 
   # Nginx:
   #   image: nginx:latest
