@@ -19,7 +19,6 @@ public class Event {
 		this.eventType = eventType;
 		this.arguments = arguments;
 		this.uuid = uuid;
-		ArrayList<UUID> list = getArgument(0, new TypeToken<ArrayList<UUID>>(){} );
 	}
 
 	public Event(String eventType, Object[] arguments) {
@@ -42,15 +41,13 @@ public class Event {
 
 	public <T> T getArgument(Integer idx, Class<T> clazz) {
 		Gson gson = new Gson();
-		gson.fromJson(gson.toJson(arguments[idx]), clazz);
+		return gson.fromJson(gson.toJson(arguments[idx]), clazz);
 	}
 
 	public <T> T getArgument(Integer idx, TypeToken<T> clazz) {
 		Gson gson = new Gson();
-		gson.fromJson(gson.toJson(arguments[idx]), clazz.getType());
+		return gson.fromJson(gson.toJson(arguments[idx]), clazz.getType());
 	}
-
-
 
 	public UUID getUUID() {
 		return uuid;

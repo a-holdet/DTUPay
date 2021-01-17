@@ -5,8 +5,9 @@ import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 
 public abstract class RMQExchange {
-    
+
     public static final String FIXED_ROUTING_KEY = "route_key"; //todo delete later?
+    private static final Object SYNC_LOCK = new Object();
     
     public final RMQChannel parentChannel = RMQChannel.instance;
 
@@ -30,8 +31,10 @@ public abstract class RMQExchange {
             @Override
             public void sendEvent(Event event) throws Exception {
                 String message = new Gson().toJson(event);
-                parentChannel.getChannel().basicPublish(exchangeName, FIXED_ROUTING_KEY, null,
-                        message.getBytes("UTF-8"));
+                synchronized (SYNC_LOCK) {
+                    parentChannel.getChannel().basicPublish(exchangeName, FIXED_ROUTING_KEY, null,
+                            message.getBytes("UTF-8"));
+                }
             }
         };
     }
