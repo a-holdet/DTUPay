@@ -19,6 +19,12 @@ services:
     depends_on:
       - "rabbitMq"
 
+  AccountMicroService:
+    image: accountmicroservice
+    container_name: accountmicroservice
+    depends_on:
+      - "rabbitMq"
+
   rabbitMq:
     image: rabbitmq
     container_name: rabbitMq_container

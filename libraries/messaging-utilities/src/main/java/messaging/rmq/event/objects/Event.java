@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.google.gson.Gson;
+
 public class Event {
 
 	private String eventType;
@@ -28,6 +30,15 @@ public class Event {
 
 	public Object[] getArguments() {
 		return arguments;
+	}
+
+	public <T> T getArgument(Integer idx, Class<T> clazz) {
+		Gson gson = new Gson();
+		return gson.fromJson(gson.toJson(arguments[0]), clazz);
+	}
+
+	public List<String> getJsonArguments() {
+		return Arrays.stream(arguments).map(o -> new Gson().toJson(o)).collect(Collectors.toList());
 	}
 
 	public boolean equals(Object o) {

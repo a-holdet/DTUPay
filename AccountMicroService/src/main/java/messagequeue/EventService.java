@@ -9,66 +9,82 @@ import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 
+import com.google.gson.Gson;
+
+import java.util.List;
+
 public class EventService implements IEventReceiver {
 
-	public static EventService instance = null; // startUp(); //cannot be used until after startUp();
-
-	public static void startUp() {
+	// Singleton as method due to serviceTest
+	private static EventService instance;
+	public static EventService getInstance() {
 		if (instance == null) {
 			try {
-				var s = EventExchange.instance.getSender();
-				EventService service = new EventService(s);
+				var ies = EventExchange.instance.getSender();
+				EventService service = new EventService(ies);
 				new EventQueue().registerReceiver(service);
 				instance = service;
 			} catch (Exception e) {
 				throw new Error(e);
 			}
 		}
+		return instance;
 	}
 
+	static final IMerchantService merchantService = LocalMerchantService.instance;
 	IEventSender sender;
-	IMerchantService merchantService = LocalMerchantService.instance;
 
 	public EventService(IEventSender sender) { this.sender = sender; }
 
+	public static final String registerMerchant = "registerMerchant";
+	public void registerMerchant(Merchant merchant) throws Exception {
+		try {
+			merchant.id = merchantService.registerMerchant(merchant);
+			this.sender.sendEvent(new Event(registerMerchant+"Success",
+					new Object[] {merchant}));
+		}
+		catch (IllegalArgumentException e) {
+			this.sender.sendEvent(new Event(registerMerchant+"Fail",
+					new Object[] {e.getClass().getSimpleName(), e.getMessage()})
+			);
+		}
+	}
+
+	public static final String getMerchant = "getMerchant";
+	public void getMerchant(String merchantId) throws Exception {
+		try {
+			Merchant merchant = merchantService.getMerchant(merchantId);
+			this.sender.sendEvent(new Event(getMerchant+"Success",
+					new Object[] {merchant}));
+		}
+		catch (Exception e) {
+			this.sender.sendEvent(new Event(getMerchant+"Fail",
+					new Object[] {e.getClass().getSimpleName(), e.getMessage()})
+			);
+		}
+	}
+
 	@Override
 	public void receiveEvent(Event event) throws Exception {
-		String type = event.getEventType();
-		Object[] arguments = event.getArguments();
 		Merchant merchant;
+		String merchantId;
+
+		String type = event.getEventType();
+
 		switch (type) {
-			case "registerMerchant":
-				merchant = (Merchant) arguments[0];
-				try {
-					merchant.id = merchantService.registerMerchant(merchant);
-					this.sender.sendEvent(new Event(type+"Success",
-							new Object[] {merchant}));
-				}
-				catch (IllegalArgumentException e) {
-					this.sender.sendEvent(new Event(type+"Fail",
-							new Object[] {e.getClass().getSimpleName(), e.getMessage()})
-					);
-				}
+			case registerMerchant:
+				merchant = event.getArgument(0, Merchant.class);
+				registerMerchant(merchant);
 				break;
-			case "getMerchant":
-				String merchantId = (String) arguments[0];
-				try {
-					merchant = merchantService.getMerchant(merchantId);
-					this.sender.sendEvent(new Event(type+"Success",
-							new Object[] {merchant}));
-				}
-				catch (Exception e) {
-					this.sender.sendEvent(new Event(type+"Fail",
-							new Object[] {e.getClass().getSimpleName(), e.getMessage()})
-					);
-				}
-				break;
-			case "RabbitTest a":
-				Event e = new Event("RabbitTest b");
-				this.sender.sendEvent(e);
+			case getMerchant:
+				merchantId = event.getArgument(0, String.class);
+				getMerchant(merchantId);
 				break;
 			default:
 				//ignore, do nothing
+				break;
 		}
 	}
+
+
 }
