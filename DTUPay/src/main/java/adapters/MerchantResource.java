@@ -1,7 +1,6 @@
 package adapters;
 
 import merchantservice.*;
-import reportservice.ReportService;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;

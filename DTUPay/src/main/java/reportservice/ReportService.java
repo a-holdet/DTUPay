@@ -15,13 +15,11 @@ import java.util.stream.Collectors;
 public class ReportService implements IReportService {
 
     private static ReportService instance;
+
     public static ReportService getInstance() {
-        if(instance == null) {
-            instance = new ReportService(
-                    new TransactionsInMemoryRepository(),
-                    MessageQueueMerchantService.getInstance(),
-                    LocalCustomerService.instance
-            );
+        if (instance == null) {
+            instance = new ReportService(new TransactionsInMemoryRepository(),
+                    MessageQueueMerchantService.getInstance(), LocalCustomerService.instance);
         }
         return instance;
     }
@@ -30,25 +28,28 @@ public class ReportService implements IReportService {
     private final IMerchantService merchantService;
     private final ICustomerService customerService;
 
-    public ReportService(ITransactionsRepository transactionsRepository, IMerchantService merchantService, ICustomerService customerService) {
+    public ReportService(ITransactionsRepository transactionsRepository, IMerchantService merchantService,
+            ICustomerService customerService) {
         this.transactionsRepository = transactionsRepository;
         this.merchantService = merchantService;
         this.customerService = customerService;
         instance = this; // needed for service tests!
     }
 
-
     @Override
-    public UserReport generateReportForCustomer(String customerId, String startTime, String endTime) throws CustomerDoesNotExistException {
+    public UserReport generateReportForCustomer(String customerId, String startTime, String endTime)
+            throws CustomerDoesNotExistException {
         LocalDateTime startTimeAsDateTime = startTime != null ? LocalDateTime.parse(startTime) : LocalDateTime.MIN;
         LocalDateTime endTimeAsDateTime = endTime != null ? LocalDateTime.parse(endTime) : LocalDateTime.MAX;
 
         List<Payment> payments = transactionsRepository.getTransactionsForCustomer(customerId).stream()
                 .filter(t -> t.datetime.isAfter(startTimeAsDateTime) && t.datetime.isBefore(endTimeAsDateTime))
-                .map(Transaction::toPayment)
-                .collect(Collectors.toList());
+                .map(Transaction::toPayment).collect(Collectors.toList());
+
         Customer customer = customerService.getCustomer(customerId);
-        DTUPayUser customerAsUser = new DTUPayUser(customer.firstName, customer.lastName, customer.cprNumber, customer.accountId);
+        
+        DTUPayUser customerAsUser = new DTUPayUser(customer.firstName, customer.lastName, customer.cprNumber,
+                customer.accountId);
         UserReport report = new UserReport();
         report.setPayments(payments);
         report.setUser(customerAsUser);
@@ -57,19 +58,19 @@ public class ReportService implements IReportService {
     }
 
     @Override
-    public UserReport generateReportForMerchant(String merchantId, String startTime, String endTime) throws MerchantDoesNotExistException  {
+    public UserReport generateReportForMerchant(String merchantId, String startTime, String endTime)
+            throws MerchantDoesNotExistException {
         LocalDateTime startTimeAsDateTime = startTime != null ? LocalDateTime.parse(startTime) : LocalDateTime.MIN;
         LocalDateTime endTimeAsDateTime = endTime != null ? LocalDateTime.parse(endTime) : LocalDateTime.MAX;
 
-        List<Payment> payments =
-                transactionsRepository.getTransactionsForMerchant(merchantId).stream()
-                        .filter(t -> t.datetime.isAfter(startTimeAsDateTime) && t.datetime.isBefore(endTimeAsDateTime))
-                        .map(Transaction::toPayment)
-                        .collect(Collectors.toList());
+        List<Payment> payments = transactionsRepository.getTransactionsForMerchant(merchantId).stream()
+                .filter(t -> t.datetime.isAfter(startTimeAsDateTime) && t.datetime.isBefore(endTimeAsDateTime))
+                .map(Transaction::toPayment).collect(Collectors.toList());
 
         Merchant merchant = merchantService.getMerchant(merchantId);
 
-        DTUPayUser merchantAsUser = new DTUPayUser(merchant.firstName, merchant.lastName, merchant.cprNumber, merchant.accountId);
+        DTUPayUser merchantAsUser = new DTUPayUser(merchant.firstName, merchant.lastName, merchant.cprNumber,
+                merchant.accountId);
         UserReport report = new UserReport();
         report.setPayments(payments);
         report.setUser(merchantAsUser);
