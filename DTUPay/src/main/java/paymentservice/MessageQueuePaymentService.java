@@ -24,7 +24,7 @@ public class MessageQueuePaymentService extends MessageQueueBase implements IPay
             try {
                 var ies = EventExchange.instance.getSender();
                 MessageQueuePaymentService service = new MessageQueuePaymentService(ies);
-                new EventQueue().registerReceiver(service);
+                new EventQueue(service).startListening();
                 instance = service;
             } catch (Exception e) {
                 throw new Error(e);

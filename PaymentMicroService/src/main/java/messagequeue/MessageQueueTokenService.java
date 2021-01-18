@@ -22,7 +22,7 @@ public class MessageQueueTokenService implements ITokenService, IEventReceiver {
             try {
                 var ies = EventExchange.instance.getSender();
                 MessageQueueTokenService service = new MessageQueueTokenService(ies);
-                new EventQueue().registerReceiver(service);
+                new EventQueue(service).startListening();
                 instance = service;
             } catch (Exception e) {
                 throw new Error(e);
@@ -75,7 +75,7 @@ public class MessageQueueTokenService implements ITokenService, IEventReceiver {
     }
 
     @Override
-    public void receiveEvent(Event event) throws Exception {
+    public void receiveEvent(Event event) {
         System.out.println("--------------------------------------------------------");
         System.out.println("Event received! : " + event);
 

@@ -28,7 +28,7 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
             try {
                 var ies = EventExchange.instance.getSender();
                 MessageQueueAccountService service = new MessageQueueAccountService(ies);
-                new EventQueue().registerReceiver(service);
+                new EventQueue(service).startListening();
                 instance = service;
             } catch (Exception e) {
                 throw new Error(e);
@@ -97,7 +97,7 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
     }
 
     @Override
-    public void receiveEvent(Event event) throws Exception {
+    public void receiveEvent(Event event) {
         System.out.println("--------------------------------------------------------");
 
         if (Arrays.stream(supportedEventTypes).anyMatch(eventType -> eventType.matches(event.getEventType()))) {

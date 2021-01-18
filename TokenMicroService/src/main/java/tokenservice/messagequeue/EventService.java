@@ -5,6 +5,7 @@ import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
+import tokenservice.*;
 
 import java.util.List;
 import java.util.UUID;
