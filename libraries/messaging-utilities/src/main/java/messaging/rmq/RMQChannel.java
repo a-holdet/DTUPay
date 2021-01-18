@@ -1,11 +1,12 @@
 package messaging.rmq;
 
 import java.io.IOException;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+import java.nio.charset.StandardCharsets;
+
+import com.rabbitmq.client.*;
 
 public class RMQChannel {
+    //could be replace by factory
     public static final RMQChannel instance = new RMQChannel();
 
     private final Channel consumerChannel;
@@ -35,7 +36,7 @@ public class RMQChannel {
     public String queueDeclare() {
         String queueName;
         try {
-            queueName = consumerChannel.queueDeclare().getQueue(); // queueName, true, false, false, null
+            queueName = consumerChannel.queueDeclare().getQueue();
         } catch (IOException e) {
             throw new Error(e);
         }
@@ -50,11 +51,32 @@ public class RMQChannel {
         }
     }
 
-    public Channel getProducerChannel() {
-        return producerChannel;
-    }
-    public Channel getConsumerChannel() {
-        return consumerChannel;
+    private static final Object SYNC_LOCK_PUBLISH = new Object();
+    public void basicPublish(String exchangeName, String routingKey, String message) {
+        synchronized (SYNC_LOCK_PUBLISH) {
+            try {
+                producerChannel.basicPublish(
+                        exchangeName,
+                        routingKey,
+                        null,
+                        message.getBytes(StandardCharsets.UTF_8)
+                );
+            } catch (IOException e) {
+                throw new Error(e);
+            }
+        }
     }
 
+    public void basicConsume(String queueName, DeliverCallback deliverCallback, CancelCallback cancelCallback) {
+        try {
+            consumerChannel.basicConsume(
+                queueName,
+                true,
+                deliverCallback,
+                cancelCallback
+            );
+        } catch (IOException e) {
+            throw new Error(e);
+        }
+    }
 }

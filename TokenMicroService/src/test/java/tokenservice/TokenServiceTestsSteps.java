@@ -1,5 +1,6 @@
 package tokenservice;
 
+import com.google.gson.reflect.TypeToken;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -42,13 +43,15 @@ public class TokenServiceTestsSteps {
 
     @Then("I have sent event createTokensForCustomerSuccess with {int} tokens")
     public void iHaveSentEventWithTokens(int amount) {
+        eventSet.join();
         assertEquals("createTokensForCustomerSuccess",event.getEventType());
-        List<UUID> tokens = (List<UUID>) event.getArguments()[0];
+        List<UUID> tokens = event.getArgument(0, new TypeToken<>() {});
         assertEquals(amount, tokens.size());
     }
 
     @When("I receive event customerExistsSuccess")
-    public void iReceiveEventCustomerExistsSuccess() throws Exception {
+    public void iReceiveEventCustomerExistsSuccess() {
+        eventSet = new CompletableFuture<>();
         s.receiveEvent(new Event("customerExistsSuccess", new Object[]{true}));
     }
 

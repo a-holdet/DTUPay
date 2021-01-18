@@ -1,6 +1,6 @@
-package messagequeue;
+package messaging.rmq.event.objects;
 
-public class EventType implements Resultable {
+public class EventType {
 
     private String name;
 
@@ -12,12 +12,10 @@ public class EventType implements Resultable {
         return this.name;
     }
 
-    @Override
     public String succeeded() {
         return name + "Success";
     }
 
-    @Override
     public String failed() {
         return name + "Fail";
     }

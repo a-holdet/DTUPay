@@ -25,7 +25,7 @@ public class EventService implements IEventReceiver {
             try {
                 var ies = EventExchange.instance.getSender();
                 EventService service = new EventService(ies);
-                new EventQueue().registerReceiver(service);
+                new EventQueue(service).startListening();
                 instance = service;
             } catch (Exception e) {
                 throw new Error(e);
@@ -35,7 +35,7 @@ public class EventService implements IEventReceiver {
     }
 
     @Override
-    public void receiveEvent(Event event) throws Exception {
+    public void receiveEvent(Event event) {
         if (event.getEventType().equals("customerExistsSuccess")) {
             customerExistsResponse(event);
         } else if (event.getEventType().equals("consumeToken")) {
@@ -79,8 +79,8 @@ public class EventService implements IEventReceiver {
         }
     }
 
-    private void consumeToken(Event event) throws Exception {
-        UUID customerToken = UUID.fromString((String) event.getArguments()[0]);
+    private void consumeToken(Event event) {
+        UUID customerToken = UUID.fromString(event.getArgument(0, String.class));
 
         try {
             String customerId = tokenService.consumeToken(customerToken);
@@ -92,7 +92,7 @@ public class EventService implements IEventReceiver {
     }
 
     private void customerExistsResponse(Event event) {
-        boolean customerExists = (boolean) event.getArguments()[0];
+        boolean customerExists = event.getArgument(0, Boolean.class);
         customerExistsResult.complete(customerExists);
     }
 

@@ -1,6 +1,5 @@
 package merchantServiceTests;
 
-import com.google.gson.Gson;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import merchantservice.Merchant;
@@ -14,6 +13,9 @@ import java.util.UUID;
 
 import static org.junit.Assert.*;
 
+/***
+ * @Author Michael, s153587
+ */
 public class MerchantServiceTestsSteps {
 	EventService s;
 	Event event;
@@ -36,10 +38,7 @@ public class MerchantServiceTestsSteps {
 	@Given("A valid Merchant")
 	public void aValidMerchant() {
 		merchant = new Merchant();
-		merchant.accountId = "123123123";
-		merchant.cprNumber = "test";
-		merchant.firstName = "test";
-		merchant.lastName = "test";
+		merchant.accountId = UUID.randomUUID().toString();
 		assertNull(merchant.id);
 	}
 
@@ -52,10 +51,8 @@ public class MerchantServiceTestsSteps {
 	public void iHaveSentEventRegisterMerchantSuccessWithRegisteredMerchantId() {
 		String type = event.getEventType();
 		assertEquals("registerMerchantSuccess", type);
-
-		String merchantId = event.getArgument(0, String.class);
-
-		assertNotNull(merchantId);
+		merchant.id = event.getArgument(0, String.class);
+		assertNotNull(merchant.id);
 	}
 
 	@Given("An invalid Merchant")
