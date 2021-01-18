@@ -79,7 +79,7 @@ public class TokenPortAdapter implements IEventReceiver {
     }
 
     private void consumeToken(Event event) {
-        UUID customerToken = UUID.fromString((String) event.getArguments()[0]);
+        UUID customerToken = UUID.fromString(event.getArgument(0, String.class));
 
         try {
             String customerId = tokenService.consumeToken(customerToken);
@@ -91,7 +91,7 @@ public class TokenPortAdapter implements IEventReceiver {
     }
 
     private void customerExistsResponse(Event event) {
-        boolean customerExists = (boolean) event.getArguments()[0];
+        boolean customerExists = event.getArgument(0, Boolean.class);
         customerExistsResult.complete(customerExists);
     }
 

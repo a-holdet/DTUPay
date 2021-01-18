@@ -90,7 +90,7 @@ public class MessageQueueTokenService implements IEventReceiver, ITokenService {
             throw new IllegalTokenGrantingException(createTokensResponseEvent.getArgument(0, String.class));
         }
 
-        return (List<UUID>) createTokensResponseEvent.getArguments()[0];
+        return createTokensResponseEvent.getArgument(0, new TypeToken<List<UUID>>() {});
     }
 
     private CompletableFuture<Event> consumeTokenResult;
@@ -112,7 +112,7 @@ public class MessageQueueTokenService implements IEventReceiver, ITokenService {
     }
 
     private void createTokensResponse(Event event) {
-        List<UUID> tokens = (List<UUID>) event.getArguments()[0];
+        List<UUID> tokens = event.getArgument(0, new TypeToken<List<UUID>>() {});
 
         createTokensForCustomerResult.complete(event);
     }
