@@ -16,7 +16,7 @@ import java.util.UUID;
 @Path("/customerapi/tokens")
 public class TokenResource {
 
-    ITokenService tokenService  = MessageQueueTokenService.getInstance();
+    ITokenService tokenService = MessageQueueTokenService.getInstance();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

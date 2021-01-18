@@ -45,7 +45,7 @@ public class ReportService implements IReportService {
         LocalDateTime endTimeAsDateTime = endTime != null ? LocalDateTime.parse(endTime) : LocalDateTime.MAX;
 
         List<Payment> payments = transactionsRepository.getTransactionsForCustomer(customerId).stream()
-                .filter(t -> t.datetime.isAfter(startTimeAsDateTime) && t.datetime.isBefore(endTimeAsDateTime))
+                //.filter(t -> t.datetime.isAfter(startTimeAsDateTime) && t.datetime.isBefore(endTimeAsDateTime))
                 .map(Transaction::toPayment).collect(Collectors.toList());
 
         Customer customer = customerService.getCustomer(customerId);
@@ -66,7 +66,7 @@ public class ReportService implements IReportService {
         LocalDateTime endTimeAsDateTime = endTime != null ? LocalDateTime.parse(endTime) : LocalDateTime.MAX;
 
         List<Payment> payments = transactionsRepository.getTransactionsForMerchant(merchantId).stream()
-                .filter(t -> t.datetime.isAfter(startTimeAsDateTime) && t.datetime.isBefore(endTimeAsDateTime))
+                //.filter(t -> t.datetime.isAfter(startTimeAsDateTime) && t.datetime.isBefore(endTimeAsDateTime))
                 .map(Transaction::toPayment).collect(Collectors.toList());
 
         Merchant merchant = merchantService.getMerchant(merchantId);

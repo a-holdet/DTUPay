@@ -87,6 +87,7 @@ public class MessageQueueAccountService extends MessageQueueBase implements IMer
 
     @Override
     public Customer getCustomer(String customerId) throws CustomerDoesNotExistException {
+        System.out.println("Creating GetCustomer event");
         Event response = sendRequestAndAwaitReponse(customerId,getCustomer);
         if(response.isSuccessReponse())
             return response.getPayloadAs(Customer.class);

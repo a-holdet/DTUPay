@@ -27,6 +27,8 @@ import messaging.rmq.event.objects.Event;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import com.google.gson.reflect.TypeToken;
+
 
 public class MessageQueueReportService extends MessageQueueBase implements IReportService, IEventReceiver {
 
@@ -72,7 +74,7 @@ public class MessageQueueReportService extends MessageQueueBase implements IRepo
         event = requests.get(event.getUUID()).join();
         String type = event.getEventType();
 
-        if (type.equals(generateReportForCustomer + "Success")) {
+        if (event.isSuccessReponse()) {
             // Gson gson = new Gson();
             // UserReport report = new UserReport();
             // List<Payment> payments = Arrays.asList(gson.fromJson(event.getArgument(0,
@@ -101,7 +103,7 @@ public class MessageQueueReportService extends MessageQueueBase implements IRepo
         event = requests.get(event.getUUID()).join();
         String type = event.getEventType();
 
-        if (type.equals(generateReportForMerchant + "Success")) {
+        if (event.isSuccessReponse()) {
             return generateReport(event);
         }
         String exceptionMsg = event.getArgument(1, String.class);
@@ -109,32 +111,42 @@ public class MessageQueueReportService extends MessageQueueBase implements IRepo
     }
 
     private UserReport generateReport(Event event) {
-        Gson gson = new Gson();
+        System.out.println("DTUPay successfully received report: " + event.getEventType());
         UserReport report = new UserReport();
-        List<Payment> payments = Arrays.asList(gson.fromJson(event.getArgument(0, String.class), Payment[].class));
-        DTUPayUser User = gson.fromJson(event.getArgument(1, String.class), DTUPayUser.class);
+        DTUPayUser user = event.getArgument(0,DTUPayUser.class);
+        System.out.println("DTUPay report user is " + user.getFirstName() + user.getCprNumber());
+        List<Payment> payments = event.getArgument(1, new TypeToken<>(){});
+        System.out.println("payments contain " + payments.size());
         report.setPayments(payments);
-        report.setUser(User);
+        report.setUser(user);
         return report;
     }
 
     @Override
     public void registerTransaction(Payment payment, String customerId) {
         Event event = new Event(registerTransaction.getName(), new Object[] { payment, customerId });
-        requests.put(event.getUUID(), new CompletableFuture<>());
-        this.sender.sendEvent(event);
-        requests.get(event.getUUID()).join();
+        try {
+            this.sender.sendEvent(event);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
     }
 
     @Override
     public List<Transaction> generateManagerOverview() {
         Event event = new Event(generateManagerOverview.getName());
-        requests.put(event.getUUID(), new CompletableFuture<>());
-        this.sender.sendEvent(event);
+        try {
+            requests.put(event.getUUID(), new CompletableFuture<>());
+            this.sender.sendEvent(event);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
 
-        Gson gson = new Gson();
         event = requests.get(event.getUUID()).join();
-        return Arrays.asList(gson.fromJson(event.getArgument(0, String.class), Transaction[].class));
+
+        List<Transaction> transactions = event.getArgument(0, new TypeToken<>() {});
+        //List<Transaction> transactions = (List<Transaction>) event.getArguments()[0];
+        return transactions;
     }
 
     @Override

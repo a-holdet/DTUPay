@@ -11,7 +11,7 @@ public interface ITokenService {
 
     List<UUID> readTokensForCustomer(String cpr);
 
-    String consumeToken(UUID customerToken) throws TokenDoesNotExistException, Exception, ConsumeTokenException;
+    String consumeToken(UUID customerToken) throws TokenDoesNotExistException, Exception;
 
     List<UUID> createTokensForCustomer(String customerId, int amount) throws IllegalTokenGrantingException, Exception;
 }

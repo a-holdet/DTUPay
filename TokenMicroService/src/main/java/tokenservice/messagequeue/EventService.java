@@ -44,7 +44,9 @@ public class EventService implements IEventReceiver {
             Event createTokensResponse = new Event("createTokensForCustomerSuccess", new Object[]{tokens});
             sender.sendEvent(createTokensResponse);
         } catch (IllegalTokenGrantingException e) {
-            Event createTokensResponse = new Event("createTokensForCustomerFailed", new Object[]{e.getMessage()});
+            String errorType = e.getClass().getSimpleName();
+            String errorMessage = e.getMessage();
+            Event createTokensResponse = new Event("createTokensForCustomerFail", new Object[]{errorType, errorMessage}, event.getUUID());
             try {
                 sender.sendEvent(createTokensResponse);
             } catch (Exception exception) {
@@ -65,11 +67,14 @@ public class EventService implements IEventReceiver {
 
         try {
             String customerId = tokenService.consumeToken(customerToken);
-            sender.sendEvent(new Event("consumeTokenResponse", new Object[]{customerId}));
+            sender.sendEvent(new Event("consumeTokenSuccess", new Object[]{customerId}, event.getUUID()));
+            System.out.println("returned tokens for customer " + customerId);
         } catch (TokenDoesNotExistException e) {
-            sender.sendEvent(new Event("consumeTokenResponseFailed", new Object[]{e.getMessage()}));
+            System.out.println("Failed returned tokens for customer");
+            String errorType = e.getClass().getSimpleName();
+            String errorMessage = e.getMessage();
+            sender.sendEvent(new Event("consumeTokenFail", new Object[]{errorType, errorMessage}, event.getUUID()));
         }
-
     }
 
 //    private void customerExistsResponse(Event event) {

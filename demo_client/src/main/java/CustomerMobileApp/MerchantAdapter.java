@@ -41,7 +41,7 @@ public class MerchantAdapter {
         return merchantId;
     }
 
-    public void transferMoneyFromTo(UUID selectedToken, String merchantId, BigDecimal amount, String description) throws IllegalArgumentException {
+    public void transferMoneyFromTo(UUID selectedToken, String merchantId, BigDecimal amount, String description) throws IllegalArgumentException, ForbiddenException {
         Payment payment = new Payment();
         payment.amount = amount;
         payment.customerToken = selectedToken;
