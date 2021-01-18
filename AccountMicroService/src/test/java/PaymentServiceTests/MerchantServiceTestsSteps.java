@@ -1,3 +1,4 @@
+/*
 package PaymentServiceTests;
 
 import customerservice.CustomerInMemoryRepository;
@@ -5,9 +6,9 @@ import customerservice.LocalCustomerService;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import merchantservice.LocalMerchantService;
-import merchantservice.Merchant;
+import DTO.Merchant;
 import merchantservice.MerchantInMemoryRepository;
-import messagequeue.EventPortAdapter;
+import messagequeue.MessageQueueConnector;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import messaging.rmq.event.interfaces.IEventSender;
@@ -17,11 +18,13 @@ import java.util.UUID;
 
 import static org.junit.Assert.*;
 
+*/
 /***
  * @Author Michael, s153587
- */
+ *//*
+
 public class MerchantServiceTestsSteps {
-	EventPortAdapter service;
+	MessageQueueConnector service;
 	Event event;
 	Merchant merchant;
 
@@ -32,7 +35,7 @@ public class MerchantServiceTestsSteps {
 				event = ev;
 			}
 		};
-		service = new EventPortAdapter(
+		service = new MessageQueueConnector(
 				new LocalMerchantService(
 						new MerchantInMemoryRepository()
 				),
@@ -95,3 +98,4 @@ public class MerchantServiceTestsSteps {
 		service.receiveEvent(new Event("getMerchant", new Object[] {merchant.id}));
 	}
 }
+*/

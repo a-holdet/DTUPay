@@ -1,5 +1,7 @@
 package customerservice;
 
+import DTO.Customer;
+
 import java.util.UUID;
 
 public class LocalCustomerService implements ICustomerService {

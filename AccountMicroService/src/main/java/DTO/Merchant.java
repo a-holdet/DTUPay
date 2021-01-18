@@ -1,4 +1,4 @@
-package merchantservice;
+package DTO;
 
 public class Merchant {
     public String firstName;

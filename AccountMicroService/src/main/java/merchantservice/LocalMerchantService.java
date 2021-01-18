@@ -1,5 +1,7 @@
 package merchantservice;
 
+import DTO.Merchant;
+
 import java.util.UUID;
 
 public class LocalMerchantService implements IMerchantService{

@@ -1,4 +1,4 @@
-package customerservice;
+package DTO;
 
 public class Customer {
     public String firstName;

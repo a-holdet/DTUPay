@@ -1,3 +1,4 @@
+/*
 package AccountMessageQueueTest;
 
 import accountservice.MessageQueueAccountService;
@@ -18,9 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+*/
 /***
  * @Author Michael, s153587
- */
+ *//*
+
 public class MerchantSteps {
 
     Merchant merchant;
@@ -107,3 +110,4 @@ public class MerchantSteps {
         assertTrue(actualOutput instanceof Throwable);
     }
 }
+*/

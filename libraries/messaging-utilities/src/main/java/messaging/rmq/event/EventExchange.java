@@ -5,6 +5,9 @@ import messaging.rmq.RMQChannel;
 import messaging.rmq.RMQExchange;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
+import messaging.rmq.event.objects.EventType;
+
+import java.util.UUID;
 
 public class EventExchange extends RMQExchange {
 
@@ -26,6 +29,12 @@ public class EventExchange extends RMQExchange {
             public void sendEvent(Event event) {
                 String message = new Gson().toJson(event);
                 parentChannel.basicPublish(EXCHANGE_NAME, routingKey, message);
+            }
+
+            @Override
+            public void sendErrorEvent(EventType eventType, Exception exception, UUID eventID) {
+                Event event = new Event(eventType.failed(), new Object[] {exception.getClass().getSimpleName(), exception.getMessage()}, eventID);
+                sendEvent(event);
             }
         };
     }

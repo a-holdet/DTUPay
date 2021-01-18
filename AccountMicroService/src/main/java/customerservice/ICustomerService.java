@@ -1,5 +1,7 @@
 package customerservice;
 
+import DTO.Customer;
+
 public interface ICustomerService {
     String registerCustomer(Customer customer) throws IllegalArgumentException;
 

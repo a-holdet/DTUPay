@@ -1,5 +1,7 @@
 package merchantservice;
 
+import DTO.Merchant;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

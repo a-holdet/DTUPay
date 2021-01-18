@@ -1,9 +1,26 @@
 package messagequeue;
 
+import customerservice.*;
+import merchantservice.*;
+import messaging.rmq.event.EventExchangeFactory;
+import messaging.rmq.event.EventQueue;
+import messaging.rmq.event.interfaces.IEventReceiver;
+
 public class StartUp {
 
-    public static void main(String[] args) throws Exception {
-        // Creates new instances of listeners
-        new EventPortAdapterFactory().getPortAdapter();
+    public static void main(String[] args) {
+        IMerchantRepository merchantRepository = new MerchantInMemoryRepository();
+        ICustomerRepository customerRepository = new CustomerInMemoryRepository();
+
+        IMerchantService merchantService = new LocalMerchantService(merchantRepository);
+        ICustomerService customerService = new LocalCustomerService(customerRepository);
+
+        IEventReceiver service = new MessageQueueConnector(
+                merchantService,
+                customerService,
+                new EventExchangeFactory().getExchange().getSender()
+        );
+
+        new EventQueue(service).startListening();
     }
 }
