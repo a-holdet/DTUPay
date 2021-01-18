@@ -8,7 +8,6 @@ public class TokenInMemoryRepository implements ITokenRepository{
 
     @Override
     public void add(UUID token, String customerId) {
-        System.out.println("add cust id" + customerId);
         tokenCustomerMap.put(UUID.randomUUID(), customerId);
     }
 
@@ -16,8 +15,6 @@ public class TokenInMemoryRepository implements ITokenRepository{
     public List<UUID> getTokensForCustomer(String customerId) {
         List<UUID> tokens = new ArrayList<>();
         for (UUID uuid : tokenCustomerMap.keySet()) {
-            System.out.println("uuid" + uuid);
-            System.out.println("customerId " + customerId);
             System.out.println(tokenCustomerMap.get(uuid));
 
             if (tokenCustomerMap.get(uuid).equals(customerId)) tokens.add(uuid);
