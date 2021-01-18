@@ -1,10 +1,11 @@
-package tokenservice;
+package tokenservice.tokenservice;
+
+import tokenservice.interfaces.ITokenRepository;
 
 import java.util.*;
 
-public class TokenInMemoryRepository implements ITokenRepository{
+public class TokenInMemoryRepository implements ITokenRepository {
     Map<UUID, String> tokenCustomerMap = new HashMap<>();
-
 
     @Override
     public void add(UUID token, String customerId) {
@@ -21,13 +22,7 @@ public class TokenInMemoryRepository implements ITokenRepository{
     }
 
     @Override
-    public void deleteTokensForCustomer(String customerId) {
-        tokenCustomerMap.entrySet().removeIf(entry -> entry.getValue().equals(customerId));
-    }
-
-    @Override
     public String consumeToken(UUID customerToken) {
-        String customerId = tokenCustomerMap.remove(customerToken);
-        return customerId;
+        return tokenCustomerMap.remove(customerToken);
     }
 }

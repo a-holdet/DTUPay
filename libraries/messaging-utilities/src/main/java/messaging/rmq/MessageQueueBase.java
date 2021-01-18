@@ -1,8 +1,9 @@
-package tokenservice.messagequeue;
+package messaging.rmq;
 
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
+import messaging.rmq.event.objects.EventType;
 
 import java.util.Arrays;
 import java.util.UUID;

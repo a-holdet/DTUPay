@@ -1,19 +1,16 @@
-package tokenservice;
+package tokenservice.interfaces;
 
-//import io.quarkus.security.UnauthorizedException;
-
-import tokenservice.customer.CustomerNotFoundException;
+import tokenservice.exceptions.CustomerNotFoundException;
+import tokenservice.exceptions.IllegalTokenGrantingException;
+import tokenservice.exceptions.TokenDoesNotExistException;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface ITokenService {
 
-    List<UUID> readTokensForCustomer(String cpr);
-
-    void deleteTokensForCustomer(String cpr);
-
     String consumeToken(UUID customerToken) throws TokenDoesNotExistException;
 
     List<UUID> createTokensForCustomer(String customerId, int amount) throws IllegalTokenGrantingException, CustomerNotFoundException;
+
 }
