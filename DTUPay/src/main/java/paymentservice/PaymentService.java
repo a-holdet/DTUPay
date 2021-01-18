@@ -1,3 +1,4 @@
+/*
 package paymentservice;
 import java.math.BigDecimal;
 
@@ -12,7 +13,6 @@ import reportservice.ReportService;
 import tokenservice.ConsumeTokenException;
 import tokenservice.ITokenService;
 import tokenservice.MessageQueueTokenService;
-import tokenservice.TokenDoesNotExistException;
 import customerservice.LocalCustomerService;
 import customerservice.ICustomerService;
 
@@ -53,7 +53,7 @@ public class PaymentService implements IPaymentService {
     }
 
     @Override
-    public void registerPayment(Payment payment) throws Exception, MerchantDoesNotExistException, NegativeAmountException, BankException, ConsumeTokenException {
+    public void registerPayment(Payment payment) throws TokenDoesNotExistException, MerchantDoesNotExistException, NegativeAmountException, BankException, ConsumeTokenException {
         System.out.println("-");
         if (isNegative(payment.amount)) throw new NegativeAmountException("Cannot transfer a negative amount");
 
@@ -75,3 +75,4 @@ public class PaymentService implements IPaymentService {
         reportService.registerTransaction(payment, customerId);
     }
 }
+*/

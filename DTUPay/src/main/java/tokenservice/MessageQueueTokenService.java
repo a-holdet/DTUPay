@@ -123,7 +123,7 @@ public class MessageQueueTokenService implements IEventReceiver, ITokenService {
     private CompletableFuture<Event> consumeTokenResult;
 
     @Override
-    public String consumeToken(UUID customerToken) throws Exception, ConsumeTokenException {
+    public String consumeToken(UUID customerToken) throws Exception, TokenDoesNotExistException {
         consumeTokenResult = new CompletableFuture<>();
         sender.sendEvent(new Event("consumeToken", new Object[]{customerToken}));
         Event consumeTokenEvent = consumeTokenResult.join();
@@ -131,7 +131,7 @@ public class MessageQueueTokenService implements IEventReceiver, ITokenService {
         if (consumeTokenEvent.getEventType().endsWith("Fail")) {
             System.out.println("in heere");
             String errorMessage = consumeTokenEvent.getArgument(1, String.class);
-            throw new ConsumeTokenException(errorMessage);
+            throw new TokenDoesNotExistException(errorMessage);
         }else {
             System.out.println("not in here " + consumeTokenEvent);
         }
