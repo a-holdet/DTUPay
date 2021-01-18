@@ -9,10 +9,10 @@ import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 import messaging.rmq.event.objects.Result;
-import paymentservice.CustomerDoesNotExistException;
-import paymentservice.ICustomerService;
-import paymentservice.IMerchantService;
-import paymentservice.MerchantDoesNotExistException;
+import Accounts.CustomerDoesNotExistException;
+import Accounts.ICustomerService;
+import Accounts.IMerchantService;
+import Accounts.MerchantDoesNotExistException;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -75,7 +75,9 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
 
     @Override
     public Merchant getMerchant(String merchantId) throws MerchantDoesNotExistException {
+        System.out.println("GET MERCHANT SEND REQUEST");
         Result<Merchant, String> res = handle(merchantId, getMerchant, Merchant.class);
+        System.out.println("GET MERCHANT RECEIVE REQUEST");
         if (res.state == Result.ResultState.FAILURE) {
             throw new MerchantDoesNotExistException(res.failureValue);
         } else {
@@ -97,11 +99,13 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
     @Override
     public void receiveEvent(Event event) throws Exception {
         System.out.println("--------------------------------------------------------");
-        System.out.println("Event received! : " + event);
 
         if (Arrays.stream(supportedEventTypes).anyMatch(eventType -> eventType.matches(event.getEventType()))) {
+            System.out.println("Supported Event received! : " + event);
             CompletableFuture<Event> cf = requests.get(event.getUUID());
             if (cf != null) cf.complete(event);
+        } else {
+            System.out.println("Event received! : " + event);
         }
 
         System.out.println("--------------------------------------------------------");

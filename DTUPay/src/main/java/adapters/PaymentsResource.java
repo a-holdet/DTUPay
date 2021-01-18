@@ -4,7 +4,6 @@ import DTO.Payment;
 import customerservice.CustomerDoesNotExistException;
 import merchantservice.MerchantDoesNotExistException;
 import paymentservice.*;
-import ports.BankException;
 import tokenservice.ConsumeTokenException;
 import Bank.BankException;
 import tokenservice.TokenDoesNotExistException;
@@ -15,8 +14,7 @@ import javax.ws.rs.core.Response;
 
 @Path("/merchantapi/payments")
 public class PaymentsResource {
-    IPaymentService paymentService = PaymentService.getInstance();
-
+    IPaymentService paymentService = MessageQueuePaymentService.getInstance();
 
     // -- HER //
     @POST
@@ -25,6 +23,7 @@ public class PaymentsResource {
     public Response create(Payment payment) {
         // Send Payment Out
 
+        System.out.println("PAYMENTS RESOURCE:");
         try {
             paymentService.registerPayment(payment);
         } catch (BankException e) {

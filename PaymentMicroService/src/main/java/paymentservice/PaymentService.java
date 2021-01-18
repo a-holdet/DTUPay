@@ -1,11 +1,18 @@
 package paymentservice;
 
 
+import Accounts.CustomerDoesNotExistException;
+import Accounts.ICustomerService;
+import Accounts.IMerchantService;
+import Accounts.MerchantDoesNotExistException;
 import Bank.BankException;
 import Bank.DTUBankPort;
 import Bank.IBank;
 import DTO.Merchant;
 import DTO.Payment;
+import Reports.IReportService;
+import Tokens.ITokenService;
+import Tokens.TokenDoesNotExistException;
 import messagequeue.MessageQueueAccountService;
 import messagequeue.MessageQueueReportService;
 import messagequeue.MessageQueueTokenService;
@@ -50,7 +57,7 @@ public class PaymentService implements IPaymentService {
 
     @Override
     public void registerPayment(Payment payment) throws TokenDoesNotExistException, MerchantDoesNotExistException, NegativeAmountException, BankException, CustomerDoesNotExistException {
-        System.out.println("-");
+        System.out.println("REGISTER PAYMENT BUSINESS LOGIC!");
         if (isNegative(payment.amount)) throw new NegativeAmountException("Cannot transfer a negative amount");
 
         Merchant merchant = merchantService.getMerchant(payment.merchantId);

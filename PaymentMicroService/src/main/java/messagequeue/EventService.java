@@ -1,7 +1,10 @@
 package messagequeue;
 
+import Accounts.CustomerDoesNotExistException;
+import Accounts.MerchantDoesNotExistException;
 import Bank.BankException;
 import DTO.Payment;
+import Tokens.TokenDoesNotExistException;
 import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.interfaces.IEventReceiver;
@@ -40,6 +43,7 @@ public class EventService implements IEventReceiver {
 
 	private void registerPayment(Payment payment, UUID eventID) throws Exception {
 		try {
+			System.out.println("register payment: " + payment);
 			paymentService.registerPayment(payment);
 			Event event = new Event(registerPayment.succeeded(), new Object[] {}, eventID);
 			this.sender.sendEvent(event);
@@ -54,14 +58,23 @@ public class EventService implements IEventReceiver {
 	@Override
 	public void receiveEvent(Event event) throws Exception {
 		System.out.println("--------------------------------------------------------");
-		System.out.println("Event received! : " + event);
+
 
 		String type = event.getEventType();
 		UUID eventId = event.getUUID();
 
 		if (type.equals(registerPayment.getName())) {
+			System.out.println("Supported Event received! : " + event);
 			Payment payment = event.getArgument(0, Payment.class);
-			registerPayment(payment, eventId);
+			new Thread(() -> {
+				try {
+					registerPayment(payment, eventId);
+				} catch (Exception e) {
+					e.printStackTrace(); // TODO: Fix properly
+				}
+			}).start();
+		} else {
+			System.out.println("Event received! : " + event);
 		}
 	}
 }

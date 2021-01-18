@@ -1,4 +1,6 @@
-package paymentservice;
+package Tokens;
+
+import Tokens.TokenDoesNotExistException;
 
 import java.util.UUID;
 

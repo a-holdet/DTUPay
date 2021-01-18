@@ -1,4 +1,4 @@
-package paymentservice;
+package Accounts;
 
 import DTO.Customer;
 

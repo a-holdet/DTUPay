@@ -6,7 +6,7 @@ import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
-import paymentservice.IReportService;
+import Reports.IReportService;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;

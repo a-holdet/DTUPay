@@ -1,9 +1,8 @@
 package paymentservice;
 
+import Bank.BankException;
 import DTO.Payment;
-import customerservice.CustomerDoesNotExistException;
 import merchantservice.MerchantDoesNotExistException;
-import ports.BankException;
 import tokenservice.ConsumeTokenException;
 
 public interface IPaymentService {
