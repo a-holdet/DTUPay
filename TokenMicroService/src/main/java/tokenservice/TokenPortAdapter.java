@@ -71,6 +71,7 @@ public class TokenPortAdapter implements IEventReceiver {
             e.printStackTrace();
         } catch (CustomerNotFoundException e) {
             e.printStackTrace();
+            // TODO: Handle this
         } catch (Exception e) {
             // TODO: throw error
             e.printStackTrace();

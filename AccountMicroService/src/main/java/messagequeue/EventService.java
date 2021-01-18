@@ -28,8 +28,6 @@ public class EventService implements IEventReceiver {
 	public static EventService getInstance() {
 		if (instance == null) {
 			try {
-				System.out.println("event service parent channel");
-				System.out.println(EventExchange.instance.parentChannel);
 				var ies = EventExchange.instance.getSender();
 				EventService service = new EventService(ies);
 				new EventQueue().registerReceiver(service);

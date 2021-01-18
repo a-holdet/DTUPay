@@ -27,7 +27,6 @@ public class CustomerAdapter {
 
     public String registerCustomer(String firstName, String lastName, String cprNumber, String accountID)
             throws IllegalArgumentException {
-        System.out.println("lets see");
         DTUPayUser customer = new DTUPayUser(firstName, lastName, cprNumber, accountID);
         Response response = baseUrl.path("customers").request()
                 .post(Entity.entity(customer, MediaType.APPLICATION_JSON));
@@ -39,16 +38,12 @@ public class CustomerAdapter {
         } else if (response.getStatus() >= 300) {
             String errorMessage = response.readEntity(String.class); // error message is in payload
             response.close();
-            System.out.println("above 300");
-            System.out.println(errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }
 
-        System.out.println("this is the response status" + response.getStatus());
-        System.out.println(response);
+        // TODO: Refactor
         String customerId = response.readEntity(String.class);
         if (customerId.equals("")) {
-            System.out.println("lookatthis");
             throw new RuntimeException("wtf");
         }
 
@@ -60,7 +55,6 @@ public class CustomerAdapter {
         TokenRequestObject request = new TokenRequestObject();
         request.setUserId(customerId);
         request.setTokenAmount(amount);
-        System.out.println("customeradapter " + customerId);
         Response response = baseUrl
                 .path("tokens")
                 .request()
