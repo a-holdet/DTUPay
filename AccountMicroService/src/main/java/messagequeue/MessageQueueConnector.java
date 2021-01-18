@@ -1,7 +1,7 @@
 package messagequeue;
 
-import DTO.Customer;
-import DTO.Merchant;
+import customerservice.Customer;
+import merchantservice.Merchant;
 import customerservice.CustomerDoesNotExistException;
 import customerservice.ICustomerService;
 import merchantservice.IMerchantService;

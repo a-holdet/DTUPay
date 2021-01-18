@@ -1,7 +1,5 @@
 package customerservice;
 
-import DTO.Customer;
-
 import java.util.List;
 
 public interface ICustomerRepository {

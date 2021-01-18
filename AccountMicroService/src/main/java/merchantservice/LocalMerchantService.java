@@ -1,7 +1,5 @@
 package merchantservice;
 
-import DTO.Merchant;
-
 import java.util.UUID;
 
 public class LocalMerchantService implements IMerchantService{
@@ -14,7 +12,7 @@ public class LocalMerchantService implements IMerchantService{
 
     @Override
     public String registerMerchant(Merchant merchant) throws IllegalArgumentException {
-        if (merchant.accountId==null || merchant.accountId.isEmpty())
+        if (!merchant.hasValidAccountId())
             throw new IllegalArgumentException("Merchant must have a bank account to be created in DTUPay");
 
         merchant.id = String.valueOf(UUID.randomUUID());

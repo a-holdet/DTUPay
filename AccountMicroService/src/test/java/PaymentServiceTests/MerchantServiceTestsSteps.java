@@ -6,7 +6,7 @@ import customerservice.LocalCustomerService;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import merchantservice.LocalMerchantService;
-import DTO.Merchant;
+import merchantservice.Merchant;
 import merchantservice.MerchantInMemoryRepository;
 import messagequeue.MessageQueueConnector;
 import io.cucumber.java.en.Then;

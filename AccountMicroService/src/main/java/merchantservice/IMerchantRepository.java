@@ -1,7 +1,5 @@
 package merchantservice;
 
-import DTO.Merchant;
-
 import java.util.List;
 
 public interface IMerchantRepository {
