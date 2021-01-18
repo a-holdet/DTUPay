@@ -10,10 +10,7 @@ import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 
-import reportservice.IReportService;
-import reportservice.ReportService;
-import reportservice.Transaction;
-import reportservice.UserReport;
+import reportservice.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -44,9 +41,13 @@ public class EventService implements IEventReceiver {
     EventType generateReportForCustomer = new EventType("generateReportForCustomer");
     private static final EventType generateReportForMerchant = new EventType("generateReportForMerchant");
     private static final EventType generateManagerOverview = new EventType("generateManagerOverview");
+	private static final EventType registerTransaction = new EventType("registerTransaction");
 
+	private void registerTransaction(Payment payment, String CustomerId) throws Exception {
+		reportService.registerTransaction(payment, CustomerId);
+	}
 
-	public void generateReportForCustomer(String customerId, String startTime, String endTime, UUID eventId) throws Exception {
+	private void generateReportForCustomer(String customerId, String startTime, String endTime, UUID eventId) throws Exception {
 		try {
 			UserReport userReport = reportService.generateReportForCustomer(customerId, startTime, endTime);
             Event event = new Event(generateReportForCustomer.succeeded(), new Object[] { userReport }, eventId);
@@ -80,6 +81,8 @@ public class EventService implements IEventReceiver {
         this.sender.sendEvent(event);
     }
 
+
+
 	@Override
 	public void receiveEvent(Event event) throws Exception {
 		System.out.println("--------------------------------------------------------");
@@ -100,7 +103,11 @@ public class EventService implements IEventReceiver {
             generateReportForMerchant(merchantId, startTime, endTime, eventId);
         } else if (type.equals(generateManagerOverview.getName())){
             generateManagerOverview(eventId);
-        }
+        } else if(type.equals(registerTransaction.getName())){
+			Payment payment = event.getArgument(0, Payment.class);
+			String customerId = event.getArgument(1, String.class);
+        	registerTransaction(payment,customerId);
+		}
 
 		System.out.println("--------------------------------------------------------");
 	}

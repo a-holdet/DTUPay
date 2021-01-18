@@ -47,6 +47,11 @@ mvn clean package
 docker build -t accountmicroservice .
 popd
 
+pushd ReportMicroService
+mvn clean package
+docker build -t reportmicroservice .
+popd
+
 pushd DTUPay
 mvn clean package
 docker build -t dtupay .
