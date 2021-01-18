@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class MessageQueueBase implements IEventReceiver {
     protected final ConcurrentHashMap<UUID, CompletableFuture<Event>> requests = new ConcurrentHashMap<>();
-    private final IEventSender sender;
+    protected final IEventSender sender; //TODO could be changed to private once subclasses uses it properly
 
     protected EventType[] supportedEventTypes;
 
