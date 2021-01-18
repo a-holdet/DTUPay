@@ -25,7 +25,7 @@ public class MessageQueueTokenService implements IEventReceiver, ITokenService {
             try {
                 var ies = EventExchange.instance.getSender();
                 MessageQueueTokenService service = new MessageQueueTokenService(ies);
-                new EventQueue().registerReceiver(service);
+                new EventQueue(service).startListening();
                 instance = service;
             } catch (Exception e) {
                 throw new Error(e);
@@ -57,50 +57,31 @@ public class MessageQueueTokenService implements IEventReceiver, ITokenService {
         } else if (event.getEventType().equals("consumeTokenResponseFailed")) {
 //            String errorMessage = event.getArgument(0, String.class);
             consumeTokenResult.complete(event);
-        } else if (event.getEventType().equals("createTokensForCustomerResponse")) {
+        } else if (event.getEventType().equals("createTokensForCustomerSuccess")) {
             createTokensResponse(event);
         } else if (event.getEventType().equals("createTokensForCustomerFailed")) {
             createTokensFailed(event);
-        } else {
-            System.out.println("CustomerPA ignored: " + event);
         }
 
-//        else if (event.getEventType().equals("registerCustomerResponse")) {
-//            System.out.println("customerPA " + event);
-//            registerCustomerResponse(event);
-//        } else if (event.getEventType().equals("registerCustomerFailed")) {
-//            System.out.println("customerPA Failed" + event);
-//        }
     }
 
     private void createTokensFailed(Event event) {
         createTokensForCustomerResult.complete(event);
     }
-//
-//    private void registerCustomerResponse(Event event) {
-//        String customerId = event.getArgument(0, String.class);
-//        registerCustomerResult.complete(customerId);
-//    }
-
-
 
     @Override
     public List<UUID> readTokensForCustomer(String cpr) {
-
+        // TODO Implement this probably or delete
         return null;
     }
 
     @Override
     public List<UUID> createTokensForCustomer(String customerId, int amount) throws Exception, IllegalTokenGrantingException {
-        System.out.println("inside createTokensForCustomer");
-        // if customer id is null, then never call createTokenForCustomer
         if (customerId == null)
             throw new CustomerNotFoundException("Customer must have a customer id to request tokens");
 
         createTokensForCustomerResult = new CompletableFuture<>();
-        System.out.println("cust id " + customerId);
         Event event = new Event("createTokensForCustomer", new Object[]{customerId, amount});
-        System.out.println("evente cpa " + event);
         sender.sendEvent(event);
 
         Event createTokensResponseEvent = createTokensForCustomerResult.join();
@@ -109,17 +90,8 @@ public class MessageQueueTokenService implements IEventReceiver, ITokenService {
             throw new IllegalTokenGrantingException(createTokensResponseEvent.getArgument(0, String.class));
         }
 
-        return (List<UUID>) createTokensResponseEvent.getArguments()[0];
+        return createTokensResponseEvent.getArgument(0, new TypeToken<List<UUID>>() {});
     }
-//
-//    public String registerCustomer(Customer customer) throws Exception {
-////        TODO: Call customer micro service to register customer
-//        System.out.println("Inside register customer method in CustomerPA");
-//        registerCustomerResult = new CompletableFuture<>();
-//        Event event = new Event("registerCustomer", new Object[]{customer});
-//        sender.sendEvent(event);
-//        return registerCustomerResult.join();
-//    }
 
     private CompletableFuture<Event> consumeTokenResult;
 
@@ -130,19 +102,17 @@ public class MessageQueueTokenService implements IEventReceiver, ITokenService {
         Event consumeTokenEvent = consumeTokenResult.join();
 
         if (consumeTokenEvent.getEventType().endsWith("Failed")) {
-            System.out.println("in heere");
             String errorMessage = consumeTokenEvent.getArgument(0, String.class);
             throw new ConsumeTokenException(errorMessage);
         }else {
-            System.out.println("not in here " + consumeTokenEvent);
+            // TODO: Handle this?
         }
 
         return consumeTokenEvent.getArgument(0, String.class);
     }
 
     private void createTokensResponse(Event event) {
-        System.out.println("inside createTokenresponse");
-        List<UUID> tokens = (List<UUID>) event.getArguments()[0];
+        List<UUID> tokens = event.getArgument(0, new TypeToken<List<UUID>>() {});
 
         createTokensForCustomerResult.complete(event);
     }

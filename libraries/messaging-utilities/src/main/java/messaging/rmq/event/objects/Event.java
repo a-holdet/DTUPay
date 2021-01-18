@@ -11,13 +11,15 @@ import com.google.gson.reflect.TypeToken;
 
 public class Event {
 
+	static Gson GSON = new Gson();
+
 	private String eventType;
-	private Object[] arguments;
+	private String[] arguments;
 	private UUID uuid;
 
 	public Event(String eventType, Object[] arguments, UUID uuid) {
 		this.eventType = eventType;
-		this.arguments = arguments;
+		this.arguments = Arrays.stream(arguments).map(GSON::toJson).toArray(String[]::new);
 		this.uuid = uuid;
 	}
 
@@ -35,18 +37,12 @@ public class Event {
 		return eventType;
 	}
 
-	public Object[] getArguments() {
-		return arguments;
-	}
-
 	public <T> T getArgument(Integer idx, Class<T> clazz) {
-		Gson gson = new Gson();
-		return gson.fromJson(gson.toJson(arguments[idx]), clazz);
+		return GSON.fromJson(arguments[idx], clazz);
 	}
 
 	public <T> T getArgument(Integer idx, TypeToken<T> clazz) {
-		Gson gson = new Gson();
-		return gson.fromJson(gson.toJson(arguments[idx]), clazz.getType());
+		return GSON.fromJson(arguments[idx], clazz.getType());
 	}
 
 	public UUID getUUID() {
@@ -76,8 +72,8 @@ public class Event {
 		}
 		Event other = (Event) o;
 		return this.eventType.equals(other.eventType)
-				&& (this.getArguments() != null && this.getArguments().equals(other.getArguments()))
-				|| (this.getArguments() == null && other.getArguments() == null);
+				&& (this.arguments != null && this.arguments.equals(other.arguments))
+				|| (this.arguments == null && other.arguments == null);
 	}
 
 	public int hashCode() {

@@ -41,7 +41,7 @@ public class MessageQueueReportService extends MessageQueueBase implements IRepo
                 var ies = EventExchange.instance.getSender();
                 MessageQueueReportService service = new MessageQueueReportService(ies,
                         MessageQueueAccountService.getInstance(), MessageQueueAccountService.getInstance());
-                new EventQueue().registerReceiver(service);
+                new EventQueue(service).startListening();
                 instance = service;
             } catch (Exception e) {
                 throw new Error(e);
@@ -85,10 +85,6 @@ public class MessageQueueReportService extends MessageQueueBase implements IRepo
             // report.setUser(customerAsUser);
             return generateReport(event);
         }
-        System.out.println("Generate report for customer not successfull");
-        System.out.println("Event contains " + event.getArguments().length + " arguments");
-        System.out.println("first argument: " + event.getArguments()[0]);
-        System.out.println("second argument: " + event.getArguments()[1]);
         String exceptionMsg = event.getArgument(1, String.class);
         throw new CustomerDoesNotExistException(exceptionMsg);
     }
@@ -110,10 +106,6 @@ public class MessageQueueReportService extends MessageQueueBase implements IRepo
         if (event.isSuccessReponse()) {
             return generateReport(event);
         }
-        System.out.println("Generate report for merchant not successfull");
-        System.out.println("Event contains " + event.getArguments().length + " arguments");
-        System.out.println("first argument: " + event.getArguments()[0]);
-        System.out.println("second argument: " + event.getArguments()[1]);
         String exceptionMsg = event.getArgument(1, String.class);
         throw new MerchantDoesNotExistException(exceptionMsg);
     }

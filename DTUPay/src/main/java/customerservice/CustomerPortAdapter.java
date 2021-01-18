@@ -1,3 +1,4 @@
+/*
 package customerservice;
 
 import messaging.rmq.event.interfaces.IEventReceiver;
@@ -15,7 +16,7 @@ public class CustomerPortAdapter implements IEventReceiver {
     }
 
     @Override
-    public void receiveEvent(Event event) throws Exception {
+    public void receiveEvent(Event event) {
         System.out.println("CustomerPortAdapter event received " + event);
         if (event.getEventType().equals("customerExists")) {
             System.out.println("inside receive event cust adapter");
@@ -30,7 +31,7 @@ public class CustomerPortAdapter implements IEventReceiver {
         }
     }
 
-    private void registerCustomer(Event event) throws Exception {
+    private void registerCustomer(Event event) {
         Customer customer = event.getArgument(0, Customer.class);
         String customerId = customerService.registerCustomer(customer);
         Event registerCustomerEvent = new Event("registerCustomerResponse", new Object[]{customerId});
@@ -53,3 +54,4 @@ public class CustomerPortAdapter implements IEventReceiver {
 
 
 }
+*/

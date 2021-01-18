@@ -23,16 +23,12 @@ public abstract class MessageQueueBase implements IEventReceiver {
     protected Event sendRequestAndAwaitReponse(Object payload, EventType eventType){
         Event request = new Event(eventType.getName(), new Object[] {payload}, UUID.randomUUID());
         requests.put(request.getUUID(), new CompletableFuture<>());
-        try {
-            this.sender.sendEvent(request);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
+        this.sender.sendEvent(request);
         Event response = requests.get(request.getUUID()).join();
         return response;
     }
 
-    public void receiveEvent(Event event) throws Exception {
+    public void receiveEvent(Event event) {
         System.out.println("--------------------------------------------------------");
         System.out.println("Event received! : " + event);
 
