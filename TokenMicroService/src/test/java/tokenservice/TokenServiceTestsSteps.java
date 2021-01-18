@@ -9,6 +9,7 @@ import tokenservice.interfaces.ITokenRepository;
 import tokenservice.interfaces.ITokenService;
 import tokenservice.tokenservice.LocalTokenService;
 import tokenservice.MQ.MQTokenService;
+import tokenservice.tokenservice.TokenCreation;
 import tokenservice.tokenservice.TokenInMemoryRepository;
 
 import java.util.List;
@@ -26,7 +27,6 @@ public class TokenServiceTestsSteps {
 
     public TokenServiceTestsSteps() {
         ITokenService tokenService = new LocalTokenService(customerId -> true, tokenRepository);
-
         s = new MQTokenService(e -> {
             event = e;
             eventSet.complete(true);
@@ -40,13 +40,14 @@ public class TokenServiceTestsSteps {
 
     @When("I receive event createTokensForCustomer with {int} tokens")
     public void iReceiveEventWithTokens(int amount) {
-        s.receiveEvent(new Event("createTokensForCustomer", new Object[]{customerId, amount}));
+        TokenCreation tokenCreation = new TokenCreation(customerId, amount);
+        s.receiveEvent(new Event("createTokens", new Object[]{tokenCreation}));
     }
 
     @Then("I have sent event createTokensForCustomerSuccess with {int} tokens")
     public void iHaveSentEventWithTokens(int amount) {
         eventSet.join();
-        assertEquals("createTokensForCustomerSuccess",event.getEventType());
+        assertEquals("createTokensSuccess",event.getEventType());
         List<UUID> tokens = event.getArgument(0, new TypeToken<>() {});
         assertEquals(amount, tokens.size());
     }
