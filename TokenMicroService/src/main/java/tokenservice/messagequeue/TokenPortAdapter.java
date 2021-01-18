@@ -1,4 +1,4 @@
-package tokenservice;
+package tokenservice.messagequeue;
 
 import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.EventExchangeFactory;
@@ -6,6 +6,7 @@ import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
+import tokenservice.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -59,7 +60,7 @@ public class TokenPortAdapter implements IEventReceiver {
                 sender.sendEvent(customerNotFoundEvent);
             } else {
                 List<UUID> tokens = tokenService.createTokensForCustomer(customerId, amount);
-                Event createTokensResponse = new Event("createTokensForCustomerResponse", new Object[]{tokens});
+                Event createTokensResponse = new Event("createTokensForCustomerSuccess", new Object[]{tokens});
                 sender.sendEvent(createTokensResponse);
             }
         } catch (IllegalTokenGrantingException e) {

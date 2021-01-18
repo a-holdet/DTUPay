@@ -7,7 +7,7 @@ End_to_end_test () {
 
     # Update the set of services and
     # build and execute the system tests
-    pushd demo_client
+    pushd demo-client
     mvn clean test
     popd
 
@@ -18,7 +18,7 @@ End_to_end_test () {
 
 INPUT=$1
 
-if [ ! -z "$INPUT" ] && [ $INPUT != "demo_client" ]
+if [ ! -z "$INPUT" ] && [ $INPUT != "demo-client" ]
 then
     pushd $INPUT
         mvn clean package
@@ -45,6 +45,11 @@ popd
 pushd AccountMicroService
 mvn clean package
 docker build -t accountmicroservice .
+popd
+
+pushd ReportMicroService
+mvn clean package
+docker build -t reportmicroservice .
 popd
 
 pushd DTUPay

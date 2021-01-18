@@ -1,7 +1,5 @@
 package reportservice;
 
-import DTO.Payment;
-
 import java.util.List;
 
 public interface IPaymentsRepository {

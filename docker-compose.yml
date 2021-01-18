@@ -14,9 +14,13 @@ services:
     image: accountmicroservice
     container_name: accountmicroservice
 
-  rabbitMq:
-    image: rabbitmq:management
-    container_name: rabbitMq_container
+  ReportMicroService:
+    image: reportmicroservice
+    container_name: reportmicroservice
+
+#  rabbitMq:
+#    image: rabbitmq:management
+#    container_name: rabbitMq_container
 #    ports:
 #      - "8041:15672"
 #    environment:

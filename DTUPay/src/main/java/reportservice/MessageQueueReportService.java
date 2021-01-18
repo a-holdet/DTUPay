@@ -10,8 +10,7 @@ import DTO.Payment;
 import java.util.Arrays;
 import java.util.List;
 
-import com.google.gson.Gson;
-
+import com.google.gson.reflect.TypeToken;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.EventServiceBase;
@@ -83,10 +82,10 @@ public class MessageQueueReportService extends EventServiceBase implements IRepo
     }
 
     private UserReport generateReport(Event event) {
-        Gson gson = new Gson();
         UserReport report = new UserReport();
-        List<Payment> payments = Arrays.asList(gson.fromJson(event.getArgument(0, String.class), Payment[].class));
-        DTUPayUser User = gson.fromJson(event.getArgument(1, String.class), DTUPayUser.class);
+        List<Payment> payments = event.getArgument(0, new TypeToken<List<Payment>>(){});
+//        List<Payment> payments = Arrays.asList(gson.fromJson(event.getArgument(0, String.class), Payment[].class));
+        DTUPayUser User = event.getArgument(1, DTUPayUser.class);
         report.setPayments(payments);
         report.setUser(User);
         return report;
@@ -106,9 +105,9 @@ public class MessageQueueReportService extends EventServiceBase implements IRepo
         requests.put(event.getUUID(), new CompletableFuture<>());
         this.sender.sendEvent(event);
 
-        Gson gson = new Gson();
         event = requests.get(event.getUUID()).join();
-        return Arrays.asList(gson.fromJson(event.getArgument(0, String.class), Transaction[].class));
+        return event.getArgument(0, new TypeToken<List<Transaction>>(){});
+//        return Arrays.asList(gson.fromJson(event.getArgument(0, String.class), Transaction[].class));
     }
 
     @Override
