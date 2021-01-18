@@ -1,9 +1,8 @@
 package reportservice;
 
 import accountservice.AccountServiceFactory;
-import accountservice.customerservice.ICustomerService;
-import accountservice.merchantservice.IMerchantService;
-import dtu.ws.fastmoney.Account;
+import accountservice.ICustomerService;
+import accountservice.IMerchantService;
 import messaging.rmq.event.EventExchangeFactory;
 import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.objects.EventServiceBase;

@@ -6,7 +6,6 @@ import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
-import messaging.rmq.event.objects.EventType;
 import messaging.rmq.event.objects.Result;
 import Tokens.ITokenService;
 import Tokens.TokenDoesNotExistException;

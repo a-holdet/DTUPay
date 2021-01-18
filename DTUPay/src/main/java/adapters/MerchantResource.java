@@ -1,10 +1,8 @@
 package adapters;
 
 import accountservice.AccountServiceFactory;
-import accountservice.merchantservice.*;
 import DTO.Merchant;
-import accounts.IMerchantService;
-import accounts.MessageQueueAccountService;
+import accountservice.IMerchantService;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -15,7 +13,7 @@ import javax.ws.rs.core.Response;
 @Path("/merchantapi/merchants")
 public class MerchantResource {
 
-    IMerchantService merchantService = new AccountServiceFactory().getService();
+    IMerchantService merchantService = (IMerchantService) new AccountServiceFactory().getService();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

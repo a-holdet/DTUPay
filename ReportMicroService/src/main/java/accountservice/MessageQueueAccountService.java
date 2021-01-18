@@ -1,24 +1,41 @@
-package accountservice;
+package AccountService;
 
-import DTO.Customer;
-import DTO.Merchant;
+import messagequeue.EventType;
+import messaging.rmq.event.EventExchangeFactory;
+import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventSender;
-import messaging.rmq.event.objects.EventServiceBase;
 import messaging.rmq.event.objects.Event;
-import messaging.rmq.event.objects.EventType;
 
-public class MessageQueueAccountService extends EventServiceBase implements IAccountService {
+public class MessageQueueAccountService extends MessageQueueBase implements IMerchantService, ICustomerService{
 
-    static final EventType registerMerchant = new EventType("registerMerchant");
-    static final EventType getMerchant = new EventType("getMerchant");
-    static final EventType registerCustomer = new EventType("registerCustomer");
-    static final EventType customerExists = new EventType("customerExists");
-    static final EventType getCustomer = new EventType("getCustomer");
-    static final EventType[] supportedEventTypes =
-            new EventType[]{registerMerchant, getMerchant, registerCustomer, customerExists, getCustomer};
+    // Singleton as method due to serviceTest
+    private static MessageQueueAccountService instance;
+
+    public static MessageQueueAccountService getInstance() {
+        if (instance == null) {
+            try {
+                var ies = new EventExchangeFactory().getExchange().getSender();
+                MessageQueueAccountService service = new MessageQueueAccountService(ies);
+                new EventQueue(service).startListening();
+                instance = service;
+            } catch (Exception e) {
+                throw new Error(e);
+            }
+        }
+        return instance;
+    }
+
+    private final EventType registerMerchant = new EventType("registerMerchant");
+    private final EventType getMerchant = new EventType("getMerchant");
+    private final EventType registerCustomer = new EventType("registerCustomer");
+    private final EventType customerExists = new EventType("customerExists");
+    private final EventType getCustomer = new EventType("getCustomer");
+
 
     public MessageQueueAccountService(IEventSender sender) {
-        super(sender, supportedEventTypes);
+        super(sender);
+        supportedEventTypes = new EventType[]{registerMerchant, getMerchant, registerCustomer, customerExists, getCustomer}; //this does not work as super constructor argument, not sure why
+        instance = this; // needed for service tests!
     }
 
     @Override
@@ -32,7 +49,9 @@ public class MessageQueueAccountService extends EventServiceBase implements IAcc
 
     @Override
     public Merchant getMerchant(String merchantId) throws MerchantDoesNotExistException {
+        System.out.println("sending event from MQAccount service");
         Event response = sendRequestAndAwaitReponse(merchantId,getMerchant);
+        System.out.println("received event from MQAccount service");
         if(response.isSuccessReponse())
             return response.getPayloadAs(Merchant.class);
         else
@@ -59,7 +78,6 @@ public class MessageQueueAccountService extends EventServiceBase implements IAcc
 
     @Override
     public Customer getCustomer(String customerId) throws CustomerDoesNotExistException {
-        System.out.println("Creating GetCustomer event");
         Event response = sendRequestAndAwaitReponse(customerId,getCustomer);
         if(response.isSuccessReponse())
             return response.getPayloadAs(Customer.class);

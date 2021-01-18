@@ -1,9 +1,8 @@
 package adapters;
 
-import Bank.BankPortException;
 import DTO.Payment;
-import accounts.CustomerDoesNotExistException;
-import accounts.MerchantDoesNotExistException;
+import accountservice.CustomerDoesNotExistException;
+import accountservice.MerchantDoesNotExistException;
 import paymentservice.*;
 import tokenservice.TokenDoesNotExistException;
 

@@ -1,9 +1,12 @@
 package adapters;
 
-import accounts.MerchantDoesNotExistException;
+import accountservice.AccountServiceFactory;
+import accountservice.IMerchantService;
+import accountservice.MerchantDoesNotExistException;
 import reportservice.IReportService;
 import reportservice.MessageQueueReportService;
 import DTO.UserReport;
+import reportservice.ReportServiceFactory;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -14,7 +17,7 @@ import javax.ws.rs.core.Response;
 
 @Path("/merchantapi/reports")
 public class MerchantReportingResource {
-    IReportService reportService = MessageQueueReportService.getInstance();
+    IReportService reportService = new ReportServiceFactory().getService();
 
     @GET
     @Consumes(MediaType.APPLICATION_JSON)

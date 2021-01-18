@@ -8,7 +8,6 @@ import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 import Reports.IReportService;
-import messaging.rmq.event.objects.EventType;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;

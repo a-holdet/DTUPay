@@ -1,12 +1,11 @@
 package paymentservice;
 
 import DTO.Payment;
-import accounts.CustomerDoesNotExistException;
-import accounts.MerchantDoesNotExistException;
+import accountservice.CustomerDoesNotExistException;
+import accountservice.MerchantDoesNotExistException;
 import messaging.rmq.event.objects.EventServiceBase;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
-import messaging.rmq.event.objects.EventServiceBase;
 import messaging.rmq.event.objects.EventType;
 import tokenservice.TokenDoesNotExistException;
 
@@ -32,7 +31,6 @@ public class MessageQueuePaymentService extends EventServiceBase implements IPay
                 case "MerchantDoesNotExistException": throw new MerchantDoesNotExistException(exceptionMessage);
                 case "NegativeAmountException": throw new NegativeAmountException(exceptionMessage);
                 case "BankException": throw new BankException(exceptionMessage);
-                case "ConsumeTokenException": throw new ConsumeTokenException(exceptionMessage);
                 case "TokenDoesNotExistException": throw new TokenDoesNotExistException(exceptionMessage);
                 case "CustomerDoesNotExistException": throw new CustomerDoesNotExistException(exceptionMessage);
             }

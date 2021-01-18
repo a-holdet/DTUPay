@@ -1,8 +1,8 @@
 package adapters;
 
 import DTO.Customer;
-import accountservice.customerservice.*;
 import accountservice.AccountServiceFactory;
+import accountservice.ICustomerService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 @Path("/customerapi/customers")
 public class CustomerResource {
 
-    ICustomerService customerService = new AccountServiceFactory().getService();
+    ICustomerService customerService = (ICustomerService) new AccountServiceFactory().getService();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

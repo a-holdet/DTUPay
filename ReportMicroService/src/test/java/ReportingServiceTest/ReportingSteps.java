@@ -1,7 +1,6 @@
 package ReportingServiceTest;
 
-import accountservice.customerservice.*;
-import accountservice.merchantservice.*;
+import AccountService.*;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -16,6 +15,9 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ReportingSteps {
+
+
+
 
     private static class MerchantServiceMock implements IMerchantService {
 

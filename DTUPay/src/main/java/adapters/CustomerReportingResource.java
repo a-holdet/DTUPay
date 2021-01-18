@@ -1,6 +1,6 @@
 package adapters;
 
-import accounts.CustomerDoesNotExistException;
+import accountservice.CustomerDoesNotExistException;
 import reportservice.IReportService;
 import reportservice.ReportServiceFactory;
 import DTO.UserReport;

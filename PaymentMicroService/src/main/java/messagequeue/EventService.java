@@ -12,7 +12,6 @@ import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 
-import messaging.rmq.event.objects.EventType;
 import paymentservice.*;
 
 import java.util.UUID;

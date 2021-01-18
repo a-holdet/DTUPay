@@ -1,12 +1,6 @@
 package reportservice;
 
-import accountservice.AccountServiceFactory;
-import accountservice.customerservice.Customer;
-import accountservice.customerservice.CustomerDoesNotExistException;
-import accountservice.customerservice.ICustomerService;
-import accountservice.merchantservice.IMerchantService;
-import accountservice.merchantservice.Merchant;
-import accountservice.merchantservice.MerchantDoesNotExistException;
+import AccountService.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,8 +14,8 @@ public class ReportService implements IReportService {
         if(instance == null) {
             instance = new ReportService(
                     new TransactionsInMemoryRepository(),
-                    (IMerchantService) new AccountServiceFactory().getService(),
-                    (ICustomerService) new AccountServiceFactory().getService()
+                    MessageQueueAccountService.getInstance(),
+                    MessageQueueAccountService.getInstance()
             );
         }
         return instance;
