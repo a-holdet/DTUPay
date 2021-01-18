@@ -55,8 +55,8 @@ public class TokenPortAdapter implements IEventReceiver {
             sender.sendEvent(new Event("customerExists", new Object[]{customerId}));
             boolean customerExists = customerExistsResult.join();
             if (!customerExists) {
-                Event customerNotFoundEvent = new Event("createTokensForCustomerFailed",
-                        new Object[]{new CustomerNotFoundException("Customer was not found")});
+                Event customerNotFoundEvent = new Event("createTokensForCustomerFail",
+                        new Object[]{new CustomerNotFoundException("Customer was not found")}, event.getUUID());
                 sender.sendEvent(customerNotFoundEvent);
             } else {
                 List<UUID> tokens = tokenService.createTokensForCustomer(customerId, amount);
@@ -64,7 +64,9 @@ public class TokenPortAdapter implements IEventReceiver {
                 sender.sendEvent(createTokensResponse);
             }
         } catch (IllegalTokenGrantingException e) {
-            Event createTokensResponse = new Event("createTokensForCustomerFailed", new Object[]{e.getMessage()});
+            String errorType = e.getClass().getSimpleName();
+            String errorMessage = e.getMessage();
+            Event createTokensResponse = new Event("createTokensForCustomerFail", new Object[]{errorType, errorMessage}, event.getUUID());
             try {
                 sender.sendEvent(createTokensResponse);
             } catch (Exception exception) {
@@ -85,11 +87,14 @@ public class TokenPortAdapter implements IEventReceiver {
 
         try {
             String customerId = tokenService.consumeToken(customerToken);
-            sender.sendEvent(new Event("consumeTokenResponse", new Object[]{customerId}));
+            sender.sendEvent(new Event("consumeTokenSuccess", new Object[]{customerId}, event.getUUID()));
+            System.out.println("returned tokens for customer " + customerId);
         } catch (TokenDoesNotExistException e) {
-            sender.sendEvent(new Event("consumeTokenResponseFailed", new Object[]{e.getMessage()}));
+            System.out.println("Failed returned tokens for customer");
+            String errorType = e.getClass().getSimpleName();
+            String errorMessage = e.getMessage();
+            sender.sendEvent(new Event("consumeTokenFail", new Object[]{errorType, errorMessage}, event.getUUID()));
         }
-
     }
 
     private void customerExistsResponse(Event event) {

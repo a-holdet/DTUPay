@@ -1,25 +1,31 @@
 package reportservice;
 
 import DTO.DTUPayUser;
-import accountservice.merchantservice.IMerchantService;
-import accountservice.merchantservice.MerchantDoesNotExistException;
-import accountservice.customerservice.CustomerDoesNotExistException;
-import accountservice.customerservice.ICustomerService;
 import DTO.Payment;
 
 import java.util.Arrays;
 import java.util.List;
 
+import accountservice.customerservice.*;
+import accountservice.merchantservice.*;
 import com.google.gson.reflect.TypeToken;
+
+import messaging.rmq.event.EventExchange;
+import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
-import messaging.rmq.event.objects.EventServiceBase;
 import messaging.rmq.event.objects.Event;
 import messaging.rmq.event.objects.EventType;
+import messaging.rmq.event.objects.EventServiceBase;
 
 import java.util.concurrent.CompletableFuture;
 
+
 public class MessageQueueReportService extends EventServiceBase implements IReportService, IEventReceiver {
+
+    public MessageQueueReportService(IEventSender sender, IMerchantService merchantService, ICustomerService customerService) {
+        super(sender, supportedEventTypes);
+    }
 
     private static final EventType generateReportForCustomer = new EventType("generateReportForCustomer");
     private static final EventType generateReportForMerchant = new EventType("generateReportForMerchant");
@@ -27,10 +33,6 @@ public class MessageQueueReportService extends EventServiceBase implements IRepo
     private static final EventType generateManagerOverview = new EventType("generateManagerOverview");
     private static final EventType[] supportedEventTypes =
             new EventType[] {generateReportForCustomer, generateReportForMerchant, registerTransaction, generateManagerOverview};
-
-    public MessageQueueReportService(IEventSender sender, IMerchantService merchantService, ICustomerService customerService) {
-        super(sender, supportedEventTypes);
-    }
 
     @Override
     public UserReport generateReportForCustomer(String customerId, String startTime, String endTime) throws CustomerDoesNotExistException {
@@ -45,7 +47,7 @@ public class MessageQueueReportService extends EventServiceBase implements IRepo
         event = requests.get(event.getUUID()).join();
         String type = event.getEventType();
 
-        if (type.equals(generateReportForCustomer + "Success")) {
+        if (event.isSuccessReponse()) {
             // Gson gson = new Gson();
             // UserReport report = new UserReport();
             // List<Payment> payments = Arrays.asList(gson.fromJson(event.getArgument(0,
@@ -74,7 +76,7 @@ public class MessageQueueReportService extends EventServiceBase implements IRepo
         event = requests.get(event.getUUID()).join();
         String type = event.getEventType();
 
-        if (type.equals(generateReportForMerchant + "Success")) {
+        if (event.isSuccessReponse()) {
             return generateReport(event);
         }
         String exceptionMsg = event.getArgument(1, String.class);
@@ -82,32 +84,32 @@ public class MessageQueueReportService extends EventServiceBase implements IRepo
     }
 
     private UserReport generateReport(Event event) {
+        System.out.println("DTUPay successfully received report: " + event.getEventType());
         UserReport report = new UserReport();
-        List<Payment> payments = event.getArgument(0, new TypeToken<List<Payment>>(){});
-//        List<Payment> payments = Arrays.asList(gson.fromJson(event.getArgument(0, String.class), Payment[].class));
-        DTUPayUser User = event.getArgument(1, DTUPayUser.class);
+        DTUPayUser user = event.getArgument(0,DTUPayUser.class);
+        System.out.println("DTUPay report user is " + user.getFirstName() + user.getCprNumber());
+        List<Payment> payments = event.getArgument(1, new TypeToken<>(){});
+        System.out.println("payments contain " + payments.size());
         report.setPayments(payments);
-        report.setUser(User);
+        report.setUser(user);
         return report;
-    }
-
-    @Override
-    public void registerTransaction(Payment payment, String customerId) {
-        Event event = new Event(registerTransaction.getName(), new Object[] { payment, customerId });
-        requests.put(event.getUUID(), new CompletableFuture<>());
-        this.sender.sendEvent(event);
-        requests.get(event.getUUID()).join();
     }
 
     @Override
     public List<Transaction> generateManagerOverview() {
         Event event = new Event(generateManagerOverview.getName());
-        requests.put(event.getUUID(), new CompletableFuture<>());
-        this.sender.sendEvent(event);
+        try {
+            requests.put(event.getUUID(), new CompletableFuture<>());
+            this.sender.sendEvent(event);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
 
         event = requests.get(event.getUUID()).join();
-        return event.getArgument(0, new TypeToken<List<Transaction>>(){});
-//        return Arrays.asList(gson.fromJson(event.getArgument(0, String.class), Transaction[].class));
+
+        List<Transaction> transactions = event.getArgument(0, new TypeToken<>() {});
+        //List<Transaction> transactions = (List<Transaction>) event.getArguments()[0];
+        return transactions;
     }
 
     @Override

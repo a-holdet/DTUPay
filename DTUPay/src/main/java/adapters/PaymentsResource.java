@@ -4,8 +4,9 @@ import DTO.Payment;
 import accountservice.customerservice.CustomerDoesNotExistException;
 import accountservice.merchantservice.MerchantDoesNotExistException;
 import paymentservice.*;
-import ports.BankPortException;
+import Bank.BankPortException;
 import tokenservice.ConsumeTokenException;
+import tokenservice.TokenDoesNotExistException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -13,7 +14,6 @@ import javax.ws.rs.core.Response;
 
 @Path("/merchantapi/payments")
 public class PaymentsResource {
-
     IPaymentService paymentService = new PaymentServiceFactory().getService();
 
     @POST
@@ -22,6 +22,7 @@ public class PaymentsResource {
     public Response create(Payment payment) {
         // Send Payment Out
 
+        System.out.println("PAYMENTS RESOURCE:");
         try {
             paymentService.registerPayment(payment);
         } catch (BankPortException e) {

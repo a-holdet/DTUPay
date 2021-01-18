@@ -1,15 +1,12 @@
 package paymentservice;
 
 import DTO.Payment;
+import accountservice.customerservice.CustomerDoesNotExistException;
 import accountservice.merchantservice.MerchantDoesNotExistException;
-import ports.BankPortException;
+import Bank.BankPortException;
 import tokenservice.ConsumeTokenException;
+import tokenservice.TokenDoesNotExistException;
 
 public interface IPaymentService {
-    void registerPayment(Payment payment)
-            throws Exception,
-            MerchantDoesNotExistException,
-            NegativeAmountException,
-            ConsumeTokenException,
-            BankPortException;
+    void registerPayment(Payment payment) throws TokenDoesNotExistException, ConsumeTokenException, MerchantDoesNotExistException, CustomerDoesNotExistException, NegativeAmountException, BankPortException;
 }

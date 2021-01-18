@@ -1,7 +1,7 @@
 package reportservice;
 
-import AccountService.CustomerDoesNotExistException;
-import AccountService.MerchantDoesNotExistException;
+import accountservice.customerservice.CustomerDoesNotExistException;
+import accountservice.merchantservice.MerchantDoesNotExistException;
 
 import java.util.List;
 

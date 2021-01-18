@@ -14,13 +14,19 @@ services:
     image: accountmicroservice
     container_name: accountmicroservice
 
+  PaymentMicroService:
+    image: paymentmicroservice
+    container_name: paymentmicroservice
+    depends_on:
+      - "rabbitMq"
+
   ReportMicroService:
     image: reportmicroservice
     container_name: reportmicroservice
 
-#  rabbitMq:
-#    image: rabbitmq:management
-#    container_name: rabbitMq_container
+  rabbitMq:
+    image: rabbitmq:management
+    container_name: rabbitMq_container
 #    ports:
 #      - "8041:15672"
 #    environment:

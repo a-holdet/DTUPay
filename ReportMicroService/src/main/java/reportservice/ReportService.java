@@ -1,6 +1,12 @@
 package reportservice;
 
-import AccountService.*;
+import accountservice.AccountServiceFactory;
+import accountservice.customerservice.Customer;
+import accountservice.customerservice.CustomerDoesNotExistException;
+import accountservice.customerservice.ICustomerService;
+import accountservice.merchantservice.IMerchantService;
+import accountservice.merchantservice.Merchant;
+import accountservice.merchantservice.MerchantDoesNotExistException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -8,15 +14,15 @@ import java.util.stream.Collectors;
 
 public class ReportService implements IReportService {
 
-    public static ReportService instance;
+    private static ReportService instance;
 
     public static ReportService getInstance() {
         if(instance == null) {
-            /*instance = new ReportService(
+            instance = new ReportService(
                     new TransactionsInMemoryRepository(),
-                    MessageQueueAccountService.getInstance(),
-                    MessageQueueAccountService.getInstance()
-            );*/
+                    (IMerchantService) new AccountServiceFactory().getService(),
+                    (ICustomerService) new AccountServiceFactory().getService()
+            );
         }
         return instance;
     }
@@ -26,7 +32,7 @@ public class ReportService implements IReportService {
     private final ICustomerService customerService;
 
     public ReportService(ITransactionsRepository transactionsRepository, IMerchantService merchantService,
-            ICustomerService customerService) {
+                         ICustomerService customerService) {
         this.transactionsRepository = transactionsRepository;
         this.merchantService = merchantService;
         this.customerService = customerService;
@@ -55,14 +61,19 @@ public class ReportService implements IReportService {
 
     @Override
     public UserReport generateReportForMerchant(String merchantId, String startTime, String endTime) throws MerchantDoesNotExistException {
+        System.out.println("Generating report for merchant");
         LocalDateTime startTimeAsDateTime = startTime != null ? LocalDateTime.parse(startTime) : LocalDateTime.MIN;
         LocalDateTime endTimeAsDateTime = endTime != null ? LocalDateTime.parse(endTime) : LocalDateTime.MAX;
-
+        System.out.println("Fetching payments in db for report for merchant");
         List<Payment> payments = transactionsRepository.getTransactionsForMerchant(merchantId).stream()
                 .filter(t -> t.datetime.isAfter(startTimeAsDateTime) && t.datetime.isBefore(endTimeAsDateTime))
                 .map(Transaction::toPayment).collect(Collectors.toList());
+        System.out.println("Getting merchant from merchant service");
 
         Merchant merchant = merchantService.getMerchant(merchantId);
+
+        System.out.println("Got merchant from merchant service");
+
 
         DTUPayUser merchantAsUser = new DTUPayUser(merchant.firstName, merchant.lastName, merchant.cprNumber,
                 merchant.accountId);

@@ -61,6 +61,7 @@ public class MessageQueueAccountService extends EventServiceBase implements IAcc
 
     @Override
     public Customer getCustomer(String customerId) throws CustomerDoesNotExistException {
+        System.out.println("Creating GetCustomer event");
         Event response = sendRequestAndAwaitReponse(customerId,getCustomer);
         if(response.isSuccessReponse())
             return response.getPayloadAs(Customer.class);

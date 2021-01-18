@@ -30,15 +30,14 @@ public class MessageQueueTokenService extends EventServiceBase implements IEvent
 
     @Override
     public void receiveEvent(Event event) {
-        if (event.getEventType().equals("consumeTokenResponse")) {
+        if (event.getEventType().equals("consumeTokenSuccess")) {
 //            String customerId = event.getArgument(0, String.class);
-            consumeTokenResult.complete(event);
-        } else if (event.getEventType().equals("consumeTokenResponseFailed")) {
-//            String errorMessage = event.getArgument(0, String.class);
-            consumeTokenResult.complete(event);
+            if (consumeTokenResult != null) consumeTokenResult.complete(event);
+        } else if (event.getEventType().equals("consumeTokenFail")) {
+            if (consumeTokenResult != null) consumeTokenResult.complete(event);
         } else if (event.getEventType().equals("createTokensForCustomerSuccess")) {
             createTokensResponse(event);
-        } else if (event.getEventType().equals("createTokensForCustomerFailed")) {
+        } else if (event.getEventType().equals("createTokensForCustomerFail")) {
             createTokensFailed(event);
         }
 
@@ -65,8 +64,8 @@ public class MessageQueueTokenService extends EventServiceBase implements IEvent
 
         Event createTokensResponseEvent = createTokensForCustomerResult.join();
 
-        if (createTokensResponseEvent.getEventType().endsWith("Failed")) {
-            throw new IllegalTokenGrantingException(createTokensResponseEvent.getArgument(0, String.class));
+        if (createTokensResponseEvent.getEventType().endsWith("Fail")) {
+            throw new IllegalTokenGrantingException(createTokensResponseEvent.getArgument(1, String.class));
         }
 
         return createTokensResponseEvent.getArgument(0, new TypeToken<List<UUID>>() {});
@@ -75,14 +74,15 @@ public class MessageQueueTokenService extends EventServiceBase implements IEvent
     private CompletableFuture<Event> consumeTokenResult;
 
     @Override
-    public String consumeToken(UUID customerToken) throws Exception, ConsumeTokenException {
+    public String consumeToken(UUID customerToken) throws Exception, TokenDoesNotExistException {
         consumeTokenResult = new CompletableFuture<>();
         sender.sendEvent(new Event("consumeToken", new Object[]{customerToken}));
         Event consumeTokenEvent = consumeTokenResult.join();
 
-        if (consumeTokenEvent.getEventType().endsWith("Failed")) {
-            String errorMessage = consumeTokenEvent.getArgument(0, String.class);
-            throw new ConsumeTokenException(errorMessage);
+        if (consumeTokenEvent.getEventType().endsWith("Fail")) {
+            System.out.println("in heere");
+            String errorMessage = consumeTokenEvent.getArgument(1, String.class);
+            throw new TokenDoesNotExistException(errorMessage);
         }else {
             // TODO: Handle this?
         }

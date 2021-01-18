@@ -1,5 +1,6 @@
 package reportservice;
 
+
 import java.util.List;
 
 public interface IPaymentsRepository {
