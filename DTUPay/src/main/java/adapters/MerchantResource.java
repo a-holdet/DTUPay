@@ -2,6 +2,9 @@ package adapters;
 
 import accountservice.AccountServiceFactory;
 import accountservice.merchantservice.*;
+import DTO.Merchant;
+import accounts.IMerchantService;
+import accounts.MessageQueueAccountService;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;

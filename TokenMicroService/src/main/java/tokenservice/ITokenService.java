@@ -2,6 +2,8 @@ package tokenservice;
 
 //import io.quarkus.security.UnauthorizedException;
 
+import tokenservice.customer.CustomerNotFoundException;
+
 import java.util.List;
 import java.util.UUID;
 

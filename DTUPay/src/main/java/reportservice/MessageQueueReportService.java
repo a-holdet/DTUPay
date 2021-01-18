@@ -1,13 +1,19 @@
 package reportservice;
 
 import DTO.DTUPayUser;
+import DTO.Transaction;
+import DTO.UserReport;
+import accounts.*;
 import DTO.Payment;
 
+import java.lang.reflect.Type;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
-import accountservice.customerservice.*;
-import accountservice.merchantservice.*;
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import messaging.rmq.event.EventExchange;
@@ -17,8 +23,10 @@ import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 import messaging.rmq.event.objects.EventType;
 import messaging.rmq.event.objects.EventServiceBase;
+import messaging.rmq.event.objects.EventType;
 
 import java.util.concurrent.CompletableFuture;
+
 
 
 public class MessageQueueReportService extends EventServiceBase implements IReportService, IEventReceiver {
@@ -93,6 +101,16 @@ public class MessageQueueReportService extends EventServiceBase implements IRepo
         report.setPayments(payments);
         report.setUser(user);
         return report;
+    }
+
+    @Override
+    public void registerTransaction(Payment payment, String customerId) {
+        Event event = new Event(registerTransaction.getName(), new Object[] { payment, customerId });
+        try {
+            this.sender.sendEvent(event);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
     }
 
     @Override

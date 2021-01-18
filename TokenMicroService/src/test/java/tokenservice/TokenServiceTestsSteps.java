@@ -10,6 +10,7 @@ import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 import org.junit.Assert;
 import tokenservice.messagequeue.TokenPortAdapter;
+import tokenservice.customer.ICustomerService;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,16 +21,18 @@ import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TokenServiceTestsSteps {
-    IEventReceiver s;
+    TokenPortAdapter s;
     Event event;
     String customerId;
     CompletableFuture<Boolean> eventSet = new CompletableFuture<>();
 
     public TokenServiceTestsSteps() {
+        ITokenService tokenService = new LocalTokenService(customerId -> true);
+
         s = new TokenPortAdapter(e -> {
             event = e;
             eventSet.complete(true);
-        });
+        }, tokenService);
     }
 
     @Given("a valid customer")
@@ -48,18 +51,5 @@ public class TokenServiceTestsSteps {
         assertEquals("createTokensForCustomerSuccess",event.getEventType());
         List<UUID> tokens = event.getArgument(0, new TypeToken<>() {});
         assertEquals(amount, tokens.size());
-    }
-
-    @When("I receive event customerExistsSuccess")
-    public void iReceiveEventCustomerExistsSuccess() {
-        eventSet = new CompletableFuture<>();
-        s.receiveEvent(new Event("customerExistsSuccess", new Object[]{true}));
-    }
-
-    @Then("I sent customerExists")
-    public void iSentCustomerExists() {
-        eventSet.join();
-        assertEquals("customerExists", event.getEventType());
-        assertEquals(customerId, event.getArgument(0,String.class));
     }
 }

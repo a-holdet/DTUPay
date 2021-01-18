@@ -1,11 +1,10 @@
 package adapters;
 
-import DTO.Payment;
-import accountservice.customerservice.CustomerDoesNotExistException;
-import accountservice.merchantservice.MerchantDoesNotExistException;
-import paymentservice.*;
 import Bank.BankPortException;
-import tokenservice.ConsumeTokenException;
+import DTO.Payment;
+import accounts.CustomerDoesNotExistException;
+import accounts.MerchantDoesNotExistException;
+import paymentservice.*;
 import tokenservice.TokenDoesNotExistException;
 
 import javax.ws.rs.*;
@@ -25,12 +24,10 @@ public class PaymentsResource {
         System.out.println("PAYMENTS RESOURCE:");
         try {
             paymentService.registerPayment(payment);
-        } catch (BankPortException e) {
+        } catch (BankException e) {
             throw new InternalServerErrorException(e.getMessage());
         } catch (TokenDoesNotExistException | MerchantDoesNotExistException | CustomerDoesNotExistException | NegativeAmountException e) {
             return Response.status(422).entity(e.getMessage()).build();
-        }catch (ConsumeTokenException e) {
-            return Response.status(403).entity(e.getMessage()).build();
         } catch (Exception e) {
             e.printStackTrace();
             return Response.status(500).entity("Internal server error").build();

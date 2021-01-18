@@ -9,6 +9,8 @@ import com.google.gson.reflect.TypeToken;
 import messaging.rmq.event.objects.EventServiceBase;
 import messaging.rmq.event.objects.EventType;
 
+import messaging.rmq.event.objects.EventType;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;

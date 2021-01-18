@@ -1,8 +1,10 @@
 package reportservice;
 
-import accountservice.customerservice.CustomerDoesNotExistException;
-import accountservice.merchantservice.MerchantDoesNotExistException;
 import DTO.Payment;
+import DTO.Transaction;
+import DTO.UserReport;
+import accounts.CustomerDoesNotExistException;
+import accounts.MerchantDoesNotExistException;
 
 import java.util.List;
 

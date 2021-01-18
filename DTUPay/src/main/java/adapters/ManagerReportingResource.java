@@ -4,6 +4,7 @@ import reportservice.IReportService;
 import reportservice.MessageQueueReportService;
 import reportservice.ReportServiceFactory;
 import reportservice.Transaction;
+import DTO.Transaction;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
