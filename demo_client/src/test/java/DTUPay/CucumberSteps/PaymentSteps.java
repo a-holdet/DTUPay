@@ -71,7 +71,6 @@ public class PaymentSteps {
     public void afterScenario() {
         customerAdapter.close();
         merchantAdapter.close();
-        // System.out.println("Hello from payment teardown");
         Account acc1 = null;
         try {
             acc1 = bankService.getAccountByCprNumber("290276-7777");

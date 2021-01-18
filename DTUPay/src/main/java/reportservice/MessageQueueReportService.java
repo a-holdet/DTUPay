@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import messagequeuebase.MessageQueueBase;
 import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
@@ -27,7 +28,7 @@ import messaging.rmq.event.objects.Event;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class MessageQueueReportService implements IReportService, IEventReceiver {
+public class MessageQueueReportService extends MessageQueueBase implements IReportService, IEventReceiver {
 
     // Singleton as method due to serviceTest
     private static MessageQueueReportService instance;
@@ -47,11 +48,9 @@ public class MessageQueueReportService implements IReportService, IEventReceiver
         return instance;
     }
 
-    IEventSender sender;
-
-    public MessageQueueReportService(IEventSender sender, IMerchantService merchantService,
-            ICustomerService customerService) {
-        this.sender = sender;
+    public MessageQueueReportService(IEventSender sender, IMerchantService merchantService, ICustomerService customerService) {
+        super(sender);
+        supportedEventTypes = new EventType[] {generateReportForCustomer, generateReportForMerchant, registerTransaction, generateManagerOverview};
         instance = this; // needed for service tests!
     }
 
@@ -59,16 +58,13 @@ public class MessageQueueReportService implements IReportService, IEventReceiver
     private static final EventType generateReportForMerchant = new EventType("generateReportForMerchant");
     private static final EventType registerTransaction = new EventType("registerTransaction");
     private static final EventType generateManagerOverview = new EventType("generateManagerOverview");
-    private static final EventType[] supportedEventTypes = {generateReportForCustomer, generateReportForMerchant, registerTransaction, generateManagerOverview};
-
-    private final ConcurrentHashMap<UUID, CompletableFuture<Event>> requests = new ConcurrentHashMap<>();
 
     @Override
     public UserReport generateReportForCustomer(String customerId, String startTime, String endTime) throws CustomerDoesNotExistException {
         Event event = new Event(generateReportForCustomer.getName(), new Object[] { customerId, startTime, endTime });
         try {
             requests.put(event.getUUID(), new CompletableFuture<>());
-            this.sender.sendEvent(event);
+            sender.sendEvent(event);
         } catch (Exception e) {
             throw new Error(e);
         }

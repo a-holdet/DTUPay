@@ -1,3 +1,4 @@
+/*
 package customerservice;
 
 import messaging.rmq.event.interfaces.IEventReceiver;
@@ -53,3 +54,4 @@ public class CustomerPortAdapter implements IEventReceiver {
 
 
 }
+*/

@@ -46,7 +46,6 @@ public class CustomerRegistrationSteps {
 
     @Given("the customer has a bank account")
     public void theCustomerHasABankAccount() throws BankServiceException_Exception {
-        System.out.println("starting test");
         customerHolder.setCustomerBasics();
         User customerBank = new User();
         customerBank.setFirstName(customerHolder.getFirstName());
@@ -66,7 +65,6 @@ public class CustomerRegistrationSteps {
     public void theCustomerIsRegisteringWithDTUPay() {
         try {
             String customerId = customerAdapter.registerCustomer(customerHolder.getFirstName(), customerHolder.getLastName(), customerHolder.getCpr(), customerHolder.getAccountId());
-            System.out.println("custid" + customerId);
             customerHolder.setId(customerId);
         } catch (IllegalArgumentException e) {
             exceptionHolder.setException(e);

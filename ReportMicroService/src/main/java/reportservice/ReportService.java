@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public class ReportService implements IReportService {
 
-    private static ReportService instance;
+    public static ReportService instance;
 
     public static ReportService getInstance() {
         if(instance == null) {

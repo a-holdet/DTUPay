@@ -3,6 +3,7 @@ package merchantservice;
 import customerservice.Customer;
 import customerservice.CustomerDoesNotExistException;
 import customerservice.ICustomerService;
+import messagequeuebase.MessageQueueBase;
 import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
@@ -16,12 +17,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
-import messaging.rmq.event.objects.EventType;
-
-public class MessageQueueAccountService implements IMerchantService, ICustomerService, IEventReceiver {
+public class MessageQueueAccountService extends MessageQueueBase implements IMerchantService, ICustomerService{
 
     // Singleton as method due to serviceTest
     private static MessageQueueAccountService instance;
+
     public static MessageQueueAccountService getInstance() {
         if (instance == null) {
             try {
@@ -36,27 +36,17 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
         return instance;
     }
 
-    private static final EventType registerMerchant = new EventType("registerMerchant");
-    private static final EventType getMerchant = new EventType("getMerchant");
-    private static final EventType registerCustomer = new EventType("registerCustomer");
-    private static final EventType customerExists = new EventType("customerExists");
-    private static final EventType getCustomer = new EventType("getCustomer");
-    private static final EventType[] supportedEventTypes = {registerMerchant, getMerchant, registerCustomer, customerExists, getCustomer};
+    private final EventType registerMerchant = new EventType("registerMerchant");
+    private final EventType getMerchant = new EventType("getMerchant");
+    private final EventType registerCustomer = new EventType("registerCustomer");
+    private final EventType customerExists = new EventType("customerExists");
+    private final EventType getCustomer = new EventType("getCustomer");
 
-    private final ConcurrentHashMap<UUID, CompletableFuture<Event>> requests = new ConcurrentHashMap<>();
-    private final IEventSender sender;
 
     public MessageQueueAccountService(IEventSender sender) {
-        this.sender = sender;
+        super(sender);
+        supportedEventTypes = new EventType[]{registerMerchant, getMerchant, registerCustomer, customerExists, getCustomer}; //this does not work as super constructor argument, not sure why
         instance = this; // needed for service tests!
-    }
-
-    private Event sendRequestAndAwaitReponse(Object payload, EventType eventType){
-        Event request = new Event(eventType.getName(), new Object[] {payload}, UUID.randomUUID());
-        requests.put(request.getUUID(), new CompletableFuture<>());
-        this.sender.sendEvent(request);
-        Event response = requests.get(request.getUUID()).join();
-        return response;
     }
 
     @Override
@@ -102,19 +92,5 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
             return response.getPayloadAs(Customer.class);
         else
             throw new CustomerDoesNotExistException(response.getErrorMessage());
-    }
-
-    @Override
-    public void receiveEvent(Event event) {
-        System.out.println("--------------------------------------------------------");
-        System.out.println("Event received! : " + event);
-
-        if (Arrays.stream(supportedEventTypes).anyMatch(eventType -> eventType.matches(event.getEventType()))) {
-            CompletableFuture<Event> cf = requests.get(event.getUUID());
-            if (cf != null)
-                cf.complete(event);
-        }
-
-        System.out.println("--------------------------------------------------------");
     }
 }
