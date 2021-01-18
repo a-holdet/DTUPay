@@ -14,11 +14,9 @@ import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 
-import com.google.gson.Gson;
-
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
+
+import messaging.rmq.event.objects.EventType;
 
 public class EventService implements IEventReceiver {
 
@@ -28,11 +26,9 @@ public class EventService implements IEventReceiver {
 	public static EventService getInstance() {
 		if (instance == null) {
 			try {
-				System.out.println("event service parent channel");
-				System.out.println(EventExchange.instance.parentChannel);
 				var ies = EventExchange.instance.getSender();
 				EventService service = new EventService(ies);
-				new EventQueue().registerReceiver(service);
+				new EventQueue(service).startListening();
 				instance = service;
 			} catch (Exception e) {
 				throw new Error(e);
@@ -57,7 +53,7 @@ public class EventService implements IEventReceiver {
 	private static final EventType[] supportedEventTypes = { registerMerchant, getMerchant, registerCustomer,
 			customerExists, getCustomer };
 
-	public void registerMerchant(Merchant merchant, UUID eventID) throws Exception {
+	public void registerMerchant(Merchant merchant, UUID eventID)  {
 		try {
 			String merchantId = merchantService.registerMerchant(merchant);
 			Event event = new Event(registerMerchant.succeeded(), new Object[] { merchantId }, eventID);
@@ -70,7 +66,7 @@ public class EventService implements IEventReceiver {
 		}
 	}
 
-	public void registerCustomer(Customer customer, UUID eventID) throws Exception {
+	public void registerCustomer(Customer customer, UUID eventID) {
 		try {
 			String customerId = customerService.registerCustomer(customer);
 			Event event = new Event(registerCustomer.succeeded(), new Object[] { customerId }, eventID);
@@ -83,7 +79,7 @@ public class EventService implements IEventReceiver {
 		}
 	}
 
-	public void getMerchant(String merchantId, UUID eventID) throws Exception {
+	public void getMerchant(String merchantId, UUID eventID) {
 		try {
 			Merchant merchant = merchantService.getMerchant(merchantId);
 			Event event = new Event(getMerchant.succeeded(), new Object[] { merchant }, eventID);
@@ -96,7 +92,7 @@ public class EventService implements IEventReceiver {
 		}
 	}
 
-	public void getCustomer(String customerId, UUID eventID) throws Exception {
+	public void getCustomer(String customerId, UUID eventID) {
 		try {
 			Customer customer = customerService.getCustomer(customerId);
 			Event event = new Event(getCustomer.succeeded(), new Object[] { customer }, eventID);
@@ -109,13 +105,13 @@ public class EventService implements IEventReceiver {
 		}
 	}
 
-	public void customerExists(String customerId, UUID eventId) throws Exception {
+	public void customerExists(String customerId, UUID eventId) {
 		boolean exists = customerService.customerExists(customerId);
 		this.sender.sendEvent(new Event(customerExists.succeeded(), new Object[] { exists }, eventId));
 	}
 
 	@Override
-	public void receiveEvent(Event event) throws Exception {
+	public void receiveEvent(Event event) {
 		System.out.println("--------------------------------------------------------");
 		System.out.println("Event received! : " + event);
 

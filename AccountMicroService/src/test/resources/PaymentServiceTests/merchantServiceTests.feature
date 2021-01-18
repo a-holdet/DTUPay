@@ -1,3 +1,6 @@
+#/***
+#* @Author Michael, s153587
+#*/
 Feature: merchant service tests
 
   Scenario: successful merchant register

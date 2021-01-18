@@ -18,6 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+/***
+ * @Author Michael, s153587
+ */
 public class MerchantSteps {
 
     Merchant merchant;
@@ -31,7 +34,7 @@ public class MerchantSteps {
     public MerchantSteps() {
         accountService = new MessageQueueAccountService(new IEventSender() {
             @Override
-            public void sendEvent(Event ev) throws Exception {
+            public void sendEvent(Event ev)  {
                 event = ev;
                 if(waitForEventInService != null) {
                     waitForEventInService.complete(true);

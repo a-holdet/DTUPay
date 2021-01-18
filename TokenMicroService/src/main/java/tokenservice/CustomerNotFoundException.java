@@ -1,7 +1,7 @@
 package tokenservice;
 
 public class CustomerNotFoundException extends Exception {
-    CustomerNotFoundException(String message) {
+    public CustomerNotFoundException(String message) {
         super(message);
     }
 }

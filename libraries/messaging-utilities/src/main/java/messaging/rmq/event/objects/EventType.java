@@ -1,6 +1,6 @@
-package merchantservice;
+package messaging.rmq.event.objects;
 
-public class EventType  {
+public class EventType {
 
     private String name;
 
@@ -11,11 +11,11 @@ public class EventType  {
     public String getName() {
         return this.name;
     }
-    
+
     public String succeeded() {
         return name + "Success";
     }
-    
+
     public String failed() {
         return name + "Fail";
     }
