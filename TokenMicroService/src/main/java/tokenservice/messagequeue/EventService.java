@@ -54,7 +54,7 @@ public class EventService implements IEventReceiver {
             }
             e.printStackTrace();
         } catch (CustomerNotFoundException e) {
-            Event customerNotFoundEvent = new Event("createTokensForCustomerFailed",
+            Event customerNotFoundEvent = new Event("createTokensForCustomerFail",
                     new Object[]{new CustomerNotFoundException("Customer was not found")});
             sender.sendEvent(customerNotFoundEvent);
         } catch (Exception e) {
