@@ -1,29 +1,18 @@
 package ReportingServiceTest;
 
-import DTO.Payment;
-import com.google.gson.Gson;
-import customerservice.Customer;
-import customerservice.CustomerDoesNotExistException;
-import customerservice.ICustomerService;
+import AccountService.*;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import merchantservice.IMerchantService;
-import merchantservice.Merchant;
-import merchantservice.MerchantDoesNotExistException;
 import reportservice.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ReportingSteps {
 

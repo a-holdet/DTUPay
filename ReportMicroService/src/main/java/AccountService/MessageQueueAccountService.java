@@ -16,7 +16,7 @@ public class MessageQueueAccountService extends MessageQueueBase implements IMer
             try {
                 var ies = EventExchange.instance.getSender();
                 MessageQueueAccountService service = new MessageQueueAccountService(ies);
-                new EventQueue().registerReceiver(service);
+                new EventQueue(service).startListening();
                 instance = service;
             } catch (Exception e) {
                 throw new Error(e);

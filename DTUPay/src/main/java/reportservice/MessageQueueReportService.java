@@ -115,7 +115,7 @@ public class MessageQueueReportService extends MessageQueueBase implements IRepo
         UserReport report = new UserReport();
         DTUPayUser user = event.getArgument(0,DTUPayUser.class);
         System.out.println("DTUPay report user is " + user.getFirstName() + user.getCprNumber());
-        List<Payment> payments = (List<Payment>) event.getArguments()[1];
+        List<Payment> payments = event.getArgument(1, new TypeToken<>(){});
         System.out.println("payments contain " + payments.size());
         report.setPayments(payments);
         report.setUser(user);
@@ -150,7 +150,7 @@ public class MessageQueueReportService extends MessageQueueBase implements IRepo
     }
 
     @Override
-    public void receiveEvent(Event event) throws Exception {
+    public void receiveEvent(Event event) {
         System.out.println("--------------------------------------------------------");
         System.out.println("Event received! : " + event);
 

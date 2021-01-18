@@ -25,8 +25,8 @@ public class ReportService implements IReportService {
     private final IMerchantService merchantService;
     private final ICustomerService customerService;
 
-    private ReportService(ITransactionsRepository transactionsRepository, IMerchantService merchantService,
-            ICustomerService customerService) {
+    public ReportService(ITransactionsRepository transactionsRepository, IMerchantService merchantService,
+                         ICustomerService customerService) {
         this.transactionsRepository = transactionsRepository;
         this.merchantService = merchantService;
         this.customerService = customerService;

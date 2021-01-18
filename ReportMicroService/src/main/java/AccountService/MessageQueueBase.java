@@ -35,7 +35,7 @@ public abstract class MessageQueueBase implements IEventReceiver {
         return response;
     }
 
-    public void receiveEvent(Event event) throws Exception {
+    public void receiveEvent(Event event) {
         System.out.println("--------------------------------------------------------");
         System.out.println("Event received! : " + event);
 
