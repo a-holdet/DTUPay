@@ -1,6 +1,8 @@
 package adapters;
 
-import merchantservice.*;
+import DTO.Merchant;
+import accounts.IMerchantService;
+import accounts.MessageQueueAccountService;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;

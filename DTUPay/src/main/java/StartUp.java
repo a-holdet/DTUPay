@@ -1,6 +1,6 @@
-import merchantservice.MessageQueueAccountService;
+import accounts.MessageQueueAccountService;
 import paymentservice.MessageQueuePaymentService;
-import reportservice.ReportService;
+import reportservice.MessageQueueReportService;
 
 public class StartUp {
 
@@ -8,6 +8,6 @@ public class StartUp {
         // TODO: Should prob be deleted
         MessageQueueAccountService.getInstance();
         MessageQueuePaymentService.getInstance();
-        ReportService.getInstance();
+        MessageQueueReportService.getInstance();
     }
 }

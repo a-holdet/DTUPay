@@ -1,19 +1,15 @@
 package paymentservice;
 
-import Bank.BankException;
 import DTO.Payment;
-import customerservice.CustomerDoesNotExistException;
-import merchantservice.EventType;
-import merchantservice.MerchantDoesNotExistException;
+import accounts.CustomerDoesNotExistException;
+import accounts.MerchantDoesNotExistException;
 import messagequeuebase.MessageQueueBase;
 import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
-import tokenservice.ConsumeTokenException;
+import messaging.rmq.event.objects.EventType;
 import tokenservice.TokenDoesNotExistException;
-
-import java.util.function.DoubleToIntFunction;
 
 public class MessageQueuePaymentService extends MessageQueueBase implements IPaymentService {
 
@@ -44,7 +40,7 @@ public class MessageQueuePaymentService extends MessageQueueBase implements IPay
 
 
     @Override
-    public void registerPayment(Payment payment) throws TokenDoesNotExistException, MerchantDoesNotExistException, NegativeAmountException, BankException, CustomerDoesNotExistException, ConsumeTokenException {
+    public void registerPayment(Payment payment) throws TokenDoesNotExistException, MerchantDoesNotExistException, NegativeAmountException, BankException, CustomerDoesNotExistException {
         System.out.println("REGISTER PAYMENT: ");
         Event response = sendRequestAndAwaitReponse(payment, registerPayment);
 
@@ -56,7 +52,6 @@ public class MessageQueuePaymentService extends MessageQueueBase implements IPay
                 case "MerchantDoesNotExistException": throw new MerchantDoesNotExistException(exceptionMessage);
                 case "NegativeAmountException": throw new NegativeAmountException(exceptionMessage);
                 case "BankException": throw new BankException(exceptionMessage);
-                case "ConsumeTokenException": throw new ConsumeTokenException(exceptionMessage);
                 case "TokenDoesNotExistException": throw new TokenDoesNotExistException(exceptionMessage);
                 case "CustomerDoesNotExistException": throw new CustomerDoesNotExistException(exceptionMessage);
             }

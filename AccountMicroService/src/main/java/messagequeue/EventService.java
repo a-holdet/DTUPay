@@ -1,9 +1,9 @@
 package messagequeue;
 
-import customerservice.Customer;
-import customerservice.CustomerDoesNotExistException;
-import customerservice.ICustomerService;
-import customerservice.LocalCustomerService;
+import accounts.Customer;
+import accounts.CustomerDoesNotExistException;
+import accounts.ICustomerService;
+import accounts.LocalCustomerService;
 import merchantservice.IMerchantService;
 import merchantservice.LocalMerchantService;
 import merchantservice.Merchant;

@@ -1,4 +1,4 @@
-package messagequeuebase;
+package messaging.rmq;
 
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
