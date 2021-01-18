@@ -51,15 +51,14 @@ public class MessageQueueTokenService implements IEventReceiver, ITokenService {
 
     @Override
     public void receiveEvent(Event event) {
-        if (event.getEventType().equals("consumeTokenResponse")) {
+        if (event.getEventType().equals("consumeTokenSuccess")) {
 //            String customerId = event.getArgument(0, String.class);
-            consumeTokenResult.complete(event);
-        } else if (event.getEventType().equals("consumeTokenResponseFailed")) {
-//            String errorMessage = event.getArgument(0, String.class);
-            consumeTokenResult.complete(event);
-        } else if (event.getEventType().equals("createTokensForCustomerResponse")) {
+            if (consumeTokenResult != null) consumeTokenResult.complete(event);
+        } else if (event.getEventType().equals("consumeTokenFail")) {
+            if (consumeTokenResult != null) consumeTokenResult.complete(event);
+        } else if (event.getEventType().equals("createTokensForCustomerSuccess")) {
             createTokensResponse(event);
-        } else if (event.getEventType().equals("createTokensForCustomerFailed")) {
+        } else if (event.getEventType().equals("createTokensForCustomerFail")) {
             createTokensFailed(event);
         } else {
             System.out.println("CustomerPA ignored: " + event);
@@ -105,8 +104,8 @@ public class MessageQueueTokenService implements IEventReceiver, ITokenService {
 
         Event createTokensResponseEvent = createTokensForCustomerResult.join();
 
-        if (createTokensResponseEvent.getEventType().endsWith("Failed")) {
-            throw new IllegalTokenGrantingException(createTokensResponseEvent.getArgument(0, String.class));
+        if (createTokensResponseEvent.getEventType().endsWith("Fail")) {
+            throw new IllegalTokenGrantingException(createTokensResponseEvent.getArgument(1, String.class));
         }
 
         return (List<UUID>) createTokensResponseEvent.getArguments()[0];
@@ -129,9 +128,9 @@ public class MessageQueueTokenService implements IEventReceiver, ITokenService {
         sender.sendEvent(new Event("consumeToken", new Object[]{customerToken}));
         Event consumeTokenEvent = consumeTokenResult.join();
 
-        if (consumeTokenEvent.getEventType().endsWith("Failed")) {
+        if (consumeTokenEvent.getEventType().endsWith("Fail")) {
             System.out.println("in heere");
-            String errorMessage = consumeTokenEvent.getArgument(0, String.class);
+            String errorMessage = consumeTokenEvent.getArgument(1, String.class);
             throw new ConsumeTokenException(errorMessage);
         }else {
             System.out.println("not in here " + consumeTokenEvent);

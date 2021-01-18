@@ -68,19 +68,19 @@ public class TokenPortAdapter implements IEventReceiver {
             boolean customerExists = customerExistsResult.join();
             // System.out.println("after customer exists result");
             if (!customerExists) {
-                Event customerNotFoundEvent = new Event("createTokensForCustomerFailed",
+                Event customerNotFoundEvent = new Event("createTokensForCustomerFail",
                         new Object[]{new CustomerNotFoundException("Customer was not found")}, event.getUUID());
                 sender.sendEvent(customerNotFoundEvent);
             } else {
                 System.out.println("inside else statement");
                 List<UUID> tokens = tokenService.createTokensForCustomer(customerId, amount);
-                Event createTokensResponse = new Event("createTokensForCustomerResponse", new Object[]{tokens}, event.getUUID());
+                Event createTokensResponse = new Event("createTokensForCustomerSuccess", new Object[]{tokens}, event.getUUID());
                 sender.sendEvent(createTokensResponse);
             }
         } catch (IllegalTokenGrantingException e) {
             String errorType = e.getClass().getSimpleName();
             String errorMessage = e.getMessage();
-            Event createTokensResponse = new Event("createTokensForCustomerFailed", new Object[]{errorType, errorMessage}, event.getUUID());
+            Event createTokensResponse = new Event("createTokensForCustomerFail", new Object[]{errorType, errorMessage}, event.getUUID());
             try {
                 sender.sendEvent(createTokensResponse);
             } catch (Exception exception) {
@@ -108,7 +108,6 @@ public class TokenPortAdapter implements IEventReceiver {
             String errorMessage = e.getMessage();
             sender.sendEvent(new Event("consumeTokenFail", new Object[]{errorType, errorMessage}, event.getUUID()));
         }
-
     }
 
     private void customerExistsResponse(Event event) {
