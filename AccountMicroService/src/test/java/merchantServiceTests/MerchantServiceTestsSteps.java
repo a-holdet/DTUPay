@@ -1,9 +1,13 @@
 package merchantServiceTests;
 
+import customerservice.CustomerInMemoryRepository;
+import customerservice.LocalCustomerService;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import merchantservice.LocalMerchantService;
 import merchantservice.Merchant;
-import messagequeue.EventService;
+import merchantservice.MerchantInMemoryRepository;
+import messagequeue.EventPortAdapter;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import messaging.rmq.event.interfaces.IEventSender;
@@ -17,22 +21,31 @@ import static org.junit.Assert.*;
  * @Author Michael, s153587
  */
 public class MerchantServiceTestsSteps {
-	EventService s;
+	EventPortAdapter service;
 	Event event;
 	Merchant merchant;
 
 	public MerchantServiceTestsSteps() {
-		s = new EventService(new IEventSender() {
+		IEventSender sender = new IEventSender() {
 			@Override
 			public void sendEvent(Event ev) {
 				event = ev;
 			}
-		});
+		};
+		service = new EventPortAdapter(
+				new LocalMerchantService(
+						new MerchantInMemoryRepository()
+				),
+				new LocalCustomerService(
+						new CustomerInMemoryRepository()
+				),
+				sender
+		);
 	}
 
 	@When("I receive event {string}")
-	public void iReceiveEvent(String string) throws Exception {
-		s.receiveEvent(new Event(string));
+	public void iReceiveEvent(String string) {
+		service.receiveEvent(new Event(string));
 	}
 
 	@Then("I have sent event {string}")
@@ -49,7 +62,7 @@ public class MerchantServiceTestsSteps {
 
 	@When("I receive event registerMerchant with merchant")
 	public void iReceiveEventRegisterMerchantWithMerchant() throws Exception {
-		s.receiveEvent(new Event("registerMerchant", new Object[] {merchant}));
+		service.receiveEvent(new Event("registerMerchant", new Object[] {merchant}));
 	}
 
 	@Then("I have sent event registerMerchantSuccess with registered merchantId")
@@ -66,8 +79,8 @@ public class MerchantServiceTestsSteps {
 	}
 
 	@And("The Merchant is registered")
-	public void theMerchantIsRegistered() throws Exception {
-		s.registerMerchant(merchant, null);
+	public void theMerchantIsRegistered() {
+		service.registerMerchant(merchant, null);
 		merchant.id = event.getArgument(0, String.class);
 		event = null; //overwrite sent event
 	}
@@ -78,8 +91,8 @@ public class MerchantServiceTestsSteps {
 	}
 
 	@When("I receive event getMerchant event with merchantId")
-	public void iReceiveEventGetMerchantEventWithMerchantId() throws Exception {
-		s.receiveEvent(new Event("getMerchant", new Object[] {merchant.id}));
+	public void iReceiveEventGetMerchantEventWithMerchantId() {
+		service.receiveEvent(new Event("getMerchant", new Object[] {merchant.id}));
 	}
 
 

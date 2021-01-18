@@ -1,4 +1,4 @@
-package merchantservice;
+package accountservice.merchantservice;
 
 public interface IMerchantService {
     String registerMerchant(Merchant merchant) throws IllegalArgumentException;

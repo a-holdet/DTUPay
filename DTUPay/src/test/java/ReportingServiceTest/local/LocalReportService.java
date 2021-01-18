@@ -1,41 +1,32 @@
-package reportservice;
+package ReportingServiceTest.local;
 
 import DTO.DTUPayUser;
-import customerservice.Customer;
-import customerservice.CustomerDoesNotExistException;
-import customerservice.ICustomerService;
-import merchantservice.*;
+import accountservice.merchantservice.IMerchantService;
+import accountservice.merchantservice.Merchant;
+import accountservice.merchantservice.MerchantDoesNotExistException;
+import accountservice.customerservice.Customer;
+import accountservice.customerservice.CustomerDoesNotExistException;
+import accountservice.customerservice.ICustomerService;
 import DTO.Payment;
+import reportservice.IReportService;
+import reportservice.Transaction;
+import reportservice.UserReport;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ReportService implements IReportService {
-
-    private static ReportService instance;
-
-    public static ReportService getInstance() {
-        if(instance == null) {
-            instance = new ReportService(
-                    new TransactionsInMemoryRepository(),
-                    MessageQueueAccountService.getInstance(),
-                    MessageQueueAccountService.getInstance()
-            );
-        }
-        return instance;
-    }
+public class LocalReportService implements IReportService {
 
     private final ITransactionsRepository transactionsRepository;
     private final IMerchantService merchantService;
     private final ICustomerService customerService;
 
-    public ReportService(ITransactionsRepository transactionsRepository, IMerchantService merchantService,
-            ICustomerService customerService) {
+    public LocalReportService(ITransactionsRepository transactionsRepository, IMerchantService merchantService,
+                              ICustomerService customerService) {
         this.transactionsRepository = transactionsRepository;
         this.merchantService = merchantService;
         this.customerService = customerService;
-        instance = this; // needed for service tests!
     }
 
     @Override

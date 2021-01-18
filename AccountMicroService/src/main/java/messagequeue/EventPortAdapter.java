@@ -1,47 +1,24 @@
 package messagequeue;
 
-import customerservice.Customer;
-import customerservice.CustomerDoesNotExistException;
-import customerservice.ICustomerService;
-import customerservice.LocalCustomerService;
-import merchantservice.IMerchantService;
-import merchantservice.LocalMerchantService;
-import merchantservice.Merchant;
-import merchantservice.MerchantDoesNotExistException;
-import messaging.rmq.event.EventQueue;
-import messaging.rmq.event.EventExchange;
+import customerservice.*;
+import merchantservice.*;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
+import messaging.rmq.event.objects.EventType;
+import messaging.rmq.event.objects.EventServiceBase;
 
 import java.util.UUID;
 
-import messaging.rmq.event.objects.EventType;
+public class EventPortAdapter implements IEventReceiver {
 
-public class EventService implements IEventReceiver {
-
-	// Singleton as method due to serviceTest
-	private static EventService instance;
-
-	public static EventService getInstance() {
-		if (instance == null) {
-			try {
-				var ies = EventExchange.instance.getSender();
-				EventService service = new EventService(ies);
-				new EventQueue(service).startListening();
-				instance = service;
-			} catch (Exception e) {
-				throw new Error(e);
-			}
-		}
-		return instance;
-	}
-
-	private static final IMerchantService merchantService = LocalMerchantService.instance;
-	private static final ICustomerService customerService = LocalCustomerService.instance;
+	IMerchantService merchantService;
+	ICustomerService customerService;
 	IEventSender sender;
 
-	public EventService(IEventSender sender) {
+	public EventPortAdapter(IMerchantService merchantService, ICustomerService customerService, IEventSender sender) {
+		this.merchantService = merchantService;
+		this.customerService = customerService;
 		this.sender = sender;
 	}
 

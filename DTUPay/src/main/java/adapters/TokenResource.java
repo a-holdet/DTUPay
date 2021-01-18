@@ -2,10 +2,7 @@ package adapters;
 
 import DTO.TokenCreationDTO;
 import io.quarkus.security.UnauthorizedException;
-import tokenservice.CustomerNotFoundException;
-import tokenservice.ITokenService;
-import tokenservice.IllegalTokenGrantingException;
-import tokenservice.MessageQueueTokenService;
+import tokenservice.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -16,7 +13,7 @@ import java.util.UUID;
 @Path("/customerapi/tokens")
 public class TokenResource {
 
-    ITokenService tokenService  = MessageQueueTokenService.getInstance();
+    ITokenService tokenService  = new TokenServiceFactory().getService();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

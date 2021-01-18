@@ -1,34 +1,32 @@
 package ReportingServiceTest;
 
-import DTO.Payment;
-import com.google.gson.Gson;
-import customerservice.Customer;
-import customerservice.CustomerDoesNotExistException;
-import customerservice.ICustomerService;
+import reportservice.Transaction;
+import accountservice.customerservice.Customer;
+import accountservice.customerservice.CustomerDoesNotExistException;
+import accountservice.customerservice.ICustomerService;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import merchantservice.IMerchantService;
-import merchantservice.Merchant;
-import merchantservice.MerchantDoesNotExistException;
+import accountservice.merchantservice.IMerchantService;
+import accountservice.merchantservice.Merchant;
+import accountservice.merchantservice.MerchantDoesNotExistException;
 import reportservice.*;
+import ReportingServiceTest.local.ITransactionsRepository;
+import ReportingServiceTest.local.LocalReportService;
+import ReportingServiceTest.local.TransactionsInMemoryRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ReportingSteps {
-
-
-
 
     private static class MerchantServiceMock implements IMerchantService {
 
@@ -86,7 +84,7 @@ public class ReportingSteps {
 
     public ReportingSteps() {
         transactionsRepository = new TransactionsInMemoryRepository();
-        reportService = new ReportService(transactionsRepository, merchantService, customerService);
+        reportService = new LocalReportService(transactionsRepository, merchantService, customerService);
     }
 
     @Given("a customer that is registered")

@@ -2,9 +2,9 @@ package ports;
 
 import java.math.BigDecimal;
 
-public interface IBank {
+public interface IBankPort {
     void transferMoneyFromTo(String customerAccountId,
                              String merchantAccountId,
                              BigDecimal amount,
-                             String description) throws BankException;
+                             String description) throws BankPortException;
 }

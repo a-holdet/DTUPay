@@ -6,8 +6,6 @@ import java.nio.charset.StandardCharsets;
 import com.rabbitmq.client.*;
 
 public class RMQChannel {
-    //could be replace by factory
-    public static final RMQChannel instance = new RMQChannel();
 
     private final Channel consumerChannel;
     private final Channel producerChannel;

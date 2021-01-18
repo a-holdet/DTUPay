@@ -4,6 +4,7 @@ package messagequeue;
 import AccountService.CustomerDoesNotExistException;
 import AccountService.Merchant;
 import AccountService.MerchantDoesNotExistException;
+import messaging.rmq.event.EventExchangeFactory;
 import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.interfaces.IEventReceiver;
@@ -25,9 +26,9 @@ public class EventService implements IEventReceiver {
 	public static EventService getInstance() {
 		if (instance == null) {
 			try {
-				var ies = EventExchange.instance.getSender();
+				var ies = new EventExchangeFactory().getExchange().getSender();
 				EventService service = new EventService(ies);
-				new EventQueue().registerReceiver(service);
+				new EventQueue(service).startListening();
 				instance = service;
 			} catch (Exception e) {
 				throw new Error(e);
@@ -46,7 +47,7 @@ public class EventService implements IEventReceiver {
     private static final EventType generateManagerOverview = new EventType("generateManagerOverview");
 
 
-	public void generateReportForCustomer(String customerId, String startTime, String endTime, UUID eventId) throws Exception {
+	public void generateReportForCustomer(String customerId, String startTime, String endTime, UUID eventId) {
 		try {
 			UserReport userReport = reportService.generateReportForCustomer(customerId, startTime, endTime);
             Event event = new Event(generateReportForCustomer.succeeded(), new Object[] { userReport }, eventId);
@@ -60,7 +61,7 @@ public class EventService implements IEventReceiver {
 		}
 	}
 
-    private void generateReportForMerchant(String merchantId, String startTime, String endTime, UUID eventId) throws Exception{
+    private void generateReportForMerchant(String merchantId, String startTime, String endTime, UUID eventId) {
         try {
             UserReport userReport = reportService.generateReportForMerchant(merchantId, startTime, endTime);
             Event event = new Event(generateReportForMerchant.succeeded(), new Object[] { userReport }, eventId);
@@ -74,14 +75,14 @@ public class EventService implements IEventReceiver {
         }
     }
 
-    private void generateManagerOverview(UUID eventId) throws Exception{
+    private void generateManagerOverview(UUID eventId) {
         List<Transaction> managerOverview = reportService.generateManagerOverview();
         Event event = new Event(generateReportForMerchant.succeeded(), new Object[] { managerOverview }, eventId);
         this.sender.sendEvent(event);
     }
 
 	@Override
-	public void receiveEvent(Event event) throws Exception {
+	public void receiveEvent(Event event) {
 		System.out.println("--------------------------------------------------------");
 		System.out.println("Event received! : " + event);
 

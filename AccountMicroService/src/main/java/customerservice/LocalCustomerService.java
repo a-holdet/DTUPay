@@ -3,13 +3,8 @@ package customerservice;
 import java.util.UUID;
 
 public class LocalCustomerService implements ICustomerService {
-    public static ICustomerService instance = new LocalCustomerService();
 
-    private ICustomerRepository customerRepository;
-
-    public LocalCustomerService(){
-        this(new CustomerInMemoryRepository());
-    }
+    private final ICustomerRepository customerRepository;
 
     public LocalCustomerService(ICustomerRepository customerRepository) {
         this.customerRepository = customerRepository;

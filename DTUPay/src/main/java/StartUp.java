@@ -1,13 +1,15 @@
-import merchantservice.MessageQueueAccountService;
-import paymentservice.PaymentService;
-import reportservice.ReportService;
+import accountservice.AccountServiceFactory;
+import paymentservice.PaymentServiceFactory;
+import reportservice.ReportServiceFactory;
+import tokenservice.TokenServiceFactory;
 
 public class StartUp {
 
     public static void main(String[] args) throws Exception {
-        // TODO: Should prob be deleted
-        MessageQueueAccountService.getInstance();
-        PaymentService.getInstance();
-        ReportService.getInstance();
+        // creates instances of listeners
+        new AccountServiceFactory().getService();
+        new PaymentServiceFactory().getService();
+        new ReportServiceFactory().getService();
+        new TokenServiceFactory().getService();
     }
 }

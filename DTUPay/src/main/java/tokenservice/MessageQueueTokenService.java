@@ -1,38 +1,19 @@
 package tokenservice;
 
-import customerservice.Customer;
-import customerservice.ICustomerService;
-import customerservice.LocalCustomerService;
-import io.cucumber.java.an.E;
-import merchantservice.EventType;
-import merchantservice.MessageQueueAccountService;
 import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 import com.google.gson.reflect.TypeToken;
+import messaging.rmq.event.objects.EventServiceBase;
+import messaging.rmq.event.objects.EventType;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class MessageQueueTokenService implements IEventReceiver, ITokenService {
-
-    private static MessageQueueTokenService instance;
-
-    public static MessageQueueTokenService getInstance() {
-        if (instance == null) {
-            try {
-                var ies = EventExchange.instance.getSender();
-                MessageQueueTokenService service = new MessageQueueTokenService(ies);
-                new EventQueue(service).startListening();
-                instance = service;
-            } catch (Exception e) {
-                throw new Error(e);
-            }
-        }
-        return instance;
-    }
+public class MessageQueueTokenService extends EventServiceBase implements IEventReceiver, ITokenService {
 
     private static final EventType registerMerchant = new EventType("registerMerchant");
     private static final EventType getMerchant = new EventType("getMerchant");
@@ -42,11 +23,9 @@ public class MessageQueueTokenService implements IEventReceiver, ITokenService {
     private static final EventType[] supportedEventTypes = {registerMerchant, getMerchant, registerCustomer, customerExists, getCustomer};
 
     public MessageQueueTokenService(IEventSender sender) {
-        this.sender = sender;
-        instance = this; // needed for service tests!
+        super(sender, supportedEventTypes);
     }
 
-    IEventSender sender;
     CompletableFuture<Event> createTokensForCustomerResult;
 
     @Override

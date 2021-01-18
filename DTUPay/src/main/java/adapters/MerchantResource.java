@@ -1,6 +1,7 @@
 package adapters;
 
-import merchantservice.*;
+import accountservice.AccountServiceFactory;
+import accountservice.merchantservice.*;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -8,15 +9,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-/*@Path("host1/customerapi/customer/{ìd}/payments")
-@Path("host1/merchantapi/mearchants/{ìd}/payments")
-OR
-@Path("<merchanthost>/mearchants/{ìd}/payments")
-@Path("<customerhost>/customers/{ìd}/payments")*/
-
 @Path("/merchantapi/merchants")
 public class MerchantResource {
-    IMerchantService merchantService = MessageQueueAccountService.getInstance();
+
+    IMerchantService merchantService = new AccountServiceFactory().getService();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

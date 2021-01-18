@@ -1,6 +1,7 @@
 package tokenservice;
 
 import messaging.rmq.event.EventExchange;
+import messaging.rmq.event.EventExchangeFactory;
 import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
@@ -22,7 +23,7 @@ public class TokenPortAdapter implements IEventReceiver {
     public static TokenPortAdapter getInstance() {
         if (instance == null) {
             try {
-                var ies = EventExchange.instance.getSender();
+                var ies = new EventExchangeFactory().getExchange().getSender();
                 TokenPortAdapter service = new TokenPortAdapter(ies);
                 new EventQueue(service).startListening();
                 instance = service;

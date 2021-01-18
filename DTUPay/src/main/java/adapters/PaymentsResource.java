@@ -1,10 +1,10 @@
 package adapters;
 
 import DTO.Payment;
-import customerservice.CustomerDoesNotExistException;
-import merchantservice.MerchantDoesNotExistException;
+import accountservice.customerservice.CustomerDoesNotExistException;
+import accountservice.merchantservice.MerchantDoesNotExistException;
 import paymentservice.*;
-import ports.BankException;
+import ports.BankPortException;
 import tokenservice.ConsumeTokenException;
 
 import javax.ws.rs.*;
@@ -13,10 +13,9 @@ import javax.ws.rs.core.Response;
 
 @Path("/merchantapi/payments")
 public class PaymentsResource {
-    IPaymentService paymentService = PaymentService.getInstance();
 
+    IPaymentService paymentService = new PaymentServiceFactory().getService();
 
-    // -- HER //
     @POST
     //@Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -25,7 +24,7 @@ public class PaymentsResource {
 
         try {
             paymentService.registerPayment(payment);
-        } catch (BankException e) {
+        } catch (BankPortException e) {
             throw new InternalServerErrorException(e.getMessage());
         } catch (TokenDoesNotExistException | MerchantDoesNotExistException | CustomerDoesNotExistException | NegativeAmountException e) {
             return Response.status(422).entity(e.getMessage()).build();

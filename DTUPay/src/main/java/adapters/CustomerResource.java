@@ -1,8 +1,7 @@
 package adapters;
 
-import customerservice.*;
-import merchantservice.IMerchantService;
-import merchantservice.MessageQueueAccountService;
+import accountservice.AccountServiceFactory;
+import accountservice.customerservice.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -11,7 +10,7 @@ import javax.ws.rs.core.Response;
 @Path("/customerapi/customers")
 public class CustomerResource {
 
-    ICustomerService customerService = MessageQueueAccountService.getInstance();
+    ICustomerService customerService = new AccountServiceFactory().getService();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

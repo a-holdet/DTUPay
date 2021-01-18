@@ -1,52 +1,26 @@
-package merchantservice;
+package accountservice;
 
-import customerservice.Customer;
-import customerservice.CustomerDoesNotExistException;
-import customerservice.ICustomerService;
-import messagequeuebase.MessageQueueBase;
-import messaging.rmq.event.EventExchange;
-import messaging.rmq.event.EventQueue;
-import messaging.rmq.event.interfaces.IEventReceiver;
+import accountservice.customerservice.Customer;
+import accountservice.customerservice.CustomerDoesNotExistException;
+import accountservice.merchantservice.Merchant;
+import accountservice.merchantservice.MerchantDoesNotExistException;
 import messaging.rmq.event.interfaces.IEventSender;
+import messaging.rmq.event.objects.EventServiceBase;
 import messaging.rmq.event.objects.Event;
+import messaging.rmq.event.objects.EventType;
 
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
+public class MessageQueueAccountService extends EventServiceBase implements IAccountService {
 
-public class MessageQueueAccountService extends MessageQueueBase implements IMerchantService, ICustomerService{
-
-    // Singleton as method due to serviceTest
-    private static MessageQueueAccountService instance;
-
-    public static MessageQueueAccountService getInstance() {
-        if (instance == null) {
-            try {
-                var ies = EventExchange.instance.getSender();
-                MessageQueueAccountService service = new MessageQueueAccountService(ies);
-                new EventQueue(service).startListening();
-                instance = service;
-            } catch (Exception e) {
-                throw new Error(e);
-            }
-        }
-        return instance;
-    }
-
-    private final EventType registerMerchant = new EventType("registerMerchant");
-    private final EventType getMerchant = new EventType("getMerchant");
-    private final EventType registerCustomer = new EventType("registerCustomer");
-    private final EventType customerExists = new EventType("customerExists");
-    private final EventType getCustomer = new EventType("getCustomer");
-
+    static final EventType registerMerchant = new EventType("registerMerchant");
+    static final EventType getMerchant = new EventType("getMerchant");
+    static final EventType registerCustomer = new EventType("registerCustomer");
+    static final EventType customerExists = new EventType("customerExists");
+    static final EventType getCustomer = new EventType("getCustomer");
+    static final EventType[] supportedEventTypes =
+            new EventType[]{registerMerchant, getMerchant, registerCustomer, customerExists, getCustomer};
 
     public MessageQueueAccountService(IEventSender sender) {
-        super(sender);
-        supportedEventTypes = new EventType[]{registerMerchant, getMerchant, registerCustomer, customerExists, getCustomer}; //this does not work as super constructor argument, not sure why
-        instance = this; // needed for service tests!
+        super(sender, supportedEventTypes);
     }
 
     @Override

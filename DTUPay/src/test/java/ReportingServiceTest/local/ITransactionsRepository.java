@@ -1,4 +1,6 @@
-package reportservice;
+package ReportingServiceTest.local;
+
+import reportservice.Transaction;
 
 import java.util.List;
 

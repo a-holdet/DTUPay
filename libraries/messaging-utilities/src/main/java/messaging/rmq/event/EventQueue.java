@@ -13,8 +13,7 @@ public class EventQueue extends RMQQueue {
     // all EventQueue use same routing to the EventExchange
     public static final String ROUTING_KEY = EventExchange.ROUTING_KEY_ALL;
 
-    static EventExchange eventExchange = EventExchange.instance;
-
+    static EventExchange eventExchange = new EventExchangeFactory().getExchange();
     IEventReceiver receiver;
 
     public EventQueue(IEventReceiver receiver) {

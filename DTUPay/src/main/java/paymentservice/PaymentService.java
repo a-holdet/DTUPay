@@ -2,50 +2,31 @@ package paymentservice;
 import java.math.BigDecimal;
 
 import DTO.Payment;
-import customerservice.CustomerDoesNotExistException;
-import merchantservice.*;
-import ports.BankException;
-import ports.DTUBankPort;
-import ports.IBank;
+import accountservice.merchantservice.IMerchantService;
+import accountservice.merchantservice.Merchant;
+import accountservice.merchantservice.MerchantDoesNotExistException;
+import ports.BankPortException;
+import ports.IBankPort;
 import reportservice.IReportService;
-import reportservice.ReportService;
 import tokenservice.ConsumeTokenException;
 import tokenservice.ITokenService;
-import tokenservice.MessageQueueTokenService;
-import tokenservice.TokenDoesNotExistException;
-import customerservice.LocalCustomerService;
-import customerservice.ICustomerService;
+import accountservice.customerservice.ICustomerService;
 
 
 public class PaymentService implements IPaymentService {
 
-    private static PaymentService instance;
-    public static PaymentService getInstance() {
-        if(instance == null) {
-            instance = new PaymentService(
-                    MessageQueueAccountService.getInstance(),
-                    MessageQueueAccountService.getInstance(),
-                    MessageQueueTokenService.getInstance(),
-                    new DTUBankPort(),
-                    ReportService.getInstance()
-            );
-        }
-        return instance;
-    }
-
     private final IMerchantService merchantService;
     private final ICustomerService customerService;
     private final ITokenService tokenService;
-    private final IBank bank;
+    private final IBankPort bank;
     private final IReportService reportService;
 
-    public PaymentService(IMerchantService merchantService, ICustomerService customerService, ITokenService tokenService, IBank bank, IReportService reportService) {
+    public PaymentService(IMerchantService merchantService, ICustomerService customerService, ITokenService tokenService, IBankPort bank, IReportService reportService) {
         this.merchantService = merchantService;
         this.customerService = customerService;
         this.tokenService = tokenService;
         this.bank = bank;
         this.reportService = reportService;
-        instance = this; // needed for service tests!
     }
 
     private boolean isNegative(BigDecimal amount) {
@@ -53,7 +34,7 @@ public class PaymentService implements IPaymentService {
     }
 
     @Override
-    public void registerPayment(Payment payment) throws Exception, MerchantDoesNotExistException, NegativeAmountException, BankException, ConsumeTokenException {
+    public void registerPayment(Payment payment) throws Exception, MerchantDoesNotExistException, NegativeAmountException, BankPortException, ConsumeTokenException {
         System.out.println("-");
         if (isNegative(payment.amount)) throw new NegativeAmountException("Cannot transfer a negative amount");
 

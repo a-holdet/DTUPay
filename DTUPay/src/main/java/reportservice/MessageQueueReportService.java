@@ -1,63 +1,37 @@
 package reportservice;
 
 import DTO.DTUPayUser;
-import customerservice.Customer;
-import customerservice.CustomerDoesNotExistException;
-import customerservice.ICustomerService;
-import customerservice.LocalCustomerService;
-import merchantservice.*;
+import accountservice.merchantservice.IMerchantService;
+import accountservice.merchantservice.MerchantDoesNotExistException;
+import accountservice.customerservice.CustomerDoesNotExistException;
+import accountservice.customerservice.ICustomerService;
 import DTO.Payment;
 
-import java.lang.reflect.Type;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import messagequeuebase.MessageQueueBase;
-import messaging.rmq.event.EventExchange;
-import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
+import messaging.rmq.event.objects.EventServiceBase;
 import messaging.rmq.event.objects.Event;
+import messaging.rmq.event.objects.EventType;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class MessageQueueReportService extends MessageQueueBase implements IReportService, IEventReceiver {
-
-    // Singleton as method due to serviceTest
-    private static MessageQueueReportService instance;
-
-    public static MessageQueueReportService getInstance() {
-        if (instance == null) {
-            try {
-                var ies = EventExchange.instance.getSender();
-                MessageQueueReportService service = new MessageQueueReportService(ies,
-                        MessageQueueAccountService.getInstance(), MessageQueueAccountService.getInstance());
-                new EventQueue(service).startListening();
-                instance = service;
-            } catch (Exception e) {
-                throw new Error(e);
-            }
-        }
-        return instance;
-    }
-
-    public MessageQueueReportService(IEventSender sender, IMerchantService merchantService, ICustomerService customerService) {
-        super(sender);
-        supportedEventTypes = new EventType[] {generateReportForCustomer, generateReportForMerchant, registerTransaction, generateManagerOverview};
-        instance = this; // needed for service tests!
-    }
+public class MessageQueueReportService extends EventServiceBase implements IReportService, IEventReceiver {
 
     private static final EventType generateReportForCustomer = new EventType("generateReportForCustomer");
     private static final EventType generateReportForMerchant = new EventType("generateReportForMerchant");
     private static final EventType registerTransaction = new EventType("registerTransaction");
     private static final EventType generateManagerOverview = new EventType("generateManagerOverview");
+    private static final EventType[] supportedEventTypes =
+            new EventType[] {generateReportForCustomer, generateReportForMerchant, registerTransaction, generateManagerOverview};
+
+    public MessageQueueReportService(IEventSender sender, IMerchantService merchantService, ICustomerService customerService) {
+        super(sender, supportedEventTypes);
+    }
 
     @Override
     public UserReport generateReportForCustomer(String customerId, String startTime, String endTime) throws CustomerDoesNotExistException {

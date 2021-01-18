@@ -1,4 +1,4 @@
-package customerservice;
+package accountservice.customerservice;
 
 public class Customer {
     public String firstName;

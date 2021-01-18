@@ -2,10 +2,11 @@ package messaging.rmq;
 
 public abstract class RMQExchange {
 
-    protected final RMQChannel parentChannel = RMQChannel.instance;
+    protected final RMQChannel parentChannel;
     protected final String exchangeName;
 
-    public RMQExchange(String exchangeName, String exchangeType) {
+    public RMQExchange(RMQChannel parentChannel, String exchangeName, String exchangeType) {
+        this.parentChannel = parentChannel;
         this.exchangeName = exchangeName;
         parentChannel.exchangeDeclare(exchangeName, exchangeType);
     }

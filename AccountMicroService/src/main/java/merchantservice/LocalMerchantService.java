@@ -3,13 +3,8 @@ package merchantservice;
 import java.util.UUID;
 
 public class LocalMerchantService implements IMerchantService{
-    public static LocalMerchantService instance = new LocalMerchantService();
 
-    private IMerchantRepository merchantRepository;
-
-    public LocalMerchantService() {
-        this(new MerchantInMemoryRepository());
-    }
+    private final IMerchantRepository merchantRepository;
 
     public LocalMerchantService(IMerchantRepository merchantRepository) {
         this.merchantRepository = merchantRepository;
