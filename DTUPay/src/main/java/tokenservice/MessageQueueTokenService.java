@@ -25,7 +25,7 @@ public class MessageQueueTokenService implements IEventReceiver, ITokenService {
             try {
                 var ies = EventExchange.instance.getSender();
                 MessageQueueTokenService service = new MessageQueueTokenService(ies);
-                new EventQueue().registerReceiver(service);
+                new EventQueue(service).startListening();
                 instance = service;
             } catch (Exception e) {
                 throw new Error(e);

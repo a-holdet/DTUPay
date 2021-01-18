@@ -1,3 +1,6 @@
+#/***
+#* @Author Michael, s153587
+#*/
 Feature: handle merchant from account microservice
 
   Scenario: register merchant successful

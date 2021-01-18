@@ -1,6 +1,6 @@
 package merchantservice;
 
-public class EventType implements Resultable {
+public class EventType  {
 
     private String name;
 
@@ -11,13 +11,11 @@ public class EventType implements Resultable {
     public String getName() {
         return this.name;
     }
-
-    @Override
+    
     public String succeeded() {
         return name + "Success";
     }
-
-    @Override
+    
     public String failed() {
         return name + "Fail";
     }

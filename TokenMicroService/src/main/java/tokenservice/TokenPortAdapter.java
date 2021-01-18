@@ -27,11 +27,9 @@ public class TokenPortAdapter implements IEventReceiver {
     public static TokenPortAdapter getInstance() {
         if (instance == null) {
             try {
-                System.out.println("tokenportadapter parent channel");
-                System.out.println(EventExchange.instance.parentChannel);
                 var ies = EventExchange.instance.getSender();
                 TokenPortAdapter service = new TokenPortAdapter(ies);
-                new EventQueue().registerReceiver(service);
+                new EventQueue(service).startListening();
                 instance = service;
             } catch (Exception e) {
                 throw new Error(e);
@@ -41,7 +39,7 @@ public class TokenPortAdapter implements IEventReceiver {
     }
 
     @Override
-    public void receiveEvent(Event event) throws Exception {
+    public void receiveEvent(Event event) {
 
         System.out.println("event type in tokenportadapter " + event.getEventType() + " " + event.getUUID());
         if (event.getEventType().equals("customerExistsSuccess")) {
@@ -79,11 +77,7 @@ public class TokenPortAdapter implements IEventReceiver {
             }
         } catch (IllegalTokenGrantingException e) {
             Event createTokensResponse = new Event("createTokensForCustomerFailed", new Object[]{e.getMessage()});
-            try {
-                sender.sendEvent(createTokensResponse);
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
+            sender.sendEvent(createTokensResponse);
             e.printStackTrace();
         } catch (CustomerNotFoundException e) {
             e.printStackTrace();
@@ -92,7 +86,7 @@ public class TokenPortAdapter implements IEventReceiver {
         }
     }
 
-    private void consumeToken(Event event) throws Exception {
+    private void consumeToken(Event event) {
         UUID customerToken = UUID.fromString((String) event.getArguments()[0]);
 
         try {

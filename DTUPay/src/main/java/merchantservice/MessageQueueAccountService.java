@@ -16,6 +16,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
+import messaging.rmq.event.objects.EventType;
+
 public class MessageQueueAccountService implements IMerchantService, ICustomerService, IEventReceiver {
 
     // Singleton as method due to serviceTest
@@ -25,7 +27,7 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
             try {
                 var ies = EventExchange.instance.getSender();
                 MessageQueueAccountService service = new MessageQueueAccountService(ies);
-                new EventQueue().registerReceiver(service);
+                new EventQueue(service).startListening();
                 instance = service;
             } catch (Exception e) {
                 throw new Error(e);
@@ -52,11 +54,7 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
     private Event sendRequestAndAwaitReponse(Object payload, EventType eventType){
         Event request = new Event(eventType.getName(), new Object[] {payload}, UUID.randomUUID());
         requests.put(request.getUUID(), new CompletableFuture<>());
-        try {
-            this.sender.sendEvent(request);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
+        this.sender.sendEvent(request);
         Event response = requests.get(request.getUUID()).join();
         return response;
     }
@@ -107,7 +105,7 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
     }
 
     @Override
-    public void receiveEvent(Event event) throws Exception {
+    public void receiveEvent(Event event) {
         System.out.println("--------------------------------------------------------");
         System.out.println("Event received! : " + event);
 

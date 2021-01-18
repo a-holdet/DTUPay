@@ -38,7 +38,7 @@ public class MessageQueueReportService implements IReportService, IEventReceiver
                 var ies = EventExchange.instance.getSender();
                 MessageQueueReportService service = new MessageQueueReportService(ies,
                         MessageQueueAccountService.getInstance(), MessageQueueAccountService.getInstance());
-                new EventQueue().registerReceiver(service);
+                new EventQueue(service).startListening();
                 instance = service;
             } catch (Exception e) {
                 throw new Error(e);
@@ -125,24 +125,16 @@ public class MessageQueueReportService implements IReportService, IEventReceiver
     @Override
     public void registerTransaction(Payment payment, String customerId) {
         Event event = new Event(registerTransaction.getName(), new Object[] { payment, customerId });
-        try {
-            requests.put(event.getUUID(), new CompletableFuture<>());
-            this.sender.sendEvent(event);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
+        requests.put(event.getUUID(), new CompletableFuture<>());
+        this.sender.sendEvent(event);
         requests.get(event.getUUID()).join();
     }
 
     @Override
     public List<Transaction> generateManagerOverview() {
         Event event = new Event(generateManagerOverview.getName());
-        try {
-            requests.put(event.getUUID(), new CompletableFuture<>());
-            this.sender.sendEvent(event);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
+        requests.put(event.getUUID(), new CompletableFuture<>());
+        this.sender.sendEvent(event);
 
         Gson gson = new Gson();
         event = requests.get(event.getUUID()).join();
@@ -150,7 +142,7 @@ public class MessageQueueReportService implements IReportService, IEventReceiver
     }
 
     @Override
-    public void receiveEvent(Event event) throws Exception {
+    public void receiveEvent(Event event) {
         System.out.println("--------------------------------------------------------");
         System.out.println("Event received! : " + event);
 
