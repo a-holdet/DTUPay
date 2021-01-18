@@ -1,9 +1,9 @@
 package messagequeue;
 
 
-import AccountService.CustomerDoesNotExistException;
-import AccountService.Merchant;
-import AccountService.MerchantDoesNotExistException;
+import accountservice.CustomerDoesNotExistException;
+import accountservice.Merchant;
+import accountservice.MerchantDoesNotExistException;
 import messaging.rmq.event.EventExchangeFactory;
 import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.EventExchange;

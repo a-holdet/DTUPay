@@ -1,4 +1,4 @@
-package AccountService;
+package accountservice;
 
 import messagequeue.EventType;
 import messaging.rmq.event.interfaces.IEventReceiver;

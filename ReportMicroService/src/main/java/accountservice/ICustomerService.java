@@ -1,4 +1,4 @@
-package AccountService;
+package accountservice;
 
 public interface ICustomerService {
     String registerCustomer(Customer customer) throws IllegalArgumentException;
