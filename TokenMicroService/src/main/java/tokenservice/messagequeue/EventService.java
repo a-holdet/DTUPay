@@ -1,29 +1,30 @@
-package tokenservice;
+package tokenservice.messagequeue;
 
 import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
+import tokenservice.*;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class TokenPortAdapter implements IEventReceiver {
+public class EventService implements IEventReceiver {
 
     private CompletableFuture<Boolean> customerExistsResult;
     private IEventSender sender;
     static final ITokenService tokenService = TokenService.instance;
 
-    public TokenPortAdapter(IEventSender sender) { this.sender = sender; }
+    public EventService(IEventSender sender) { this.sender = sender; }
 
-    private static TokenPortAdapter instance;
-    public static TokenPortAdapter getInstance() {
+    private static EventService instance;
+    public static EventService getInstance() {
         if (instance == null) {
             try {
                 var ies = EventExchange.instance.getSender();
-                TokenPortAdapter service = new TokenPortAdapter(ies);
+                EventService service = new EventService(ies);
                 new EventQueue().registerReceiver(service);
                 instance = service;
             } catch (Exception e) {
@@ -58,7 +59,7 @@ public class TokenPortAdapter implements IEventReceiver {
                 sender.sendEvent(customerNotFoundEvent);
             } else {
                 List<UUID> tokens = tokenService.createTokensForCustomer(customerId, amount);
-                Event createTokensResponse = new Event("createTokensForCustomerResponse", new Object[]{tokens});
+                Event createTokensResponse = new Event("createTokensForCustomerSuccess", new Object[]{tokens});
                 sender.sendEvent(createTokensResponse);
             }
         } catch (IllegalTokenGrantingException e) {

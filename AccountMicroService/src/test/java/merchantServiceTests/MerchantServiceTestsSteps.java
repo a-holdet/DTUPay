@@ -20,12 +20,7 @@ public class MerchantServiceTestsSteps {
 	Merchant merchant;
 
 	public MerchantServiceTestsSteps() {
-		s = new EventService(new IEventSender() {
-			@Override
-			public void sendEvent(Event ev) {
-				event = ev;
-			}
-		});
+		s = new EventService(ev -> event = ev);
 	}
 
 	@When("I receive event {string}")
