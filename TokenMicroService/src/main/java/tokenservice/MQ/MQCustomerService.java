@@ -3,17 +3,16 @@ package tokenservice.MQ;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 import messaging.rmq.event.objects.EventType;
-import messaging.rmq.event.objects.EventServiceBase;
+import messaging.rmq.MessageQueueBase;
 import tokenservice.interfaces.ICustomerService;
 
-public class MQCustomerService extends EventServiceBase implements ICustomerService {
+public class MQCustomerService extends MessageQueueBase implements ICustomerService {
 
-    private static final EventType customerExistsEvent = new EventType("customerExists");
-    private static final EventType[] supportedEventTypes = new EventType[]{customerExistsEvent};
+    private final EventType customerExistsEvent = new EventType("customerExists");
 
     public MQCustomerService(IEventSender sender) {
-        super(sender, supportedEventTypes);
-
+        super(sender);
+        supportedEventTypes = new EventType[]{customerExistsEvent};
     }
 
     @Override

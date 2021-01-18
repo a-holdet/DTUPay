@@ -1,22 +1,23 @@
-package messaging.rmq.event.objects;
+package messaging.rmq;
 
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
+import messaging.rmq.event.objects.Event;
+import messaging.rmq.event.objects.EventType;
 
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class EventServiceBase implements IEventReceiver {
+public abstract class MessageQueueBase implements IEventReceiver {
     protected final ConcurrentHashMap<UUID, CompletableFuture<Event>> requests = new ConcurrentHashMap<>();
     protected final IEventSender sender; //TODO could be changed to private once subclasses uses it properly
 
-    protected final EventType[] supportedEventTypes;
+    protected EventType[] supportedEventTypes;
 
-    protected EventServiceBase(IEventSender sender, EventType[] supportedEventTypes) {
+    protected MessageQueueBase(IEventSender sender) {
         this.sender = sender;
-        this.supportedEventTypes = supportedEventTypes;
     }
 
     protected Event sendRequestAndAwaitReponse(Object payload, EventType eventType){
@@ -27,7 +28,6 @@ public abstract class EventServiceBase implements IEventReceiver {
         return response;
     }
 
-    @Override
     public void receiveEvent(Event event) {
         System.out.println("--------------------------------------------------------");
         System.out.println("Event received! : " + event);
