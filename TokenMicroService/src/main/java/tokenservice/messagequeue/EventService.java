@@ -76,10 +76,4 @@ public class EventService implements IEventReceiver {
             sender.sendEvent(new Event("consumeTokenFail", new Object[]{errorType, errorMessage}, event.getUUID()));
         }
     }
-
-//    private void customerExistsResponse(Event event) {
-//        boolean customerExists = event.getArgument(0, Boolean.class);
-//        customerExistsResult.complete(customerExists);
-//    }
-
 }
