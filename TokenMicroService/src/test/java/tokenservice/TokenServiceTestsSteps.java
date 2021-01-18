@@ -1,13 +1,11 @@
 package tokenservice;
 
 import com.google.gson.reflect.TypeToken;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
-import org.junit.Assert;
+import tokenservice.customer.ICustomerService;
 import tokenservice.messagequeue.EventService;
 
 import java.util.List;
@@ -25,10 +23,12 @@ public class TokenServiceTestsSteps {
     CompletableFuture<Boolean> eventSet = new CompletableFuture<>();
 
     public TokenServiceTestsSteps() {
+        ITokenService tokenService = new LocalTokenService(customerId -> true);
+
         s = new EventService(e -> {
             event = e;
             eventSet.complete(true);
-        });
+        }, tokenService);
     }
 
     @Given("a valid customer")
@@ -37,7 +37,7 @@ public class TokenServiceTestsSteps {
     }
 
     @When("I receive event createTokensForCustomer with {int} tokens")
-    public void iReceiveEventWithTokens(int amount) throws Exception {
+    public void iReceiveEventWithTokens(int amount) {
         s.receiveEvent(new Event("createTokensForCustomer", new Object[]{customerId, amount}));
     }
 
@@ -47,18 +47,5 @@ public class TokenServiceTestsSteps {
         assertEquals("createTokensForCustomerSuccess",event.getEventType());
         List<UUID> tokens = event.getArgument(0, new TypeToken<>() {});
         assertEquals(amount, tokens.size());
-    }
-
-    @When("I receive event customerExistsSuccess")
-    public void iReceiveEventCustomerExistsSuccess() {
-        eventSet = new CompletableFuture<>();
-        s.receiveEvent(new Event("customerExistsSuccess", new Object[]{true}));
-    }
-
-    @Then("I sent customerExists")
-    public void iSentCustomerExists() {
-        eventSet.join();
-        assertEquals("customerExists", event.getEventType());
-        assertEquals(customerId, event.getArgument(0,String.class));
     }
 }

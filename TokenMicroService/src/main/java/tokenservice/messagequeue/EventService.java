@@ -6,6 +6,8 @@ import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 import tokenservice.*;
+import tokenservice.customer.CustomerNotFoundException;
+import tokenservice.customer.ICustomerService;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,33 +15,19 @@ import java.util.concurrent.CompletableFuture;
 
 public class EventService implements IEventReceiver {
 
-    private CompletableFuture<Boolean> customerExistsResult;
+//    private CompletableFuture<Boolean> customerExistsResult;
     private IEventSender sender;
-    static final ITokenService tokenService = TokenService.instance;
+    private final ITokenService tokenService;
 
-    public EventService(IEventSender sender) { this.sender = sender; }
-
-    private static EventService instance;
-    public static EventService getInstance() {
-        if (instance == null) {
-            try {
-                var ies = EventExchange.instance.getSender();
-                EventService service = new EventService(ies);
-                new EventQueue(service).startListening();
-                instance = service;
-            } catch (Exception e) {
-                throw new Error(e);
-            }
-        }
-        return instance;
+    public EventService(IEventSender sender, ITokenService tokenService) {
+        this.sender = sender;
+        this.tokenService = tokenService;
     }
 
     @Override
     public void receiveEvent(Event event) {
         System.out.println("eventType: " + event.getEventType());
-        if (event.getEventType().equals("customerExistsSuccess")) {
-            customerExistsResponse(event);
-        } else if (event.getEventType().equals("consumeToken")) {
+        if (event.getEventType().equals("consumeToken")) {
             consumeToken(event);
         } else if (event.getEventType().equals("createTokensForCustomer")) {
             new Thread(() -> createTokensForCustomer(event)).start();
@@ -51,18 +39,10 @@ public class EventService implements IEventReceiver {
         int amount = event.getArgument(1, int.class);
 
         try {
-            customerExistsResult = new CompletableFuture<>();
-            sender.sendEvent(new Event("customerExists", new Object[]{customerId}));
-            boolean customerExists = customerExistsResult.join();
-            if (!customerExists) {
-                Event customerNotFoundEvent = new Event("createTokensForCustomerFailed",
-                        new Object[]{new CustomerNotFoundException("Customer was not found")});
-                sender.sendEvent(customerNotFoundEvent);
-            } else {
-                List<UUID> tokens = tokenService.createTokensForCustomer(customerId, amount);
-                Event createTokensResponse = new Event("createTokensForCustomerSuccess", new Object[]{tokens});
-                sender.sendEvent(createTokensResponse);
-            }
+//            customerExistsResult = new CompletableFuture<>();
+            List<UUID> tokens = tokenService.createTokensForCustomer(customerId, amount);
+            Event createTokensResponse = new Event("createTokensForCustomerSuccess", new Object[]{tokens});
+            sender.sendEvent(createTokensResponse);
         } catch (IllegalTokenGrantingException e) {
             Event createTokensResponse = new Event("createTokensForCustomerFailed", new Object[]{e.getMessage()});
             try {
@@ -72,11 +52,11 @@ public class EventService implements IEventReceiver {
             }
             e.printStackTrace();
         } catch (CustomerNotFoundException e) {
-            e.printStackTrace();
-            // TODO: Handle this
+            Event customerNotFoundEvent = new Event("createTokensForCustomerFailed",
+                    new Object[]{new CustomerNotFoundException("Customer was not found")});
+            sender.sendEvent(customerNotFoundEvent);
         } catch (Exception e) {
-            // TODO: throw error
-            e.printStackTrace();
+            throw new Error(e.getMessage());
         }
     }
 
@@ -92,9 +72,9 @@ public class EventService implements IEventReceiver {
 
     }
 
-    private void customerExistsResponse(Event event) {
-        boolean customerExists = event.getArgument(0, Boolean.class);
-        customerExistsResult.complete(customerExists);
-    }
+//    private void customerExistsResponse(Event event) {
+//        boolean customerExists = event.getArgument(0, Boolean.class);
+//        customerExistsResult.complete(customerExists);
+//    }
 
 }
