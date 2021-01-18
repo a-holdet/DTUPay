@@ -19,6 +19,7 @@ public class DTUBankPort implements IBank{
                     description
             );
         } catch (BankServiceException_Exception e) {
+            System.out.println("what went wrong?" + e.getMessage());
             throw new BankException("The bank transfer went wrong");
         }
     }
