@@ -8,6 +8,7 @@ import ports.BankException;
 import ports.DTUBankPort;
 import ports.IBank;
 import reportservice.IReportService;
+import reportservice.MessageQueueReportService;
 import reportservice.ReportService;
 import tokenservice.ConsumeTokenException;
 import tokenservice.ITokenService;
@@ -27,7 +28,7 @@ public class PaymentService implements IPaymentService {
                     MessageQueueAccountService.getInstance(),
                     MessageQueueTokenService.getInstance(),
                     new DTUBankPort(),
-                    ReportService.getInstance()
+                    MessageQueueReportService.getInstance()
             );
         }
         return instance;

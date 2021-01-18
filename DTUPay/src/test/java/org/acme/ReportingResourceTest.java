@@ -20,7 +20,7 @@ import java.util.UUID;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.*;
 
-@QuarkusTest
+/*@QuarkusTest
 public class ReportingResourceTest {
 
     private static class MerchantServiceMock implements IMerchantService {
@@ -102,7 +102,7 @@ public class ReportingResourceTest {
                .then()
                .statusCode(200)
                .body(not(containsString(descriptionT2))).body(containsString(descriptionT1));
-        */
+
         given().pathParam("id",merchant.id).pathParam("start",nowMinus3.toString()).pathParam("end",now.toString())
                 .when().get("/merchantapi/reports?id={id}&start={start}&end={end}")
                 .then()
@@ -164,7 +164,7 @@ public class ReportingResourceTest {
                 .then()
                 .statusCode(200)
                 .body(not(containsString(descriptionT2))).body(containsString(descriptionT1));
-        */
+
         given().pathParam("id",customer.id).pathParam("start",nowMinus3.toString()).pathParam("end",now.toString())
                 .when().get("/customerapi/reports?id={id}&start={start}&end={end}")
                 .then()
@@ -186,4 +186,4 @@ public class ReportingResourceTest {
                 .body(not(containsString(descriptionT1)))
                 .body(containsString(descriptionT2));
     }
-}
+}*/

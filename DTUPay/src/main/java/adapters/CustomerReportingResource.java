@@ -2,6 +2,7 @@ package adapters;
 
 import customerservice.CustomerDoesNotExistException;
 import reportservice.IReportService;
+import reportservice.MessageQueueReportService;
 import reportservice.ReportService;
 import reportservice.UserReport;
 
@@ -14,7 +15,7 @@ import javax.ws.rs.core.Response;
 
 @Path("/customerapi/reports")
 public class CustomerReportingResource {
-    IReportService reportService = ReportService.getInstance();
+    IReportService reportService = MessageQueueReportService.getInstance();
 
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
