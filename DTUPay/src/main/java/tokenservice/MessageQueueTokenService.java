@@ -1,17 +1,13 @@
 package tokenservice;
 
-import customerservice.Customer;
-import customerservice.ICustomerService;
-import customerservice.LocalCustomerService;
-import io.cucumber.java.an.E;
-import merchantservice.EventType;
-import merchantservice.MessageQueueAccountService;
 import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 import com.google.gson.reflect.TypeToken;
+import messaging.rmq.event.objects.EventType;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;

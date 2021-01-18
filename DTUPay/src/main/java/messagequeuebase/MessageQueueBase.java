@@ -1,9 +1,9 @@
 package messagequeuebase;
 
-import merchantservice.EventType;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
+import messaging.rmq.event.objects.EventType;
 
 import java.util.Arrays;
 import java.util.UUID;
