@@ -1,10 +1,7 @@
 package adapters;
 
-import accountservice.AccountServiceFactory;
-import accountservice.IMerchantService;
 import accountservice.MerchantDoesNotExistException;
 import reportservice.IReportService;
-import reportservice.MessageQueueReportService;
 import DTO.UserReport;
 import reportservice.ReportServiceFactory;
 

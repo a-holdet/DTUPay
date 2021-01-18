@@ -1,8 +1,9 @@
 package adapters;
 
 import reportservice.IReportService;
-import reportservice.ReportServiceFactory;
+import reportservice.MessageQueueReportService;
 import DTO.Transaction;
+import reportservice.ReportServiceFactory;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;

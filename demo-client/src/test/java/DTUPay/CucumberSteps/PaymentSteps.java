@@ -120,13 +120,13 @@ public class PaymentSteps {
     @And("the balance of the customer at the bank is {int} kr")
     public void theBalanceOfTheCustomerAtTheBankIsKr(int expectedBalance) throws BankServiceException_Exception {
         Account account = bankService.getAccount(customerHolder.getAccountId());
-        assertEquals(new BigDecimal(expectedBalance), account.getBalance());
+        assertEquals(new BigDecimal(expectedBalance).toBigInteger(), account.getBalance().toBigInteger());
     }
 
     @And("the balance of the merchant at the bank is {int} kr")
     public void theBalanceOfTheMerchantAtTheBankIsKr(int expectedBalance) throws BankServiceException_Exception {
         Account account = bankService.getAccount(merchantHolder.getAccountId());
-        assertEquals(new BigDecimal(expectedBalance), account.getBalance());
+        assertEquals(new BigDecimal(expectedBalance).toBigInteger(), account.getBalance().toBigInteger());
     }
 
     @Then("the payment is successful")
@@ -146,15 +146,18 @@ public class PaymentSteps {
 
     @Then("the payment fails")
     public void thePaymentFails() {
+        System.out.println("XXXXX + " + successful);
         assertFalse(successful);
     }
 
     @And("the other merchant and customer perform a successful payment of {int} kr for a {string}")
-    public void theOtherMerchantAndCustomerPerformASuccessfulPaymentOfKrForA(int amount, String productDescription) {
+    public void theOtherMerchantAndCustomerPerformASuccessfulPaymentOfKrForA(int amount, String productDescription) throws Exception {
         purchasesHolder.add(amount, productDescription);
         UUID nextTokenUsedInPayment = tokenHolder.getTokens().get(1); // Extract 2nd token
         performPaymentUsing(nextTokenUsedInPayment, otherMerchantHolder, amount, productDescription);
     }
+
+
 
     @And("the merchant and customer perform a successful payment of {int} kr for a {string}")
     public void theMerchantAndCustomerPerformASuccessfulPaymentOfKrForA(int amount, String productDescription) throws Exception {
@@ -164,7 +167,7 @@ public class PaymentSteps {
         performPaymentUsing(tokenUsedInPayment, merchantHolder, amount, productDescription);
     }
 
-    private void performPaymentUsing(UUID token, UserHolder merchantHolder, int amount, String productDescription) {
+    private void performPaymentUsing(UUID token, UserHolder merchantHolder, int amount, String productDescription) throws IllegalArgumentException, ForbiddenException {
         // System.out.println("PERFORMING PAYMENT:" + merchantHolder.getId() + ". " + productDescription);
         merchantAdapter.transferMoneyFromTo(token, merchantHolder.getId(), BigDecimal.valueOf(amount),
         productDescription); // Make payment

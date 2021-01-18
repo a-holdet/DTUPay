@@ -6,7 +6,6 @@ import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 import messaging.rmq.event.objects.EventType;
-import messaging.rmq.event.objects.EventServiceBase;
 
 import java.util.UUID;
 

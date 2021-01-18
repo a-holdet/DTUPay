@@ -14,21 +14,18 @@ import accountservice.IMerchantService;
 import accountservice.MerchantDoesNotExistException;
 import com.google.gson.reflect.TypeToken;
 
+import messaging.rmq.event.EventExchange;
+import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
-import messaging.rmq.event.objects.EventType;
 import messaging.rmq.event.objects.EventServiceBase;
+import messaging.rmq.event.objects.EventType;
 
 import java.util.concurrent.CompletableFuture;
 
 
-
 public class MessageQueueReportService extends EventServiceBase implements IReportService, IEventReceiver {
-
-    public MessageQueueReportService(IEventSender sender, IMerchantService merchantService, ICustomerService customerService) {
-        super(sender, supportedEventTypes);
-    }
 
     private static final EventType generateReportForCustomer = new EventType("generateReportForCustomer");
     private static final EventType generateReportForMerchant = new EventType("generateReportForMerchant");
@@ -37,6 +34,9 @@ public class MessageQueueReportService extends EventServiceBase implements IRepo
     private static final EventType[] supportedEventTypes =
             new EventType[] {generateReportForCustomer, generateReportForMerchant, registerTransaction, generateManagerOverview};
 
+    public MessageQueueReportService(IEventSender sender, IMerchantService merchantService, ICustomerService customerService) {
+        super(sender, supportedEventTypes);
+    }
     @Override
     public UserReport generateReportForCustomer(String customerId, String startTime, String endTime) throws CustomerDoesNotExistException {
         Event event = new Event(generateReportForCustomer.getName(), new Object[] { customerId, startTime, endTime });
@@ -68,6 +68,7 @@ public class MessageQueueReportService extends EventServiceBase implements IRepo
     @Override
     public UserReport generateReportForMerchant(String merchantId, String startTime, String endTime)
             throws MerchantDoesNotExistException {
+        System.out.println("---------------------------------------------");
         Event event = new Event(generateReportForMerchant.getName(), new Object[] { merchantId, startTime, endTime });
         try {
             requests.put(event.getUUID(), new CompletableFuture<>());
@@ -75,6 +76,7 @@ public class MessageQueueReportService extends EventServiceBase implements IRepo
         } catch (Exception e) {
             throw new Error(e);
         }
+        System.out.println("---------------------------------------------");
 
         event = requests.get(event.getUUID()).join();
         String type = event.getEventType();

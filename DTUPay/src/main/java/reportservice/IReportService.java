@@ -1,5 +1,6 @@
 package reportservice;
 
+import DTO.Payment;
 import DTO.Transaction;
 import DTO.UserReport;
 import accountservice.CustomerDoesNotExistException;

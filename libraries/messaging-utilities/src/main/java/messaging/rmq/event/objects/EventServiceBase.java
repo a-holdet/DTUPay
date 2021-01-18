@@ -1,4 +1,4 @@
-package messaging.rmq;
+package messaging.rmq.event.objects;
 
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
@@ -10,13 +10,14 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class MessageQueueBase implements IEventReceiver {
+public abstract class EventServiceBase implements IEventReceiver {
     protected final ConcurrentHashMap<UUID, CompletableFuture<Event>> requests = new ConcurrentHashMap<>();
     protected final IEventSender sender; //TODO could be changed to private once subclasses uses it properly
 
     protected EventType[] supportedEventTypes;
 
-    protected MessageQueueBase(IEventSender sender) {
+    protected EventServiceBase(IEventSender sender, EventType[] supportedEventTypes) {
+        this.supportedEventTypes = supportedEventTypes;
         this.sender = sender;
     }
 

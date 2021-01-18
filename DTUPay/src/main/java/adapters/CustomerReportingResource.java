@@ -2,8 +2,9 @@ package adapters;
 
 import accountservice.CustomerDoesNotExistException;
 import reportservice.IReportService;
-import reportservice.ReportServiceFactory;
+import reportservice.MessageQueueReportService;
 import DTO.UserReport;
+import reportservice.ReportServiceFactory;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -14,7 +15,6 @@ import javax.ws.rs.core.Response;
 
 @Path("/customerapi/reports")
 public class CustomerReportingResource {
-
     IReportService reportService = new ReportServiceFactory().getService();
 
     @GET
