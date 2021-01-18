@@ -57,7 +57,7 @@ public class MessageQueueTokenService implements IEventReceiver, ITokenService {
         } else if (event.getEventType().equals("consumeTokenResponseFailed")) {
 //            String errorMessage = event.getArgument(0, String.class);
             consumeTokenResult.complete(event);
-        } else if (event.getEventType().equals("createTokensForCustomerResponse")) {
+        } else if (event.getEventType().equals("createTokensForCustomerSuccess")) {
             createTokensResponse(event);
         } else if (event.getEventType().equals("createTokensForCustomerFailed")) {
             createTokensFailed(event);

@@ -3,7 +3,6 @@ package merchantServiceTests;
 import com.google.gson.Gson;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
-import merchantservice.Merchant;
 import messagequeue.EventService;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;

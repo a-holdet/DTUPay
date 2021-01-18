@@ -36,6 +36,7 @@ public class EventService implements IEventReceiver {
 
     @Override
     public void receiveEvent(Event event) {
+        System.out.println("eventType: " + event.getEventType());
         if (event.getEventType().equals("customerExistsSuccess")) {
             customerExistsResponse(event);
         } else if (event.getEventType().equals("consumeToken")) {
