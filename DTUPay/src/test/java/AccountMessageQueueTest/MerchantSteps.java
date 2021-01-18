@@ -5,9 +5,9 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import merchantservice.Merchant;
-import merchantservice.MerchantDoesNotExistException;
-import merchantservice.MessageQueueAccountService;
+import DTO.Merchant;
+import accounts.MerchantDoesNotExistException;
+import accounts.MessageQueueAccountService;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 

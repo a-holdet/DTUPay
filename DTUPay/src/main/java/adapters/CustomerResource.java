@@ -1,8 +1,8 @@
 package adapters;
 
-import customerservice.*;
-import merchantservice.IMerchantService;
-import merchantservice.MessageQueueAccountService;
+import DTO.Customer;
+import accounts.*;
+import accounts.MessageQueueAccountService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
