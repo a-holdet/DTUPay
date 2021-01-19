@@ -1,5 +1,9 @@
 package accountservice;
 
+/***
+ * @Author Jakob Vestergaard Offersen, s163940
+ */
+
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 import messaging.rmq.event.objects.EventType;

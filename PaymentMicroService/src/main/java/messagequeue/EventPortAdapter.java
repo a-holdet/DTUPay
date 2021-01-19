@@ -1,5 +1,8 @@
 package messagequeue;
 
+/***
+ * @Author Michael Davidsen Kirkegaard, s153587
+ */
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.objects.Event;
 import messaging.rmq.event.objects.EventType;

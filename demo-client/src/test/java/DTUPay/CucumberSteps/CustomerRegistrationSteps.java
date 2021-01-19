@@ -14,6 +14,11 @@ import java.math.BigDecimal;
 
 import static org.junit.Assert.*;
 
+/***
+ * @Author Martin Hemmingsen, s141887
+ */
+
+
 public class CustomerRegistrationSteps {
     // Adapters
     BankService bankService = new BankServiceService().getBankServicePort();

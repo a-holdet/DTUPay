@@ -20,6 +20,10 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
+/***
+ * @Author Benjamin Wrist Lam, s153486
+ */
+
 public class PaymentSteps {
 
     // Adapters

@@ -5,6 +5,9 @@ import accountservice.MerchantDoesNotExistException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+/***
+ * @Author Benjamin Wrist Lam, s153486
+ */
 
 public interface IReportService {
     UserReport generateReportForCustomer(String customerId, LocalDateTime startTime, LocalDateTime EndTime) throws CustomerDoesNotExistException;

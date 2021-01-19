@@ -4,6 +4,10 @@ import messagequeue.EventPortAdapterFactory;
 import messaging.rmq.event.EventExchangeFactory;
 import messaging.rmq.event.interfaces.IEventReceiver;
 
+/***
+ * @Author Benjamin Wrist Lam, s153486
+ */
+
 public class AccountServiceFactory {
     static IAccountService service;
 

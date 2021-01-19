@@ -10,6 +10,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+/***
+ * @Author Jakob Vestergaard Offersen, s163940
+ */
+
+
 @Path("/merchantapi/merchants")
 public class MerchantResource {
 

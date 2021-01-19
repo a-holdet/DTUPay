@@ -1,5 +1,8 @@
 package reportservice;
 
+/***
+ * @Author Jakob Vestergaard Offersen, s163940
+ */
 import java.util.List;
 
 public interface ITransactionsRepository {

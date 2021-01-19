@@ -1,3 +1,7 @@
+#/***
+#* @Author Simon Borup Lindegren, s185370
+#*/
+
 #!/bin/sh
 # wait-for-RabbitMq.sh
 

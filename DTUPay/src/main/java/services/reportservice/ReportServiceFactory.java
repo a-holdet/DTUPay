@@ -4,6 +4,9 @@ import messagequeue.EventPortAdapterFactory;
 import messaging.rmq.event.EventExchangeFactory;
 import messaging.rmq.event.interfaces.IEventReceiver;
 
+/***
+ * @Author Martin Hemmingsen, s141887
+ */
 public class ReportServiceFactory {
 
     static IReportService service;

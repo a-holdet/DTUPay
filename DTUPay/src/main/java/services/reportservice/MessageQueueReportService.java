@@ -10,6 +10,10 @@ import messaging.rmq.event.objects.Event;
 import messaging.rmq.event.objects.EventType;
 import messaging.rmq.event.objects.MessageQueueBase;
 
+/***
+ * @Author Martin Hemmingsen, s141887
+ */
+
 public class MessageQueueReportService extends MessageQueueBase implements IReportService, IEventReceiver {
 
     private static final EventType generateReportForCustomer = new EventType("generateReportForCustomer");

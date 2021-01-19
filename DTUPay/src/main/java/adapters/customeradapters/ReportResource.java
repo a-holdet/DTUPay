@@ -12,6 +12,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+/***
+ * @Author Michael Davidsen Kirkegaard, s153587
+ */
+
+
 @Path("/customerapi/reports")
 public class ReportResource {
     IReportService reportService = new ReportServiceFactory().getService();

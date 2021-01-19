@@ -5,6 +5,10 @@ import java.nio.charset.StandardCharsets;
 
 import com.rabbitmq.client.*;
 
+/***
+ * @Author Simon Borup Lindegren, s185370
+ */
+
 public class RMQChannel {
 
     private final Channel consumerChannel;
