@@ -1,4 +1,4 @@
-/*
+
 package tokenservice;
 
 import com.google.gson.reflect.TypeToken;
@@ -53,4 +53,3 @@ public class TokenServiceTestsSteps {
         assertEquals(amount, tokens.size());
     }
 }
-*/
