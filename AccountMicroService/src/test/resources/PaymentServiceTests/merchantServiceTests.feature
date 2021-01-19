@@ -2,7 +2,6 @@
 #* @Author Michael, s153587
 #*/
 Feature: merchant service tests
-
   Scenario: successful merchant register
     Given A valid Merchant
     And The Merchant is not registered
