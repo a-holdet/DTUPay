@@ -17,4 +17,4 @@ Feature: handle merchant from account microservice
     When I want to get merchant
     Then I have sent event "getMerchant"
     When I receive event "getMerchantSuccess"
-   Then service is successful
+    Then service is successful
