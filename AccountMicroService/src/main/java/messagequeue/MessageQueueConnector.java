@@ -1,7 +1,11 @@
 package messagequeue;
 
-import customerservice.*;
-import merchantservice.*;
+import customerservice.Customer;
+import merchantservice.Merchant;
+import customerservice.CustomerDoesNotExistException;
+import customerservice.ICustomerService;
+import merchantservice.IMerchantService;
+import merchantservice.MerchantDoesNotExistException;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
@@ -9,30 +13,23 @@ import messaging.rmq.event.objects.EventType;
 
 import java.util.UUID;
 
-public class AccountServicePortAdapter implements IEventReceiver {
+public class MessageQueueConnector implements IEventReceiver {
 
 	IMerchantService merchantService;
 	ICustomerService customerService;
 	IEventSender sender;
 
-	public AccountServicePortAdapter(IEventSender sender, IMerchantService merchantService, ICustomerService customerService) {
-		this.sender = sender;
+	public MessageQueueConnector(IMerchantService merchantService, ICustomerService customerService, IEventSender sender) {
 		this.merchantService = merchantService;
 		this.customerService = customerService;
+		this.sender = sender;
 	}
 
-	private static final EventType registerMerchant = new EventType("registerMerchant");
-	private static final EventType getMerchant = new EventType("getMerchant");
-	private static final EventType registerCustomer = new EventType("registerCustomer");
-	private static final EventType customerExists = new EventType("customerExists");
-	private static final EventType getCustomer = new EventType("getCustomer");
-	private static final EventType[] supportedEventTypes = { registerMerchant, getMerchant, registerCustomer,
-			customerExists, getCustomer };
-
-	@Override
-	public EventType[] getSupportedEventTypes() {
-		return supportedEventTypes;
-	}
+	private final EventType registerMerchant = new EventType("registerMerchant");
+	private final EventType getMerchant = new EventType("getMerchant");
+	private final EventType registerCustomer = new EventType("registerCustomer");
+	private final EventType customerExists = new EventType("customerExists");
+	private final EventType getCustomer = new EventType("getCustomer");
 
 	public void registerMerchant(Merchant merchant, UUID eventID)  {
 		try {
@@ -40,10 +37,7 @@ public class AccountServicePortAdapter implements IEventReceiver {
 			Event event = new Event(registerMerchant.succeeded(), new Object[] { merchantId }, eventID);
 			this.sender.sendEvent(event);
 		} catch (IllegalArgumentException e) {
-			String exceptionType = e.getClass().getSimpleName();
-			String exceptionMsg = e.getMessage();
-			Event event = new Event(registerMerchant.failed(), new Object[] { exceptionType, exceptionMsg }, eventID);
-			this.sender.sendEvent(event);
+			this.sender.sendErrorEvent(registerMerchant, e, eventID);
 		}
 	}
 
@@ -53,10 +47,7 @@ public class AccountServicePortAdapter implements IEventReceiver {
 			Event event = new Event(registerCustomer.succeeded(), new Object[] { customerId }, eventID);
 			this.sender.sendEvent(event);
 		} catch (IllegalArgumentException e) {
-			String exceptionType = e.getClass().getSimpleName();
-			String exceptionMsg = e.getMessage();
-			Event event = new Event(registerCustomer.failed(), new Object[] { exceptionType, exceptionMsg }, eventID);
-			this.sender.sendEvent(event);
+			this.sender.sendErrorEvent(registerCustomer, e, eventID);
 		}
 	}
 
@@ -66,10 +57,7 @@ public class AccountServicePortAdapter implements IEventReceiver {
 			Event event = new Event(getMerchant.succeeded(), new Object[] { merchant }, eventID);
 			this.sender.sendEvent(event);
 		} catch (MerchantDoesNotExistException e) {
-			String exceptionType = e.getClass().getSimpleName();
-			String exceptionMsg = e.getMessage();
-			Event event = new Event(getMerchant.failed(), new Object[] { exceptionType, exceptionMsg }, eventID);
-			this.sender.sendEvent(event);
+			this.sender.sendErrorEvent(getMerchant, e, eventID);
 		}
 	}
 
@@ -79,16 +67,18 @@ public class AccountServicePortAdapter implements IEventReceiver {
 			Event event = new Event(getCustomer.succeeded(), new Object[] { customer }, eventID);
 			this.sender.sendEvent(event);
 		} catch (CustomerDoesNotExistException e) {
-			String exceptionType = e.getClass().getSimpleName();
-			String exceptionMsg = e.getMessage();
-			Event event = new Event(getCustomer.failed(), new Object[] { exceptionType, exceptionMsg }, eventID);
-			this.sender.sendEvent(event);
+			this.sender.sendErrorEvent(getCustomer, e, eventID);
 		}
 	}
 
 	public void customerExists(String customerId, UUID eventId) {
 		boolean exists = customerService.customerExists(customerId);
 		this.sender.sendEvent(new Event(customerExists.succeeded(), new Object[] { exists }, eventId));
+	}
+
+	@Override
+	public EventType[] getSupportedEventTypes() {
+		return new EventType[] {registerMerchant, getMerchant, registerCustomer, customerExists, getCustomer};
 	}
 
 	@Override
@@ -99,7 +89,6 @@ public class AccountServicePortAdapter implements IEventReceiver {
 		String type = event.getEventType();
 		UUID eventId = event.getUUID();
 
-		// TODO: By Jakob: Refactor this to avoid high coupling
 		try {
 			if (type.equals(registerMerchant.getName())) {
 				Merchant merchant = event.getArgument(0, Merchant.class);
@@ -124,7 +113,5 @@ public class AccountServicePortAdapter implements IEventReceiver {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		System.out.println("--------------------------------------------------------");
 	}
 }

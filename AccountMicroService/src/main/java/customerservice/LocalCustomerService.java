@@ -12,8 +12,9 @@ public class LocalCustomerService implements ICustomerService {
 
     @Override
     public String registerCustomer(Customer customer) throws IllegalArgumentException {
-        if (customer.accountId == null || customer.accountId.length() == 0)
+        if (!customer.hasValidAccountId())
             throw new IllegalArgumentException("Customer must have a bank account to be created in DTUPay");
+
         customer.id = String.valueOf(UUID.randomUUID());
         customerRepository.addCustomer(customer);
         return customer.id;

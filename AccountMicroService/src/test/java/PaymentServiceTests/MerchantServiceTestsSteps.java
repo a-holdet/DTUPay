@@ -1,3 +1,4 @@
+/*
 package PaymentServiceTests;
 
 import customerservice.CustomerInMemoryRepository;
@@ -17,9 +18,11 @@ import java.util.UUID;
 
 import static org.junit.Assert.*;
 
+*/
 /***
  * @Author Michael, s153587
- */
+ *//*
+
 public class MerchantServiceTestsSteps {
 	AccountServicePortAdapter service;
 	Event event;
@@ -95,3 +98,4 @@ public class MerchantServiceTestsSteps {
 		service.receiveEvent(new Event("getMerchant", new Object[] {merchant.id}));
 	}
 }
+*/

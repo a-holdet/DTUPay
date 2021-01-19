@@ -72,6 +72,11 @@ public class CustomerRegistrationSteps {
         }
     }
 
+    @And("the customer is not registered with DTUPay")
+    public void theCustomerIsNotRegisteredWithDTUPay() {
+        //No call is done as the customer is not registred
+    }
+
     @Then("the customer registration is successful")
     public void theRegistrationIsSuccessful() {
         assertNotNull(customerHolder.getId());
@@ -85,10 +90,5 @@ public class CustomerRegistrationSteps {
     @And("the error message is {string}")
     public void theErrorMessageIs(String expectedErrorMessage) {
         assertEquals(expectedErrorMessage, exceptionHolder.getException().getMessage());
-    }
-
-    @And("the customer is not registered with DTUPay")
-    public void theCustomerIsNotRegisteredWithDTUPay() {
-        //No call is done as the customer is not registred
     }
 }
