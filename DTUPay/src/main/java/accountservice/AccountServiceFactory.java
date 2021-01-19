@@ -6,6 +6,7 @@ import messaging.rmq.event.interfaces.IEventReceiver;
 
 public class AccountServiceFactory {
     static IAccountService service;
+
     public IAccountService getService() {
         if (service == null) {
             // Specific implementation of service

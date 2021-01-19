@@ -22,7 +22,7 @@ public class MQCustomerService extends EventServiceBase implements ICustomerServ
 
     @Override
     public boolean customerExists(String customerId) {
-        Event responseEvent = sendRequestAndAwaitReponse(customerId, customerExistsEvent);
+        Event responseEvent = sendRequestAndAwaitResponse(customerId, customerExistsEvent);
 
         if (responseEvent.isSuccessReponse())
             return responseEvent.getPayloadAs(Boolean.class);

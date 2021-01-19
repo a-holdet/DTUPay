@@ -4,7 +4,6 @@ package messagequeue;
 import accountservice.CustomerDoesNotExistException;
 import accountservice.MerchantDoesNotExistException;
 import messaging.rmq.event.EventExchangeFactory;
-import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
@@ -15,39 +14,21 @@ import reportservice.*;
 import java.util.List;
 import java.util.UUID;
 
-public class ReportServicePortAdapter implements IEventReceiver {
-
-	// Singleton as method due to serviceTest
-	private static ReportServicePortAdapter instance;
-	public static ReportServicePortAdapter getInstance() {
-		if (instance == null) {
-			try {
-				var ies = new EventExchangeFactory().getExchange().createIEventSender();
-				ReportServicePortAdapter service = new ReportServicePortAdapter(ies);
-				instance = service;
-				//new EventQueue(instance).startListening();
-			} catch (Exception e) {
-				throw new Error(e);
-			}
-		}
-		return instance;
-	}
+public class MessageQueueConnector implements IEventReceiver {
 
 	private static final IReportService reportService = ReportService.getInstance();
 	IEventSender sender;
 
-	public ReportServicePortAdapter(IEventSender sender) { this.sender = sender; }
+	public MessageQueueConnector(IEventSender sender) { this.sender = sender; }
 
-	private static final EventType generateReportForCustomer = new EventType("generateReportForCustomer");
-    private static final EventType generateReportForMerchant = new EventType("generateReportForMerchant");
-    private static final EventType generateManagerOverview = new EventType("generateManagerOverview");
-	private static final EventType registerTransaction = new EventType("registerTransaction");
-	private static final EventType[] supportedEventTypes =
-			new EventType[] {generateReportForCustomer, generateReportForMerchant, generateManagerOverview, registerTransaction};
+	private final EventType generateReportForCustomer = new EventType("generateReportForCustomer");
+    private final EventType generateReportForMerchant = new EventType("generateReportForMerchant");
+    private final EventType generateManagerOverview = new EventType("generateManagerOverview");
+	private final EventType registerTransaction = new EventType("registerTransaction");
 
 	@Override
 	public EventType[] getSupportedEventTypes() {
-		return supportedEventTypes;
+		return new EventType[] {generateReportForCustomer, generateReportForMerchant, generateManagerOverview, registerTransaction};
 	}
 
 	private void registerTransaction(Payment payment, String CustomerId) {
