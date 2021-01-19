@@ -59,16 +59,6 @@ public class ReportingSteps {
         customerAdapter.close();
     }
 
-    @When("the merchant requests a report of transactions")
-    public void theMerchantRequestsAReportOfTransactions() {
-        try {
-            report = merchantAdapter.getMerchantReport(merchant.getId(), null, null);
-            assertNotNull(report);
-        } catch (IllegalArgumentException e) {
-            this.exceptionHolder.setException(e);
-        }
-    }
-
     @Then("the merchant receives a report having a transaction of {int} kr for a {string} to the merchant using the same token")
     public void theMerchantReceivesAReportHavingATransactionOfKrForAToTheMerchantUsingTheSameToken(int amount,
                                                                                                    String productDescription) {
@@ -80,12 +70,6 @@ public class ReportingSteps {
         boolean foundOtherMerchantPaymentsInReport = report.getPayments().stream()
                 .anyMatch(payment -> payment.merchantId.equals(otherMerchant.getId()));
         assertFalse(foundOtherMerchantPaymentsInReport);
-    }
-
-    @When("DTUPay requests a report of transactions")
-    public void dtupayRequestsAReportOfTransactions() {
-        managerOverview = managerAdapter.getManagerOverview();
-        assertNotNull(managerOverview);
     }
 
     @Then("DTUPay receives a report including both transactions")
@@ -107,6 +91,38 @@ public class ReportingSteps {
         assertTrue(secondProductIsPresent);
     }
 
+    @Then("the customer receives a report having a transaction of {int} kr for a {string} to the merchant using the same token")
+    public void theCustomerReceivesAReportHavingATransactionOfKrForAToTheMerchantUsingTheSameToken(int amount, String productDescription) {
+        verifyUserReport(customerHolder, amount, productDescription, tokenHolder.getTokens().get(0));
+    }
+
+    @Then("the merchant does not receive a report")
+    public void theMerchantDoesNotReceiveAReport() {
+        assertNull(report);
+    }
+
+    @Then("the customer does not receive a report")
+    public void theCustomerDoesNotReceiveAReport() {
+        assertNull(report);
+
+    }
+
+    @When("the merchant requests a report of transactions")
+    public void theMerchantRequestsAReportOfTransactions() {
+        try {
+            report = merchantAdapter.getMerchantReport(merchant.getId(), null, null);
+            assertNotNull(report);
+        } catch (IllegalArgumentException e) {
+            this.exceptionHolder.setException(e);
+        }
+    }
+
+    @When("DTUPay requests a report of transactions")
+    public void dtupayRequestsAReportOfTransactions() {
+        managerOverview = managerAdapter.getManagerOverview();
+        assertNotNull(managerOverview);
+    }
+
     @When("the customer requests a report of transactions")
     public void theCustomerRequestsAReportOfTransactions() {
         try {
@@ -117,9 +133,14 @@ public class ReportingSteps {
         }
     }
 
-    @Then("the customer receives a report having a transaction of {int} kr for a {string} to the merchant using the same token")
-    public void theCustomerReceivesAReportHavingATransactionOfKrForAToTheMerchantUsingTheSameToken(int amount, String productDescription) {
-        verifyUserReport(customerHolder, amount, productDescription, tokenHolder.getTokens().get(0));
+    @When("the merchant requests a report of transactions in a time interval")
+    public void theMerchantRequestsAReportOfTransactionsInATimeInterval() {
+        try {
+            report = merchantAdapter.getMerchantReport(merchant.getId(), LocalDateTime.of(2009,01,01,12,12), LocalDateTime.now());
+            assertNotNull(report);
+        } catch (IllegalArgumentException e) {
+            this.exceptionHolder.setException(e);
+        }
     }
 
     private void verifyUserReport(UserHolder userHolder, int amount, String productDescription, UUID token) {
@@ -147,26 +168,5 @@ public class ReportingSteps {
 
         assertTrue(foundCorrectTransaction);
         assertEquals(report.getPayments().size(), 1);
-    }
-
-    @Then("the merchant does not receive a report")
-    public void theMerchantDoesNotReceiveAReport() {
-        assertNull(report);
-    }
-
-    @Then("the customer does not receive a report")
-    public void theCustomerDoesNotReceiveAReport() {
-        assertNull(report);
-
-    }
-
-    @When("the merchant requests a report of transactions in a time interval")
-    public void theMerchantRequestsAReportOfTransactionsInATimeInterval() {
-        try {
-            report = merchantAdapter.getMerchantReport(merchant.getId(), LocalDateTime.of(2009,01,01,12,12), LocalDateTime.now());
-            assertNotNull(report);
-        } catch (IllegalArgumentException e) {
-            this.exceptionHolder.setException(e);
-        }
     }
 }
