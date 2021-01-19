@@ -1,6 +1,3 @@
 package accountservice;
 
-//TODO: Refactor to DTUPayUser instead?
-public class Merchant extends DTUPayUser {
-
-}
+public class Merchant extends DTUPayUser { }
