@@ -29,21 +29,8 @@ public class ReportingSteps {
         }
 
         @Override
-        public boolean customerExists(String customerId) {
-            return true;
-        }
-
-        @Override
         public Customer getCustomer(String customerId) throws CustomerDoesNotExistException {
             return customer;
-        }
-
-        @Override
-        public String registerMerchant(Merchant merchant) throws IllegalArgumentException {
-            this.merchant = merchant;
-            String id = "Mock Merchant Id";
-            merchant.id = id;
-            return id;
         }
 
         @Override
