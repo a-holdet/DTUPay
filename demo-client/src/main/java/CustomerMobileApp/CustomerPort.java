@@ -45,14 +45,16 @@ public class CustomerPort {
         return customerId;
     }
 
-    public List<UUID> createTokensForCustomer(String customerId, int amount) throws Exception {
-        TokenRequestObject request = new TokenRequestObject(customerId, amount);
-        request.setUserId(customerId);
-        request.setTokenAmount(amount);
+    public List<UUID> createTokensForCustomer(String customerId, int tokenAmount) throws Exception {
+
+        Object inputRequest = new Object() {
+            Integer amount = tokenAmount;
+        };
+
         Response response = baseUrl
-                .path("tokens")
+                .path("customers").path(customerId).path("tokens")
                 .request()
-                .post(Entity.entity(request, MediaType.APPLICATION_JSON));
+                .post(Entity.entity(inputRequest, MediaType.APPLICATION_JSON));
 
         if (response.getStatus() == 401) { // customer is unauthorized (i.e customer has no bank account)
             String errorMessage = response.readEntity(String.class); // error message is in payload
@@ -70,7 +72,9 @@ public class CustomerPort {
     }
 
     public UserReport getCustomerReport(String customerID) {
-        Response response = baseUrl.path("reports").queryParam("id", customerID).request().get(new GenericType<>() {
+        Response response = baseUrl
+                .path("customers").path(customerID).path("reports")
+                .request().get(new GenericType<>() {
         });
         if (response.getStatus() == 422) {
             String errorMessage = response.readEntity(String.class); // error message is in payload

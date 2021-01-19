@@ -41,10 +41,17 @@ public class MerchantPort {
         return merchantId;
     }
 
-    public void transferMoneyFromTo(UUID selectedToken, String merchantId, BigDecimal amount, String description) throws IllegalArgumentException, ForbiddenException {
-        Payment payment = new Payment(selectedToken, merchantId, description, amount);
+    public void transferMoneyFromTo(UUID tSelectedToken, String merchantId, BigDecimal tAmount, String tDescription) throws IllegalArgumentException, ForbiddenException {
 
-        Response response = baseUrl.path("payments").request().post(Entity.entity(payment, MediaType.APPLICATION_JSON));
+        Object paymentInput = new Object() {
+            BigDecimal amount = tAmount;
+            UUID customerToken = tSelectedToken;
+            String description = tDescription;
+        };
+
+        Response response = baseUrl
+                .path("merchants").path(merchantId).path("payments")
+                .request().post(Entity.entity(paymentInput, MediaType.APPLICATION_JSON));
         if (response.getStatus() == 422) {
             String errorMessage = response.readEntity(String.class);
             response.close();
