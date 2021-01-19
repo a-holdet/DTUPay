@@ -14,6 +14,9 @@ import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/***
+ * @Author Christian Dan Hjelmslund, s164412
+ */
 public class TokenServiceTestsSteps {
     MessageQueueConnector s;
     Event event;

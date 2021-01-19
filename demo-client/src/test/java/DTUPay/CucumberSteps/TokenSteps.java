@@ -18,6 +18,9 @@ import java.util.UUID;
 
 import static org.junit.Assert.*;
 
+/***
+ * @Author Sebastian Arcos Specht, s164394
+ */
 public class TokenSteps {
 
     //Adapters
