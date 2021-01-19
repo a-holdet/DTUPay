@@ -16,43 +16,37 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.UUID;
 
-public class CustomerAdapter {
+public class CustomerPort {
     WebTarget baseUrl;
     Client client;
 
-    public CustomerAdapter() {
+    public CustomerPort() {
         client = ClientBuilder.newClient();
         baseUrl = client.target("http://localhost:8042/customerapi");
     }
 
-    public String registerCustomer(String firstName, String lastName, String cprNumber, String accountID)
+    public String registerCustomer(String firstName, String lastName, String cprNumber, String accountId)
             throws IllegalArgumentException {
-        DTUPayUser customer = new DTUPayUser(firstName, lastName, cprNumber, accountID);
+        DTUPayUser customer = new DTUPayUser(firstName, lastName, cprNumber, accountId);
         Response response = baseUrl.path("customers").request()
                 .post(Entity.entity(customer, MediaType.APPLICATION_JSON));
 
+        System.out.println(response.getStatus());
         if (response.getStatus() == 422) {
             String errorMessage = response.readEntity(String.class); // error message is in payload
-            response.close();
-            throw new IllegalArgumentException(errorMessage);
-        } else if (response.getStatus() >= 300) {
-            String errorMessage = response.readEntity(String.class); // error message is in payload
+            System.out.println(errorMessage);
             response.close();
             throw new IllegalArgumentException(errorMessage);
         }
 
-        // TODO: Refactor
         String customerId = response.readEntity(String.class);
-        if (customerId.equals("")) {
-            throw new RuntimeException("wtf");
-        }
 
         response.close();
         return customerId;
     }
 
     public List<UUID> createTokensForCustomer(String customerId, int amount) throws Exception {
-        TokenRequestObject request = new TokenRequestObject();
+        TokenRequestObject request = new TokenRequestObject(customerId, amount);
         request.setUserId(customerId);
         request.setTokenAmount(amount);
         Response response = baseUrl
@@ -78,15 +72,16 @@ public class CustomerAdapter {
     public UserReport getCustomerReport(String customerID) {
         Response response = baseUrl.path("reports").queryParam("id", customerID).request().get(new GenericType<>() {
         });
-        if(response.getStatus() == 422){
+        if (response.getStatus() == 422) {
             String errorMessage = response.readEntity(String.class); // error message is in payload
             response.close();
             throw new IllegalArgumentException(errorMessage);
         }
 
-        UserReport report  = response.readEntity(new GenericType<>() {});
-        return report;
+        return response.readEntity(new GenericType<>() {});
     }
 
-    public void close() { client.close(); }
+    public void close() {
+        client.close();
+    }
 }

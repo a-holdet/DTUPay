@@ -1,7 +1,7 @@
 package DTUPay.CucumberSteps;
 
-import CustomerMobileApp.CustomerAdapter;
-import CustomerMobileApp.MerchantAdapter;
+import CustomerMobileApp.CustomerPort;
+import CustomerMobileApp.MerchantPort;
 import DTUPay.Holders.CustomerHolder;
 import DTUPay.Holders.MerchantHolder;
 import DTUPay.Holders.TokenHolder;
@@ -24,8 +24,8 @@ public class PaymentSteps {
 
     // Adapters
     BankService bankService = new BankServiceService().getBankServicePort();
-    MerchantAdapter merchantAdapter;
-    CustomerAdapter customerAdapter;
+    MerchantPort merchantPort;
+    CustomerPort customerPort;
 
     // Holders
     private final TokenHolder tokenHolder;
@@ -51,8 +51,8 @@ public class PaymentSteps {
 
     @Before
     public void beforeScenario() {
-        customerAdapter = new CustomerAdapter();
-        merchantAdapter = new MerchantAdapter();
+        customerPort = new CustomerPort();
+        merchantPort = new MerchantPort();
 
         Account acc1 = null;
         try {
@@ -69,8 +69,8 @@ public class PaymentSteps {
 
     @After
     public void afterScenario() {
-        customerAdapter.close();
-        merchantAdapter.close();
+        customerPort.close();
+        merchantPort.close();
         Account acc1 = null;
         try {
             acc1 = bankService.getAccountByCprNumber("290276-7777");
@@ -110,7 +110,7 @@ public class PaymentSteps {
     @And("the merchant and customer perform a successful payment of {int} kr for a {string}")
     public void theMerchantAndCustomerPerformASuccessfulPaymentOfKrForA(int amount, String productDescription) throws Exception {
         this.purchasesHolder.add(amount, productDescription);
-        tokenHolder.setTokens(customerAdapter.createTokensForCustomer(customerHolder.getId(), 2)); // Request 2 tokens
+        tokenHolder.setTokens(customerPort.createTokensForCustomer(customerHolder.getId(), 2)); // Request 2 tokens
         UUID tokenUsedInPayment = tokenHolder.getTokens().get(0); // Extract 1st token
         performPaymentUsing(tokenUsedInPayment, merchantHolder, amount, productDescription);
     }
@@ -134,7 +134,7 @@ public class PaymentSteps {
     @When("the merchant initiates a payment for {int} kr using the selected customer token")
     public void theMerchantInitiatesAPaymentForKrUsingTheSelectedCustomerToken(int amount) {
         try {
-            merchantAdapter.transferMoneyFromTo(selectedToken, merchantHolder.getId(), new BigDecimal(amount),
+            merchantPort.transferMoneyFromTo(selectedToken, merchantHolder.getId(), new BigDecimal(amount),
                     "myscription");
             successful = true;
         } catch (IllegalArgumentException | ForbiddenException e) {
@@ -168,7 +168,7 @@ public class PaymentSteps {
 
     private void performPaymentUsing(UUID token, UserHolder merchantHolder, int amount, String productDescription) throws IllegalArgumentException, ForbiddenException {
         // System.out.println("PERFORMING PAYMENT:" + merchantHolder.getId() + ". " + productDescription);
-        merchantAdapter.transferMoneyFromTo(token, merchantHolder.getId(), BigDecimal.valueOf(amount),
+        merchantPort.transferMoneyFromTo(token, merchantHolder.getId(), BigDecimal.valueOf(amount),
         productDescription); // Make payment
     }
 }

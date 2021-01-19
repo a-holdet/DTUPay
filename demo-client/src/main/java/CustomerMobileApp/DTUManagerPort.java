@@ -8,19 +8,18 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import java.util.List;
 
-public class DTUManagerAdapter {
+public class DTUManagerPort {
 
     Client client;
     WebTarget baseUrl;
 
-    public DTUManagerAdapter() {
+    public DTUManagerPort() {
         client = ClientBuilder.newClient();
         baseUrl = client.target("http://localhost:8042/managerapi");
     }
 
     public List<Transaction> getManagerOverview() {
-        return baseUrl.path("reports").request().get(new GenericType<>() {
-        });
+        return baseUrl.path("reports").request().get(new GenericType<>() {});
     }
 
     public void close() {  
