@@ -15,7 +15,7 @@ public class StartUp {
         IMerchantService merchantService = new LocalMerchantService(merchantRepository);
         ICustomerService customerService = new LocalCustomerService(customerRepository);
 
-        IEventReceiver service = new MessageQueueConnector(
+        IEventReceiver service = new AccountServicePortAdapter(
                 merchantService,
                 customerService,
                 new EventExchangeFactory().getExchange().createIEventSender()
@@ -23,5 +23,4 @@ public class StartUp {
 
         new EventQueue(service).startListening();
     }
-        // new AccountServicePortAdapterFactory().getPortAdapter(); // Michaels linje fra i nat.
 }

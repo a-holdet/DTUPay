@@ -109,7 +109,7 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
 
         if (Arrays.stream(supportedEventTypes).anyMatch(eventType -> eventType.matches(event.getEventType()))) {
             System.out.println("Supported Event received! : " + event);
-            CompletableFuture<Event> cf = requests.get(event.getUUID());
+            CompletableFuture<Event> cf = requests.remove(event.getUUID());
             if (cf != null) cf.complete(event);
         } else {
             System.out.println("Event received! : " + event);

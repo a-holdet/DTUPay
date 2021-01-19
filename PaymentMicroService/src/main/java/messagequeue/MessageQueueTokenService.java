@@ -91,7 +91,7 @@ public class MessageQueueTokenService implements ITokenService, IEventReceiver {
 
         if (consumeToken.matches(event.getEventType())) {
             System.out.println("Receive Event mathes:" + event.getEventType());
-            CompletableFuture<Event> cf = requests.get(event.getUUID());
+            CompletableFuture<Event> cf = requests.remove(event.getUUID());
             if (cf != null) {
                 System.out.println("Completing future");
                 cf.complete(event);
