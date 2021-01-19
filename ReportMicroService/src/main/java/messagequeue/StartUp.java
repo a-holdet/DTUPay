@@ -1,14 +1,12 @@
 package messagequeue;
 
-import accountservice.IAccountService;
 import accountservice.MessageQueueAccountService;
 import messaging.rmq.event.EventExchangeFactory;
 import messaging.rmq.event.EventQueue;
-import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import reportservice.IReportService;
 import reportservice.ITransactionsRepository;
-import reportservice.ReportService;
+import reportservice.LocalReportService;
 import reportservice.TransactionsInMemoryRepository;
 
 public class StartUp {
@@ -21,7 +19,7 @@ public class StartUp {
         ITransactionsRepository transactionsRepository = new TransactionsInMemoryRepository();
 
         var accountService = new MessageQueueAccountService(eventSender1);
-        IReportService reportService = new ReportService(transactionsRepository, accountService);
+        IReportService reportService = new LocalReportService(transactionsRepository, accountService);
 
         MessageQueueConnector messageQueueConnector = new MessageQueueConnector(eventSender2,reportService);
 
