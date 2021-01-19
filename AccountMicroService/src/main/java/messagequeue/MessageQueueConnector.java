@@ -13,6 +13,10 @@ import messaging.rmq.event.objects.EventType;
 
 import java.util.UUID;
 
+/***
+ * @Author Michael Davidsen Kirkegaard, s153587
+ */
+
 public class MessageQueueConnector implements IEventReceiver {
 
 	IMerchantService merchantService;

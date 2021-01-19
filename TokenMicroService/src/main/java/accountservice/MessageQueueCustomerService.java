@@ -5,6 +5,10 @@ import messaging.rmq.event.objects.Event;
 import messaging.rmq.event.objects.EventType;
 import messaging.rmq.event.objects.MessageQueueBase;
 
+/***
+ * @Author Sebastian Arcos Specht, s164394
+ */
+
 public class MessageQueueCustomerService extends MessageQueueBase implements ICustomerService {
 
     private static final EventType customerExistsEvent = new EventType("customerExists");

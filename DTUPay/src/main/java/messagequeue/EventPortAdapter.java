@@ -7,6 +7,11 @@ import messaging.rmq.event.objects.EventType;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+
+/***
+ * @Author Michael Davidsen Kirkegaard, s153587
+ */
+
 public class EventPortAdapter implements IEventReceiver {
 
 	private ConcurrentHashMap<String, List<IEventReceiver>> eventTypeMapper = new ConcurrentHashMap<>();

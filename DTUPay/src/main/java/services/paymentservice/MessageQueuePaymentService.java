@@ -9,6 +9,12 @@ import messaging.rmq.event.objects.Event;
 import messaging.rmq.event.objects.EventType;
 import services.tokenservice.TokenDoesNotExistException;
 
+
+
+/***
+ * @Author Jakob Vestergaard Offersen, s163940
+ */
+
 public class MessageQueuePaymentService extends MessageQueueBase implements IPaymentService {
 
     private static final EventType registerPayment = new EventType("registerPayment");

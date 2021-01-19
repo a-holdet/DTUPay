@@ -2,6 +2,10 @@ package tokenservice;
 
 import java.util.*;
 
+/***
+ * @Author Jakob Vestergaard Offersen, s163940
+ */
+
 public class TokenInMemoryRepository implements ITokenRepository {
     Map<UUID, String> tokenCustomerMap = new HashMap<>();
 

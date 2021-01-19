@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 /***
- * @Author Michael, s153587
+ * @Author Michael Davidsen Kirkegaard, s153587
  */
 
 public class MerchantSteps {

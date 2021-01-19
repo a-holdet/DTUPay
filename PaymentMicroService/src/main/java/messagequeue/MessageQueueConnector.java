@@ -1,5 +1,8 @@
 package messagequeue;
 
+/***
+ * @Author Jakob Vestergaard Offersen, s163940
+ */
 import accountservice.CustomerDoesNotExistException;
 import accountservice.MerchantDoesNotExistException;
 import bank.BankException;

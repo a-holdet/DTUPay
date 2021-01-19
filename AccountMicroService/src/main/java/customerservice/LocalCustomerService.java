@@ -2,6 +2,10 @@ package customerservice;
 
 import java.util.UUID;
 
+/***
+ * @Author Benjamin Wrist Lam, s153486
+ */
+
 public class LocalCustomerService implements ICustomerService {
 
     private final ICustomerRepository customerRepository;

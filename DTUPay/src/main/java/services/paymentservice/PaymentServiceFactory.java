@@ -4,6 +4,10 @@ import messagequeue.EventPortAdapterFactory;
 import messaging.rmq.event.EventExchangeFactory;
 import messaging.rmq.event.interfaces.IEventReceiver;
 
+/***
+ * @Author Jakob Vestergaard Offersen, s163940
+ */
+
 public class PaymentServiceFactory {
     static IPaymentService service;
 

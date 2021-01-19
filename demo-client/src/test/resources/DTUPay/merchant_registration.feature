@@ -1,3 +1,9 @@
+#/***
+#* @Author Martin Hemmingsen, s141887
+#*/
+
+
+
 Feature: Merchant Registration
   Scenario: Successful Registration
     Given the merchant has a bank account

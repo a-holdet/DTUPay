@@ -4,6 +4,10 @@ import messagequeue.EventPortAdapterFactory;
 import messaging.rmq.event.EventExchangeFactory;
 import messaging.rmq.event.interfaces.IEventReceiver;
 
+/***
+ * @Author Christian Dan Hjelmslund, s164412
+ */
+
 public class TokenServiceFactory {
 
     private static ITokenService service;

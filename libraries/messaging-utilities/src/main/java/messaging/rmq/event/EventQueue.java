@@ -9,6 +9,9 @@ import messaging.rmq.event.objects.Event;
 
 import java.nio.charset.StandardCharsets;
 
+/***
+ * @Author Simon Borup Lindegren, s185370
+ */
 public class EventQueue extends RMQQueue {
     // all EventQueue use same routing to the EventExchange
     public static final String ROUTING_KEY = EventExchange.ROUTING_KEY_ALL;

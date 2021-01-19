@@ -13,6 +13,10 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+/***
+ * @Author Benjamin Wrist Lam, s153486
+ */
+
 @Path("/merchantapi/payments")
 public class PaymentsResource {
     IPaymentService paymentService = new PaymentServiceFactory().getService();

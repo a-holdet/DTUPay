@@ -1,5 +1,8 @@
 package reportservice;
 
+/***
+ * @Author Jakob Vestergaard Offersen, s163940
+ */
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

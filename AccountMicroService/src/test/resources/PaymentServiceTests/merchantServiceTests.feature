@@ -1,6 +1,7 @@
 #/***
-#* @Author Michael, s153587
+#* @Author Michael Davidsen Kirkegaard, s153587
 #*/
+
 Feature: merchant service tests
   Scenario: successful merchant register
     Given A valid Merchant

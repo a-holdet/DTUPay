@@ -10,6 +10,10 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
+/***
+ * @Author Martin Hemmingsen, s141887
+ */
+
 public abstract class MessageQueueBase implements IEventReceiver {
     protected final ConcurrentHashMap<UUID, CompletableFuture<Event>> requests = new ConcurrentHashMap<>();
     protected final IEventSender sender;
