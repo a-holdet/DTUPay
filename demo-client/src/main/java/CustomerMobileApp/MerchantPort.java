@@ -71,9 +71,6 @@ public class MerchantPort {
             throw new IllegalArgumentException(errorMessage);
         }
         UserReport userReport = response.readEntity(UserReport.class);
-
-        System.out.println(userReport);
-        System.out.println(userReport);
         return userReport;
     }
 
