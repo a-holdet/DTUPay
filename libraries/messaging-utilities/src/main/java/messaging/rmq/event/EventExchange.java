@@ -9,6 +9,9 @@ import messaging.rmq.event.objects.EventType;
 
 import java.util.UUID;
 
+/***
+ * @Author Michael Davidsen Kirkegaard, s153587
+ */
 public class EventExchange extends RMQExchange {
 
     public static final String EXCHANGE_NAME = "EventExchange";

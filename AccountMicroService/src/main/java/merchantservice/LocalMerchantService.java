@@ -2,6 +2,10 @@ package merchantservice;
 
 import java.util.UUID;
 
+/***
+ * @Author Martin Hemmingsen, s141887
+ */
+
 public class LocalMerchantService implements IMerchantService{
 
     private final IMerchantRepository merchantRepository;
