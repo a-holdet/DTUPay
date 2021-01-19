@@ -1,4 +1,4 @@
-package adapters;
+package adapters.customeradapters;
 
 import accountservice.CustomerDoesNotExistException;
 import reportservice.IReportService;
@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/customerapi/reports")
-public class CustomerReportingResource {
+public class ReportResource {
     IReportService reportService = new ReportServiceFactory().getService();
 
     @GET

@@ -1,4 +1,4 @@
-package adapters;
+package adapters.merchantadapters;
 
 import DTO.Payment;
 import accountservice.CustomerDoesNotExistException;

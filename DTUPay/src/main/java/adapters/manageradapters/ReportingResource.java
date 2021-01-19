@@ -1,4 +1,4 @@
-package adapters;
+package adapters.manageradapters;
 
 import reportservice.IReportService;
 import reportservice.MessageQueueReportService;
@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 @Path("/managerapi/reports")
-public class ManagerReportingResource {
+public class ReportingResource {
     IReportService reportService = new ReportServiceFactory().getService();
 
     @GET
