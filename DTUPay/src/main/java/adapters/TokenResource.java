@@ -1,6 +1,6 @@
 package adapters;
 
-import DTO.TokenCreation;
+import DTO.TokenCreationDTO;
 import tokenservice.*;
 
 import javax.ws.rs.*;
@@ -17,7 +17,7 @@ public class TokenResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createTokensForCustomer(TokenCreation request) {
+    public Response createTokensForCustomer(TokenCreationDTO request) {
 
         try {
             List<UUID> tokens = tokenService.createTokens(request);

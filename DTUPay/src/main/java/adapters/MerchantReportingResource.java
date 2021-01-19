@@ -4,6 +4,7 @@ import accountservice.MerchantDoesNotExistException;
 import reportservice.IReportService;
 import DTO.UserReport;
 import reportservice.ReportServiceFactory;
+import reportservice.UserDoesNotExistsException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -22,7 +23,7 @@ public class MerchantReportingResource {
         try {
             UserReport report = reportService.generateReportForMerchant(merchantId,startTime,endTime);
             return Response.ok(report).build();
-        } catch (MerchantDoesNotExistException e) {
+        } catch (UserDoesNotExistsException e) {
             return Response.status(422).entity(e.getMessage()).build();
         }
     }

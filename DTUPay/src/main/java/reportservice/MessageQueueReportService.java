@@ -1,29 +1,16 @@
 package reportservice;
 
-import DTO.DTUPayUser;
-import DTO.Transaction;
-import DTO.UserReport;
-import DTO.Payment;
+import DTO.*;
 
-import java.util.Arrays;
 import java.util.List;
-
 import accountservice.CustomerDoesNotExistException;
-import accountservice.ICustomerService;
-import accountservice.IMerchantService;
 import accountservice.MerchantDoesNotExistException;
 import com.google.gson.reflect.TypeToken;
-
-import messaging.rmq.event.EventExchange;
-import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 import messaging.rmq.event.objects.EventServiceBase;
 import messaging.rmq.event.objects.EventType;
-
-import java.util.concurrent.CompletableFuture;
-
 
 public class MessageQueueReportService extends EventServiceBase implements IReportService, IEventReceiver {
 
@@ -34,7 +21,7 @@ public class MessageQueueReportService extends EventServiceBase implements IRepo
     private static final EventType[] supportedEventTypes =
             new EventType[] {generateReportForCustomer, generateReportForMerchant, registerTransaction, generateManagerOverview};
 
-    public MessageQueueReportService(IEventSender sender, IMerchantService merchantService, ICustomerService customerService) {
+    public MessageQueueReportService(IEventSender sender) {
         super(sender);
     }
 
@@ -43,97 +30,45 @@ public class MessageQueueReportService extends EventServiceBase implements IRepo
         return supportedEventTypes;
     }
 
+    private enum AccountType {
+        CUSTOMER(generateReportForCustomer), MERCHANT(generateReportForMerchant);
+        public EventType eventType;
+        AccountType(EventType eventType) {
+            this.eventType = eventType;
+        }
+    }
+
     @Override
-    public UserReport generateReportForCustomer(String customerId, String startTime, String endTime) throws CustomerDoesNotExistException {
-        Event event = new Event(generateReportForCustomer.getName(), new Object[] { customerId, startTime, endTime });
-        try {
-            requests.put(event.getUUID(), new CompletableFuture<>());
-            sender.sendEvent(event);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
-
-        event = requests.get(event.getUUID()).join();
-        String type = event.getEventType();
-
-        if (event.isSuccessReponse()) {
-            // Gson gson = new Gson();
-            // UserReport report = new UserReport();
-            // List<Payment> payments = Arrays.asList(gson.fromJson(event.getArgument(0,
-            // String.class), Payment[].class));
-            // DTUPayUser customerAsUser = gson.fromJson(event.getArgument(1, String.class),
-            // DTUPayUser.class);
-            // report.setPayments(payments);
-            // report.setUser(customerAsUser);
-            return generateReport(event);
-        }
-        String exceptionMsg = event.getArgument(1, String.class);
-        throw new CustomerDoesNotExistException(exceptionMsg);
+    public UserReport generateReportForCustomer(String customerId, String startTime, String endTime) throws UserDoesNotExistsException {
+        ReportCreationDTO reportCreationDTO = new ReportCreationDTO(customerId, startTime, endTime);
+        return generateReport(AccountType.CUSTOMER, reportCreationDTO);
     }
 
     @Override
     public UserReport generateReportForMerchant(String merchantId, String startTime, String endTime)
-            throws MerchantDoesNotExistException {
-        System.out.println("---------------------------------------------");
-        Event event = new Event(generateReportForMerchant.getName(), new Object[] { merchantId, startTime, endTime });
-        try {
-            requests.put(event.getUUID(), new CompletableFuture<>());
-            this.sender.sendEvent(event);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
-        System.out.println("---------------------------------------------");
-
-        event = requests.get(event.getUUID()).join();
-        String type = event.getEventType();
-
-        if (event.isSuccessReponse()) {
-            return generateReport(event);
-        }
-        String exceptionMsg = event.getArgument(1, String.class);
-        throw new MerchantDoesNotExistException(exceptionMsg);
+            throws UserDoesNotExistsException {
+        return generateReport(AccountType.MERCHANT, new ReportCreationDTO(merchantId, startTime, endTime));
     }
 
-    private UserReport generateReport(Event event) {
-        System.out.println("DTUPay successfully received report: " + event.getEventType());
-        UserReport report = new UserReport();
-        DTUPayUser user = event.getArgument(0,DTUPayUser.class);
-        System.out.println("DTUPay report user is " + user.getFirstName() + user.getCprNumber());
-        List<Payment> payments = event.getArgument(1, new TypeToken<>(){});
-        System.out.println("payments contain " + payments.size());
-        report.setPayments(payments);
-        report.setUser(user);
-        return report;
+    private UserReport generateReport(AccountType accountType, ReportCreationDTO reportCreationDTO) throws UserDoesNotExistsException {
+        var responseEvent = sendRequestAndAwaitReponse(reportCreationDTO, accountType.eventType);
+
+        if (responseEvent.isSuccessReponse())
+            return responseEvent.getPayloadAs(UserReport.class);
+
+        throw new UserDoesNotExistsException(responseEvent.getErrorMessage());
     }
 
     @Override
     public List<Transaction> generateManagerOverview() {
-        Event event = new Event(generateManagerOverview.getName());
-        try {
-            requests.put(event.getUUID(), new CompletableFuture<>());
-            this.sender.sendEvent(event);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
+        // TODO: Handle case of no info sent in request event
+        // TODO: Should be handled in EventServiceBase
+        Event responseEvent = sendRequestAndAwaitReponse("", generateManagerOverview);
 
-        event = requests.get(event.getUUID()).join();
+        if (responseEvent.isSuccessReponse())
+            return responseEvent.getPayloadAs(new TypeToken<>(){});
 
-        List<Transaction> transactions = event.getArgument(0, new TypeToken<>() {});
-        //List<Transaction> transactions = (List<Transaction>) event.getArguments()[0];
-        return transactions;
+        throw new Error(responseEvent.getErrorMessage());
     }
 
-    @Override
-    public void receiveEvent(Event event) {
-        System.out.println("--------------------------------------------------------");
-        System.out.println("Event received! : " + event);
-
-        if (Arrays.stream(supportedEventTypes).anyMatch(eventType -> eventType.matches(event.getEventType()))) {
-            CompletableFuture<Event> cf = requests.get(event.getUUID());
-            if (cf != null)
-                cf.complete(event);
-        }
-
-        System.out.println("--------------------------------------------------------");
-    }
 }

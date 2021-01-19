@@ -1,9 +1,9 @@
 package tokenservice;
 
-import DTO.TokenCreation;
+import DTO.TokenCreationDTO;
 import java.util.List;
 import java.util.UUID;
 
 public interface ITokenService {
-    List<UUID> createTokens(TokenCreation tokenCreation) throws IllegalTokenGrantingException, Exception;
+    List<UUID> createTokens(TokenCreationDTO tokenCreationDTO) throws IllegalTokenGrantingException, Exception;
 }

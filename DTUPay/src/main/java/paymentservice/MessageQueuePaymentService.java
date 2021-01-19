@@ -30,7 +30,7 @@ public class MessageQueuePaymentService extends EventServiceBase implements IPay
 
         System.out.println("REGISTER PAYMENT2: ");
         if (response.isFailureReponse()) {
-            String exceptionType = response.getArgument(0, String.class); //TODO: Refactor into own method on "response"
+            String exceptionType = response.getErrorType();
             String exceptionMessage = response.getErrorMessage();
             switch (exceptionType) {
                 case "MerchantDoesNotExistException": throw new MerchantDoesNotExistException(exceptionMessage);

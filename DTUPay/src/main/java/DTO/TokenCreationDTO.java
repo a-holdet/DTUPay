@@ -1,10 +1,10 @@
 package DTO;
 
-public class TokenCreation {
+public class TokenCreationDTO {
     private String userId;
     private int tokenAmount;
 
-    public TokenCreation() {}
+    public TokenCreationDTO() {}
 
     public void setUserId(String userId) {
         this.userId = userId;

@@ -62,6 +62,8 @@ public class Event {
         return getArgument(0, clazz);
     }
 
+    public String getErrorType() {return  getArgument(0, String.class);}
+
     //Errormessage are transferred with error type at index 0 and error message at index 1
     public String getErrorMessage() {
         return getArgument(1, String.class);
