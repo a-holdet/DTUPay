@@ -1,3 +1,7 @@
+#/***
+#* @Author Simon Borup Lindegren, s185370
+#*/
+
 FROM adoptopenjdk:11-jre-hotspot
 # COPY wait-for-it.sh /usr/src/wait-for-it.sh
 COPY target/lib /usr/src/lib
