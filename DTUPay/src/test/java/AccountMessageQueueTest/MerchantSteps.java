@@ -1,4 +1,4 @@
-/*
+
 package AccountMessageQueueTest;
 
 import accountservice.MessageQueueAccountService;
@@ -11,18 +11,17 @@ import DTO.Merchant;
 import accountservice.MerchantDoesNotExistException;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
+import messaging.rmq.event.objects.EventType;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
-*/
+
 /***
  * @Author Michael, s153587
- *//*
+ */
 
 public class MerchantSteps {
 
@@ -59,26 +58,29 @@ public class MerchantSteps {
 
     @When("I want to register merchant")
     public void iWantToRegisterMerchant() {
-        expectedOutput = UUID.randomUUID().toString();
         waitForEventInService = new CompletableFuture<>();
         waitForService = CompletableFuture.supplyAsync(() -> accountService.registerMerchant(merchant));
+        waitForEventInService.join();
+        expectedOutput = UUID.randomUUID().toString();
     }
 
     @Then("I have sent event {string}")
     public void iHaveSentEvent(String eventType) {
-        waitForEventInService.join();
         assertEquals(eventType, event.getEventType());
     }
 
     @When("I receive event {string}")
-    public void iReceiveEvent(String eventType) throws Exception {
+    public void iReceiveEvent(String eventType) {
         Event ev = new Event(eventType, new Object[] {expectedOutput}, event.getUUID());
         accountService.receiveEvent(ev);
+        actualOutput = waitForService.join();
     }
 
     @Then("service is successful")
     public void serviceIsSuccessful() throws Throwable {
-        actualOutput = waitForService.join();
+        if(actualOutput == null) {
+            fail("actualOutput is null");
+        }
         if(actualOutput instanceof Throwable)
             throw (Throwable) actualOutput;
 
@@ -86,14 +88,13 @@ public class MerchantSteps {
         assertEquals(gson.toJson(expectedOutput), gson.toJson(actualOutput));
     }
 
-    @Then("merchant is registered")
-    public void merchantIsRegistered() throws Exception {
+    @And("merchant is registered")
+    public void merchantIsRegistered() {
         merchant.id = UUID.randomUUID().toString();
     }
 
     @When("I want to get merchant")
     public void iWantToGetMerchant() {
-        expectedOutput = merchant;
         waitForEventInService = new CompletableFuture<>();
         waitForService = CompletableFuture.supplyAsync(() -> {
             try {
@@ -102,12 +103,7 @@ public class MerchantSteps {
                 return e;
             }
         });
-    }
-
-    @Then("service is unsuccessful")
-    public void serviceIsUnsuccessful() {
-        actualOutput = waitForService.join();
-        assertTrue(actualOutput instanceof Throwable);
+        waitForEventInService.join();
+        expectedOutput = merchant;
     }
 }
-*/

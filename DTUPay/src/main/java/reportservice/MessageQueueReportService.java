@@ -9,8 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import accountservice.CustomerDoesNotExistException;
-import accountservice.ICustomerService;
-import accountservice.IMerchantService;
 import accountservice.MerchantDoesNotExistException;
 import com.google.gson.reflect.TypeToken;
 
@@ -32,7 +30,7 @@ public class MessageQueueReportService extends MessageQueueBase implements IRepo
     private static final EventType[] supportedEventTypes =
             new EventType[] {generateReportForCustomer, generateReportForMerchant, registerTransaction, generateManagerOverview};
 
-    public MessageQueueReportService(IEventSender sender, IMerchantService merchantService, ICustomerService customerService) {
+    public MessageQueueReportService(IEventSender sender) {
         super(sender);
     }
 
