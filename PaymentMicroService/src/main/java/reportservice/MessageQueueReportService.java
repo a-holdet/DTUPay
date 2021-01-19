@@ -29,6 +29,6 @@ public class MessageQueueReportService extends MessageQueueBase implements IRepo
     public void registerTransaction(Payment payment, String customerId) {
         // Registering a transaction does not return nor throw anything.
         // Thus, we can safely drop the returned event here
-        sendRequest(payment, registerTransaction);
+        sendRequest(new Object[] {payment, customerId}, registerTransaction);
     }
 }

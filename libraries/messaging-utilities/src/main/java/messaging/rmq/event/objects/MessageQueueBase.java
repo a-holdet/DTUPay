@@ -26,8 +26,8 @@ public abstract class MessageQueueBase implements IEventReceiver {
         return response;
     }
 
-    protected void sendRequest(Object payload, EventType eventType) {
-        Event request = new Event(eventType.getName(), new Object[] {payload}, UUID.randomUUID());
+    protected void sendRequest(Object[] payloads, EventType eventType) {
+        Event request = new Event(eventType.getName(), payloads, UUID.randomUUID());
         this.sender.sendEvent(request);
     }
 
