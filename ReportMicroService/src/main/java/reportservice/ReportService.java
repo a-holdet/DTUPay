@@ -7,30 +7,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ReportService implements IReportService {
-
-    private static ReportService instance;
-
-    public static ReportService getInstance() {
-        if(instance == null) {
-            instance = new ReportService(
-                    new TransactionsInMemoryRepository(),
-                    MessageQueueAccountService.getInstance(),
-                    MessageQueueAccountService.getInstance()
-            );
-        }
-        return instance;
-    }
-
     private final ITransactionsRepository transactionsRepository;
-    private final IMerchantService merchantService;
-    private final ICustomerService customerService;
+    private final IAccountService accountService;
 
-    public ReportService(ITransactionsRepository transactionsRepository, IMerchantService merchantService,
-                         ICustomerService customerService) {
+    public ReportService(ITransactionsRepository transactionsRepository, IAccountService accountService) {
         this.transactionsRepository = transactionsRepository;
-        this.merchantService = merchantService;
-        this.customerService = customerService;
-        instance = this; // needed for service tests!
+        this.accountService = accountService;
     }
 
     @Override
@@ -42,7 +24,7 @@ public class ReportService implements IReportService {
                 .filter(t -> t.datetime.isAfter(startTimeAsDateTime) && t.datetime.isBefore(endTimeAsDateTime))
                 .map(Transaction::toPayment).collect(Collectors.toList());
 
-        Customer customer = customerService.getCustomer(customerId);
+        Customer customer = accountService.getCustomer(customerId);
         
         DTUPayUser customerAsUser = new DTUPayUser(customer.firstName, customer.lastName, customer.cprNumber,
                 customer.accountId);
@@ -64,7 +46,7 @@ public class ReportService implements IReportService {
                 .map(Transaction::toPayment).collect(Collectors.toList());
         System.out.println("Getting merchant from merchant service");
 
-        Merchant merchant = merchantService.getMerchant(merchantId);
+        Merchant merchant = accountService.getMerchant(merchantId);
 
         System.out.println("Got merchant from merchant service");
 
