@@ -19,10 +19,10 @@ public class MessageQueueReportService implements IReportService, IEventReceiver
     public static MessageQueueReportService getInstance() {
         if (instance == null) {
             try {
-                var ies = new EventExchangeFactory().getExchange().getSender();
+                var ies = new EventExchangeFactory().getExchange().createIEventSender();
                 MessageQueueReportService service = new MessageQueueReportService(ies);
-                new EventQueue(service).startListening();
                 instance = service;
+                //new EventQueue(instance).startListening();
             } catch (Exception e) {
                 throw new Error(e);
             }

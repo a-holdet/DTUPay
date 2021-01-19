@@ -14,7 +14,7 @@ public class ReportServiceFactory {
         if(service == null) {
             // Specific implementation of service
             service = new MessageQueueReportService(
-                    new EventExchangeFactory().getExchange().getSender(),
+                    new EventExchangeFactory().getExchange().createIEventSender(),
                     (IMerchantService) new AccountServiceFactory().getService(),
                     (ICustomerService) new AccountServiceFactory().getService()
             );

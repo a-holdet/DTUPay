@@ -1,6 +1,5 @@
 package messagequeue;
 
-import messaging.rmq.event.EventExchangeFactory;
 import messaging.rmq.event.EventQueue;
 
 public class EventPortAdapterFactory {

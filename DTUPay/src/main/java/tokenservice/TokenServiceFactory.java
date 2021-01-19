@@ -12,7 +12,7 @@ public class TokenServiceFactory {
         if(service == null) {
             // Specific implementation of the service
             service = new MessageQueueTokenService(
-                    new EventExchangeFactory().getExchange().getSender()
+                    new EventExchangeFactory().getExchange().createIEventSender()
             );
             // Registers to the EventPortAdapter
             new EventPortAdapterFactory().getPortAdapter()

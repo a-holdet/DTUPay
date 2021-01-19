@@ -8,7 +8,6 @@ import Tokens.TokenDoesNotExistException;
 import messaging.rmq.event.EventExchangeFactory;
 import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.objects.EventType;
-import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
@@ -17,17 +16,17 @@ import paymentservice.*;
 
 import java.util.UUID;
 
-public class EventService implements IEventReceiver {
+public class PaymentServicePortAdaper implements IEventReceiver {
 
 	// Singleton as method due to serviceTest
-	private static EventService instance;
-	public static EventService getInstance() {
+	private static PaymentServicePortAdaper instance;
+	public static PaymentServicePortAdaper getInstance() {
 		if (instance == null) {
 			try {
-				var ies = new EventExchangeFactory().getExchange().getSender();
-				EventService service = new EventService(ies);
-				new EventQueue(service).startListening();
+				var ies = new EventExchangeFactory().getExchange().createIEventSender();
+				PaymentServicePortAdaper service = new PaymentServicePortAdaper(ies);
 				instance = service;
+				//new EventQueue(instance).startListening();
 			} catch (Exception e) {
 				throw new Error(e);
 			}
@@ -39,7 +38,7 @@ public class EventService implements IEventReceiver {
 
 	private IEventSender sender;
 
-	public EventService(IEventSender sender) { this.sender = sender; }
+	public PaymentServicePortAdaper(IEventSender sender) { this.sender = sender; }
 
 	private static final EventType registerPayment = new EventType("registerPayment");
 	private static final EventType[] SupportedEventTypes = new EventType[] {registerPayment};

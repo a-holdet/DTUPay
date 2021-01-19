@@ -1,5 +1,7 @@
 package accountservice;
 
+import messagequeue.EventPortAdapterFactory;
+import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.objects.EventType;
 import messaging.rmq.event.objects.EventServiceBase;
 import messaging.rmq.event.EventExchangeFactory;
@@ -15,10 +17,10 @@ public class MessageQueueAccountService extends EventServiceBase implements IMer
     public static MessageQueueAccountService getInstance() {
         if (instance == null) {
             try {
-                var ies = new EventExchangeFactory().getExchange().getSender();
+                var ies = new EventExchangeFactory().getExchange().createIEventSender();
                 MessageQueueAccountService service = new MessageQueueAccountService(ies);
-                new EventQueue(service).startListening();
                 instance = service;
+                //new EventQueue(instance).startListening();
             } catch (Exception e) {
                 throw new Error(e);
             }

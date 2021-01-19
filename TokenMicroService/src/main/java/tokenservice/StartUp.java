@@ -1,8 +1,6 @@
 package tokenservice;
 
-import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.EventExchangeFactory;
-import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import tokenservice.MQ.MQCustomerService;
 import tokenservice.messagequeue.EventPortAdapterFactory;
@@ -12,10 +10,10 @@ import tokenservice.tokenservice.TokenInMemoryRepository;
 
 public class StartUp {
     public static void main(String[] args) {
-        var sender = new EventExchangeFactory().getExchange().getSender();
+        var sender = new EventExchangeFactory().getExchange().createIEventSender();
         var customerService = new MQCustomerService(sender);
 
-        sender = new EventExchangeFactory().getExchange().getSender();
+        sender = new EventExchangeFactory().getExchange().createIEventSender();
         var tokenRepository = new TokenInMemoryRepository();
         var tokenService = new LocalTokenService(customerService,tokenRepository);
         var tokenEventService = new MQTokenService(sender, tokenService);
@@ -23,7 +21,5 @@ public class StartUp {
         var eventPortAdapter = new EventPortAdapterFactory().getPortAdapter();
         eventPortAdapter.registerReceiver((IEventReceiver) customerService);
         eventPortAdapter.registerReceiver((IEventReceiver) tokenEventService);
-        //new EventQueue(tokenEventService).startListening();
-        //new EventQueue(customerService).startListening();
     }
 }

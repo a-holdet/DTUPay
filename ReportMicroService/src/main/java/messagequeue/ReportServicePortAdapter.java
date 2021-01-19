@@ -2,12 +2,9 @@ package messagequeue;
 
 
 import accountservice.CustomerDoesNotExistException;
-import accountservice.Merchant;
 import accountservice.MerchantDoesNotExistException;
-import io.cucumber.java.an.E;
 import messaging.rmq.event.EventExchangeFactory;
 import messaging.rmq.event.EventQueue;
-import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
@@ -18,17 +15,17 @@ import reportservice.*;
 import java.util.List;
 import java.util.UUID;
 
-public class EventService implements IEventReceiver {
+public class ReportServicePortAdapter implements IEventReceiver {
 
 	// Singleton as method due to serviceTest
-	private static EventService instance;
-	public static EventService getInstance() {
+	private static ReportServicePortAdapter instance;
+	public static ReportServicePortAdapter getInstance() {
 		if (instance == null) {
 			try {
-				var ies = new EventExchangeFactory().getExchange().getSender();
-				EventService service = new EventService(ies);
-				new EventQueue(service).startListening();
+				var ies = new EventExchangeFactory().getExchange().createIEventSender();
+				ReportServicePortAdapter service = new ReportServicePortAdapter(ies);
 				instance = service;
+				//new EventQueue(instance).startListening();
 			} catch (Exception e) {
 				throw new Error(e);
 			}
@@ -39,7 +36,7 @@ public class EventService implements IEventReceiver {
 	private static final IReportService reportService = ReportService.getInstance();
 	IEventSender sender;
 
-	public EventService(IEventSender sender) { this.sender = sender; }
+	public ReportServicePortAdapter(IEventSender sender) { this.sender = sender; }
 
 	private static final EventType generateReportForCustomer = new EventType("generateReportForCustomer");
     private static final EventType generateReportForMerchant = new EventType("generateReportForMerchant");

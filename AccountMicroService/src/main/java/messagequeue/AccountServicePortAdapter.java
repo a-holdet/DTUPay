@@ -9,16 +9,16 @@ import messaging.rmq.event.objects.EventType;
 
 import java.util.UUID;
 
-public class EventPortAdapter implements IEventReceiver {
+public class AccountServicePortAdapter implements IEventReceiver {
 
 	IMerchantService merchantService;
 	ICustomerService customerService;
 	IEventSender sender;
 
-	public EventPortAdapter(IMerchantService merchantService, ICustomerService customerService, IEventSender sender) {
+	public AccountServicePortAdapter(IEventSender sender, IMerchantService merchantService, ICustomerService customerService) {
+		this.sender = sender;
 		this.merchantService = merchantService;
 		this.customerService = customerService;
-		this.sender = sender;
 	}
 
 	private static final EventType registerMerchant = new EventType("registerMerchant");
@@ -33,7 +33,6 @@ public class EventPortAdapter implements IEventReceiver {
 	public EventType[] getSupportedEventTypes() {
 		return supportedEventTypes;
 	}
-
 
 	public void registerMerchant(Merchant merchant, UUID eventID)  {
 		try {

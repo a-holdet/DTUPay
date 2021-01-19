@@ -11,7 +11,7 @@ public class PaymentServiceFactory {
         if(service == null) {
             // Specific implementation of service
             service = new MessageQueuePaymentService(
-                    new EventExchangeFactory().getExchange().getSender()
+                    new EventExchangeFactory().getExchange().createIEventSender()
             );
             // Registers to the EventPortAdapter
             new EventPortAdapterFactory().getPortAdapter()

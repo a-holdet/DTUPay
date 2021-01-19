@@ -10,7 +10,7 @@ public class AccountServiceFactory {
         if (service == null) {
             // Specific implementation of service
             service = new MessageQueueAccountService(
-                    new EventExchangeFactory().getExchange().getSender()
+                    new EventExchangeFactory().getExchange().createIEventSender()
             );
             // Registers to the EventPortAdapter
             new EventPortAdapterFactory().getPortAdapter()

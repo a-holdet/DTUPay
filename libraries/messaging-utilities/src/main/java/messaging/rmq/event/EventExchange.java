@@ -16,11 +16,11 @@ public class EventExchange extends RMQExchange {
         super(parentChannel, EXCHANGE_NAME, EXCHANGE_TYPE);
     }
 
-    public IEventSender getSender() {
-        return this.getSender(ROUTING_KEY_ALL);
+    public IEventSender createIEventSender() {
+        return this.createIEventSender(ROUTING_KEY_ALL);
     }
 
-    public IEventSender getSender(String routingKey) {
+    public IEventSender createIEventSender(String routingKey) {
         return new IEventSender() {
             @Override
             public void sendEvent(Event event) {

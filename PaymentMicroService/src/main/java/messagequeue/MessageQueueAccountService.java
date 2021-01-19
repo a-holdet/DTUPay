@@ -28,10 +28,10 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
     public static MessageQueueAccountService getInstance() {
         if (instance == null) {
             try {
-                var ies = new EventExchangeFactory().getExchange().getSender();
+                var ies = new EventExchangeFactory().getExchange().createIEventSender();
                 MessageQueueAccountService service = new MessageQueueAccountService(ies);
-                new EventQueue(service).startListening();
                 instance = service;
+                //new EventQueue(instance).startListening();
             } catch (Exception e) {
                 throw new Error(e);
             }

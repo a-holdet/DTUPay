@@ -1,10 +1,17 @@
 package messagequeue;
 
-import messaging.rmq.event.objects.Event;
+import accountservice.MessageQueueAccountService;
+import messaging.rmq.event.interfaces.IEventReceiver;
 
 public class StartUp {
 
     public static void main(String[] args) throws Exception {
-        EventService.getInstance();
+        // Instantiate listeners
+        var accountService = MessageQueueAccountService.getInstance();
+        var reportService = ReportServicePortAdapter.getInstance();
+
+        var eventPortAdapter = new EventPortAdapterFactory().getPortAdapter();
+        eventPortAdapter.registerReceiver(accountService);
+        eventPortAdapter.registerReceiver(reportService);
     }
 }
