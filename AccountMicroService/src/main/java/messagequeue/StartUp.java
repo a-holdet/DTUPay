@@ -15,7 +15,7 @@ public class StartUp {
         IMerchantService merchantService = new LocalMerchantService(merchantRepository);
         ICustomerService customerService = new LocalCustomerService(customerRepository);
 
-        IEventReceiver service = new AccountServicePortAdapter(
+        IEventReceiver service = new MessageQueueConnector(
                 merchantService,
                 customerService,
                 new EventExchangeFactory().getExchange().createIEventSender()

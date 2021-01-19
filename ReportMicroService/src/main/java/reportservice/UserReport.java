@@ -1,6 +1,8 @@
 package reportservice;
 
 
+import accountservice.DTUPayUser;
+
 import java.util.List;
 
 public class UserReport {

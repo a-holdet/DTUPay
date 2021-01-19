@@ -66,7 +66,7 @@ public class ReportingSteps {
 
     public ReportingSteps() {
         transactionsRepository = new TransactionsInMemoryRepository();
-        reportService = new ReportService(transactionsRepository, accountService);
+        reportService = new LocalReportService(transactionsRepository, accountService);
     }
 
     @Given("a customer that is registered")
@@ -112,14 +112,14 @@ public class ReportingSteps {
         this.end = LocalDateTime.parse(end);
         if(merchantId.equals("merchantId")){
             try {
-                userReport = reportService.generateReportForCustomer(customerId,start,end);
+                userReport = reportService.generateReportForCustomer(customerId,this.start,this.end);
             } catch (CustomerDoesNotExistException e) {
                 e.printStackTrace();
             }
         }
         if(customerId.equals("customerId")){
             try {
-                userReport = reportService.generateReportForMerchant(merchantId,start,end);
+                userReport = reportService.generateReportForMerchant(merchantId,this.start,this.end);
             } catch (MerchantDoesNotExistException e) {
                 e.printStackTrace();
             }
@@ -127,20 +127,12 @@ public class ReportingSteps {
     }
 
     @When("the requester requests a report")
-    public void theRequesterRequestsAReport() {
+    public void theRequesterRequestsAReport() throws CustomerDoesNotExistException, MerchantDoesNotExistException {
         if(merchantId.equals("merchantId")){
-            try {
-                userReport = reportService.generateReportForCustomer(customerId,null,null);
-            } catch (CustomerDoesNotExistException e) {
-                e.printStackTrace();
-            }
+            userReport = reportService.generateReportForCustomer(customerId,null,null);
         }
         if(customerId.equals("customerId")){
-            try {
-                userReport = reportService.generateReportForMerchant(merchantId,null,null);
-            } catch (MerchantDoesNotExistException e) {
-                e.printStackTrace();
-            }
+            userReport = reportService.generateReportForMerchant(merchantId,null,null);
         }
     }
 

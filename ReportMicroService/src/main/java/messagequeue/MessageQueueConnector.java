@@ -11,6 +11,7 @@ import messaging.rmq.event.objects.EventType;
 
 import reportservice.*;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -21,7 +22,6 @@ public class MessageQueueConnector implements IEventReceiver {
 
 	private final IReportService reportService;
 	IEventSender sender;
-	private ConcurrentHashMap<String, List<IEventReceiver>> eventTypeMapper = new ConcurrentHashMap<>();
 
 	public MessageQueueConnector(IEventSender sender, IReportService reportService)
 	{
@@ -40,52 +40,38 @@ public class MessageQueueConnector implements IEventReceiver {
 	}
 
 	private void registerTransaction(Payment payment, String CustomerId) {
-		System.out.println("register transaction");
 		reportService.registerTransaction(payment, CustomerId);
-		System.out.println("register transaction done");
 	}
 
-	private void generateReportForCustomer(String customerId, String startTime, String endTime, UUID eventId)  {
+	private void generateReportForCustomer(String customerId, String startTimeString, String endTimeString, UUID eventId)  {
+		LocalDateTime startTime = getDateTimeFromString(startTimeString);
+		LocalDateTime endTime = getDateTimeFromString(endTimeString);
 		try {
 			UserReport userReport = reportService.generateReportForCustomer(customerId, startTime, endTime);
 			sendReportEvent(generateReportForCustomer.succeeded(),userReport,eventId);
 		}
 		catch (CustomerDoesNotExistException e) {
-			String exceptionType = e.getClass().getSimpleName();
-			String exceptionMsg = e.getMessage();
-            Event event = new Event(generateReportForCustomer.failed(), new Object[] { exceptionType, exceptionMsg }, eventId);
-			try {
-				this.sender.sendEvent(event);
-			} catch (Exception exception) {
-				throw new Error(exception);
-			}
+			this.sender.sendErrorEvent(generateReportForCustomer, e, eventId);
 		}
 	}
 
-    private void generateReportForMerchant(String merchantId, String startTime, String endTime, UUID eventId) {
-        try {
-			System.out.println("Invoking report service");
+	private LocalDateTime getDateTimeFromString(String datetimeString){
+		return datetimeString != null ? LocalDateTime.parse(datetimeString) : null;
+	}
+    private void generateReportForMerchant(String merchantId, String startTimeString, String endTimeString, UUID eventId) {
+		LocalDateTime startTime = getDateTimeFromString(startTimeString);
+		LocalDateTime endTime = getDateTimeFromString(endTimeString);
+		try {
             UserReport userReport = reportService.generateReportForMerchant(merchantId, startTime, endTime);
-			System.out.println("Reporting service generated report, now sending report event");
 			sendReportEvent(generateReportForMerchant.succeeded(),userReport,eventId);
         }
         catch (MerchantDoesNotExistException e) {
-			String exceptionType = e.getClass().getSimpleName();
-			String exceptionMsg = e.getMessage();
-			Event event = new Event(generateReportForMerchant.failed(), new Object[]{exceptionType, exceptionMsg}, eventId);
-			System.out.println("Failed generated report for merchant - sending exception:" + exceptionType + " and msg: " + exceptionMsg);
-			try {
-				this.sender.sendEvent(event);
-			} catch (Exception exception) {
-				throw new Error(exception);
-			}
+			this.sender.sendErrorEvent(generateReportForMerchant, e, eventId);
 		}
 	}
 
     private void generateManagerOverview(UUID eventId){
         List<Transaction> allTransactions = reportService.generateManagerOverview();
-		for(Transaction transaction : allTransactions)
-			System.out.println(transaction.datetime);
         Event event = new Event(generateManagerOverview.succeeded(), new Object[] { allTransactions }, eventId);
 		try {
 			this.sender.sendEvent(event);
@@ -96,9 +82,6 @@ public class MessageQueueConnector implements IEventReceiver {
 
 
 	private void sendReportEvent(String subject, UserReport userReport, UUID eventId){
-		System.out.println("Sending succesfull report: " + subject);
-		System.out.println("Payload is  " + userReport.getUser());
-		System.out.println("Payload is  " + userReport.getPayments());
 		Event event = new Event(subject, new Object[] { userReport.getUser(), userReport.getPayments() }, eventId);
 		try {
 			this.sender.sendEvent(event);
@@ -106,6 +89,7 @@ public class MessageQueueConnector implements IEventReceiver {
 			throw new Error(e);
 		}
 	}
+
 	// TODO: Should not use threads any longer
 	@Override
 	public void receiveEvent(Event event) {
@@ -116,7 +100,6 @@ public class MessageQueueConnector implements IEventReceiver {
 		UUID eventId = event.getUUID();
 
         if (type.equals(generateReportForCustomer.getName())){
-			System.out.println("customer overview");
             String customerId = event.getArgument(0, String.class);
             String startTime = event.getArgument(1, String.class);
             String endTime = event.getArgument(2, String.class);
@@ -124,7 +107,6 @@ public class MessageQueueConnector implements IEventReceiver {
 				generateReportForCustomer(customerId, startTime, endTime, eventId);
 			}).start();
         } else if (type.equals(generateReportForMerchant.getName())){
-			System.out.println("merchant overview");
             String merchantId = event.getArgument(0, String.class);
             String startTime = event.getArgument(1, String.class);
             String endTime = event.getArgument(2, String.class);
@@ -132,14 +114,11 @@ public class MessageQueueConnector implements IEventReceiver {
 				generateReportForMerchant(merchantId, startTime, endTime, eventId);
 			}).start();
         } else if (type.equals(generateManagerOverview.getName())){
-			System.out.println("manager overview");
             generateManagerOverview(eventId);
         } else if(type.equals(registerTransaction.getName())){
-			System.out.println("Extracing payload for register transaction");
         	Payment payment = event.getArgument(0, Payment.class);
 			String customerId = event.getArgument(1, String.class);
         	registerTransaction(payment,customerId);
-			System.out.println("finished invoking register transaction");
 		}
 
 		System.out.println("--------------------------------------------------------");
