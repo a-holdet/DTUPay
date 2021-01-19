@@ -88,8 +88,8 @@ public class MerchantSteps {
         assertEquals(gson.toJson(expectedOutput), gson.toJson(actualOutput));
     }
 
-    @Then("merchant is registered")
-    public void merchantIsRegistered() throws Exception {
+    @And("merchant is registered")
+    public void merchantIsRegistered() {
         merchant.id = UUID.randomUUID().toString();
     }
 

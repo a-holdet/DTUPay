@@ -20,9 +20,10 @@ public abstract class EventServiceBase implements IEventReceiver {
 
     protected Event sendRequestAndAwaitResponse(Object payload, EventType eventType){
         Event request = new Event(eventType.getName(), new Object[] {payload}, UUID.randomUUID());
-        requests.put(request.getUUID(), new CompletableFuture<>());
+        var waitForResponse = new CompletableFuture<Event>();
+        requests.put(request.getUUID(), waitForResponse);
         this.sender.sendEvent(request);
-        Event response = requests.get(request.getUUID()).join();
+        Event response = waitForResponse.join();
         return response;
     }
 
