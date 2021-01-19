@@ -1,4 +1,4 @@
-/*
+
 package AccountMessageQueueTest;
 
 import accountservice.MessageQueueAccountService;
@@ -11,6 +11,7 @@ import DTO.Merchant;
 import accountservice.MerchantDoesNotExistException;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
+import messaging.rmq.event.objects.EventType;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -19,10 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-*/
+
 /***
  * @Author Michael, s153587
- *//*
+ */
 
 public class MerchantSteps {
 
@@ -110,4 +111,3 @@ public class MerchantSteps {
         assertTrue(actualOutput instanceof Throwable);
     }
 }
-*/

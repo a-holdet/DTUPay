@@ -1,8 +1,8 @@
-/*
 package PaymentServiceTests;
 
 import customerservice.CustomerInMemoryRepository;
 import customerservice.LocalCustomerService;
+import io.cucumber.java.an.E;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import merchantservice.LocalMerchantService;
@@ -11,17 +11,19 @@ import merchantservice.MerchantInMemoryRepository;
 import messagequeue.AccountServicePortAdapter;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import messaging.rmq.event.EventExchange;
+import messaging.rmq.event.EventExchangeFactory;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
+import messaging.rmq.event.objects.EventType;
 
 import java.util.UUID;
 
 import static org.junit.Assert.*;
 
-*/
 /***
  * @Author Michael, s153587
- *//*
+ */
 
 public class MerchantServiceTestsSteps {
 	AccountServicePortAdapter service;
@@ -34,15 +36,15 @@ public class MerchantServiceTestsSteps {
 			public void sendEvent(Event ev) {
 				event = ev;
 			}
-		};
+        };
 		service = new AccountServicePortAdapter(
-				sender,
 				new LocalMerchantService(
 						new MerchantInMemoryRepository()
 				),
 				new LocalCustomerService(
 						new CustomerInMemoryRepository()
-				)
+				),
+                sender
 		);
 	}
 
@@ -68,10 +70,8 @@ public class MerchantServiceTestsSteps {
 		service.receiveEvent(new Event("registerMerchant", new Object[] {merchant}));
 	}
 
-	@Then("I have sent event registerMerchantSuccess with registered merchantId")
-	public void iHaveSentEventRegisterMerchantSuccessWithRegisteredMerchantId() {
-		String type = event.getEventType();
-		assertEquals("registerMerchantSuccess", type);
+	@And("event contains merchantId")
+	public void eventContainsMerchantId() {
 		merchant.id = event.getArgument(0, String.class);
 		assertNotNull(merchant.id);
 	}
@@ -98,4 +98,3 @@ public class MerchantServiceTestsSteps {
 		service.receiveEvent(new Event("getMerchant", new Object[] {merchant.id}));
 	}
 }
-*/

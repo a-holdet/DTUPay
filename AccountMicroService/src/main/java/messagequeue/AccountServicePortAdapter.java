@@ -37,7 +37,7 @@ public class AccountServicePortAdapter implements IEventReceiver {
 			Event event = new Event(registerMerchant.succeeded(), new Object[] { merchantId }, eventID);
 			this.sender.sendEvent(event);
 		} catch (IllegalArgumentException e) {
-			this.sender.sendErrorEvent(registerMerchant, e, eventID);
+			this.sender.sendEvent(Event.GetFailedEvent(registerMerchant, e, eventID));
 		}
 	}
 
@@ -47,7 +47,7 @@ public class AccountServicePortAdapter implements IEventReceiver {
 			Event event = new Event(registerCustomer.succeeded(), new Object[] { customerId }, eventID);
 			this.sender.sendEvent(event);
 		} catch (IllegalArgumentException e) {
-			this.sender.sendErrorEvent(registerCustomer, e, eventID);
+			this.sender.sendEvent(Event.GetFailedEvent(registerCustomer, e, eventID));
 		}
 	}
 
@@ -57,7 +57,7 @@ public class AccountServicePortAdapter implements IEventReceiver {
 			Event event = new Event(getMerchant.succeeded(), new Object[] { merchant }, eventID);
 			this.sender.sendEvent(event);
 		} catch (MerchantDoesNotExistException e) {
-			this.sender.sendErrorEvent(getMerchant, e, eventID);
+			this.sender.sendEvent(Event.GetFailedEvent(getMerchant, e, eventID));
 		}
 	}
 
@@ -67,7 +67,7 @@ public class AccountServicePortAdapter implements IEventReceiver {
 			Event event = new Event(getCustomer.succeeded(), new Object[] { customer }, eventID);
 			this.sender.sendEvent(event);
 		} catch (CustomerDoesNotExistException e) {
-			this.sender.sendErrorEvent(getCustomer, e, eventID);
+			this.sender.sendEvent(Event.GetFailedEvent(getCustomer, e, eventID));
 		}
 	}
 
