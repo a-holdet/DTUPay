@@ -8,6 +8,11 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+
+/***
+ * @Author Sebastian Arcos Specht, s164394
+ */
+
 @Path("/customerapi/customers")
 public class CustomerResource {
 

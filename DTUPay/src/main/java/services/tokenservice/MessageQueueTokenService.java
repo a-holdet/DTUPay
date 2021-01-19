@@ -10,6 +10,10 @@ import messaging.rmq.event.objects.EventType;
 import java.util.List;
 import java.util.UUID;
 
+/***
+ * @Author Sebastian Arcos Specht, s164394
+ */
+
 public class MessageQueueTokenService extends MessageQueueBase implements IEventReceiver, ITokenService {
 
     private static final EventType createTokens = new EventType("createTokens");

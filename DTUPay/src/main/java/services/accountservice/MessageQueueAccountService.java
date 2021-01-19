@@ -7,6 +7,10 @@ import messaging.rmq.event.objects.MessageQueueBase;
 import messaging.rmq.event.objects.Event;
 import messaging.rmq.event.objects.EventType;
 
+/***
+ * @Author Benjamin Wrist Lam, s153486
+ */
+
 public class MessageQueueAccountService extends MessageQueueBase implements IAccountService {
 
     static final EventType registerMerchant = new EventType("registerMerchant");

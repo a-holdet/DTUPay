@@ -12,6 +12,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+
+/***
+ * @Author Christian Dan Hjelmslund, s164412
+ */
+
 @Path("/merchantapi/reports")
 public class ReportingResource {
     IReportService reportService = new ReportServiceFactory().getService();
