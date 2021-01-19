@@ -1,5 +1,5 @@
 #/***
-#* @Author Michael, s153587
+#* @Author Michael Davidsen Kirkegaard, s153587
 #*/
 Feature: handle merchant from account microservice
 

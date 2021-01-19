@@ -1,5 +1,8 @@
 package messaging.rmq.event.objects;
 
+/***
+ * Christian Dan Hjelmslund, s164412
+ */
 public class EventType {
 
     private String name;

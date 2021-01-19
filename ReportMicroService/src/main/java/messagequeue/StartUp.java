@@ -1,5 +1,9 @@
 package messagequeue;
 
+/***
+ * @Author Jakob Vestergaard Offersen, s163940
+ */
+
 import accountservice.MessageQueueAccountService;
 import messaging.rmq.event.EventExchangeFactory;
 import messaging.rmq.event.EventQueue;

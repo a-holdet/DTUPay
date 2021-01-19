@@ -9,6 +9,10 @@ import java.util.stream.Collectors;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+
+/***
+ * @Author Michael Davidsen Kirkegaard, s153587
+ */
 public class Event {
 
     public static Event GetFailedEvent(EventType eventType, Exception exception, UUID eventID) {
