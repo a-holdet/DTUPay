@@ -16,7 +16,7 @@ import java.util.UUID;
 
 
 /***
- * Simon Borup Lindegren, s185370
+ * @Author Simon Borup Lindegren, s185370
  */
 
 @Path("/customerapi/tokens")
