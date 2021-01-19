@@ -5,7 +5,7 @@ import messaging.rmq.event.objects.EventServiceBase;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 
-public class MessageQueueAccountService extends EventServiceBase implements IMerchantService, ICustomerService{
+public class MessageQueueAccountService extends EventServiceBase implements IAccountService {
 
     private final EventType registerMerchant = new EventType("registerMerchant");
     private final EventType getMerchant = new EventType("getMerchant");
@@ -14,7 +14,7 @@ public class MessageQueueAccountService extends EventServiceBase implements IMer
     private final EventType getCustomer = new EventType("getCustomer");
     private final EventType[] supportedEventTypes = new EventType[]{registerMerchant, getMerchant, registerCustomer, customerExists, getCustomer};
 
-    protected MessageQueueAccountService(IEventSender sender) {
+    public MessageQueueAccountService(IEventSender sender) {
         super(sender);
     }
 

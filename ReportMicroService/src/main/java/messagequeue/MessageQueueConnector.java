@@ -11,15 +11,23 @@ import messaging.rmq.event.objects.EventType;
 
 import reportservice.*;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MessageQueueConnector implements IEventReceiver {
 
-	private static final IReportService reportService = ReportService.getInstance();
+	private final IReportService reportService;
 	IEventSender sender;
+	private ConcurrentHashMap<String, List<IEventReceiver>> eventTypeMapper = new ConcurrentHashMap<>();
 
-	public MessageQueueConnector(IEventSender sender) { this.sender = sender; }
+	public MessageQueueConnector(IEventSender sender, IReportService reportService)
+	{
+		this.sender = sender;
+		this.reportService=reportService;
+	}
 
 	private final EventType generateReportForCustomer = new EventType("generateReportForCustomer");
     private final EventType generateReportForMerchant = new EventType("generateReportForMerchant");
@@ -136,8 +144,6 @@ public class MessageQueueConnector implements IEventReceiver {
 
 		System.out.println("--------------------------------------------------------");
 	}
-
-
 
 
 }
