@@ -3,11 +3,12 @@ package reportservice;
 import accountservice.CustomerDoesNotExistException;
 import accountservice.MerchantDoesNotExistException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface IReportService {
-    UserReport generateReportForCustomer(String customerId, String startTime, String EndTime) throws CustomerDoesNotExistException;
-    UserReport generateReportForMerchant(String merchantId, String startTime, String EndTime) throws MerchantDoesNotExistException;
+    UserReport generateReportForCustomer(String customerId, LocalDateTime startTime, LocalDateTime EndTime) throws CustomerDoesNotExistException;
+    UserReport generateReportForMerchant(String merchantId, LocalDateTime startTime, LocalDateTime EndTime) throws MerchantDoesNotExistException;
     void registerTransaction(Payment payment, String customerId);
     List<Transaction> generateManagerOverview();
 }

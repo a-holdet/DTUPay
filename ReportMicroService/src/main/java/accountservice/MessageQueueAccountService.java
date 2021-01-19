@@ -24,15 +24,6 @@ public class MessageQueueAccountService extends EventServiceBase implements IAcc
     }
 
     @Override
-    public String registerMerchant(Merchant merchant) throws IllegalArgumentException {
-        Event response = sendRequestAndAwaitResponse(merchant,registerMerchant);
-        if(response.isSuccessReponse())
-            return response.getPayloadAs(String.class);
-        else
-            throw new IllegalArgumentException(response.getErrorMessage());
-    }
-
-    @Override
     public Merchant getMerchant(String merchantId) throws MerchantDoesNotExistException {
         Event response = sendRequestAndAwaitResponse(merchantId,getMerchant);
 
@@ -47,15 +38,6 @@ public class MessageQueueAccountService extends EventServiceBase implements IAcc
         Event response = sendRequestAndAwaitResponse(customer,registerCustomer);
         if(response.isSuccessReponse())
             return response.getPayloadAs(String.class);
-        else
-            throw new IllegalArgumentException(response.getErrorMessage());
-    }
-
-    @Override
-    public boolean customerExists(String customerId)  {
-        Event response = sendRequestAndAwaitResponse(customerId,customerExists);
-        if(response.isSuccessReponse())
-            return response.getPayloadAs(Boolean.class);
         else
             throw new IllegalArgumentException(response.getErrorMessage());
     }

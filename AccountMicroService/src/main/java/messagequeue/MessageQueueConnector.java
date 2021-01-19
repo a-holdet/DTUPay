@@ -13,13 +13,13 @@ import messaging.rmq.event.objects.EventType;
 
 import java.util.UUID;
 
-public class AccountServicePortAdapter implements IEventReceiver {
+public class MessageQueueConnector implements IEventReceiver {
 
 	IMerchantService merchantService;
 	ICustomerService customerService;
 	IEventSender sender;
 
-	public AccountServicePortAdapter(IMerchantService merchantService, ICustomerService customerService, IEventSender sender) {
+	public MessageQueueConnector(IMerchantService merchantService, ICustomerService customerService, IEventSender sender) {
 		this.merchantService = merchantService;
 		this.customerService = customerService;
 		this.sender = sender;
