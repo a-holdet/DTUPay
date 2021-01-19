@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/***
+ * @Author Michael, s153587
+ */
+
 public class CustomerInMemoryRepository implements ICustomerRepository {
     List<Customer> customers = Collections.synchronizedList(new ArrayList<>());
 

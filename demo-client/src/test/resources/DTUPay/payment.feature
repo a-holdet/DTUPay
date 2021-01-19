@@ -1,3 +1,7 @@
+#/***
+#* @Author Martin Hemmingsen, s141887
+#*/
+
 Feature: Payment
 	Scenario: Successful Payment
 		Given the customer has a bank account
