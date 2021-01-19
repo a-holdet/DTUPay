@@ -31,7 +31,7 @@ public abstract class EventServiceBase implements IEventReceiver {
         System.out.println("Event received! : " + event);
 
         if (Arrays.stream(this.getSupportedEventTypes()).anyMatch(eventType -> eventType.matches(event.getEventType()))) {
-            CompletableFuture<Event> cf = requests.get(event.getUUID());
+            CompletableFuture<Event> cf = requests.remove(event.getUUID());
             if (cf != null)
                 cf.complete(event);
         }

@@ -48,7 +48,7 @@ public class TokenSteps {
             tokenHolder.reset();
         }
     }
-
+    //Given
     @And("the customer has {int} tokens")
     public void theCustomerHasTokens(int tokenAmount) {
         assertEquals(tokenAmount, tokenHolder.getTokens().size());
