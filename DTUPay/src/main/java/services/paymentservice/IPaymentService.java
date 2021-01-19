@@ -1,9 +1,9 @@
-package services.payment;
+package services.paymentservice;
 
 import DTO.Payment;
 import services.accountservice.CustomerDoesNotExistException;
 import services.accountservice.MerchantDoesNotExistException;
-import services.token.TokenDoesNotExistException;
+import services.tokenservice.TokenDoesNotExistException;
 
 public interface IPaymentService {
     void registerPayment(Payment payment) throws TokenDoesNotExistException, MerchantDoesNotExistException, CustomerDoesNotExistException, NegativeAmountException, BankException;

@@ -1,4 +1,4 @@
-package services.token;
+package services.tokenservice;
 
 public class CustomerNotFoundException extends Exception {
     CustomerNotFoundException(String message) {

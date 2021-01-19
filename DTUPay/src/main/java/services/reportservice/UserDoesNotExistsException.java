@@ -1,4 +1,4 @@
-package services.report;
+package services.reportservice;
 
 public class UserDoesNotExistsException extends Throwable {
     public UserDoesNotExistsException(String errorMessage) {

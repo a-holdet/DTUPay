@@ -1,4 +1,4 @@
-package services.report;
+package services.reportservice;
 
 import DTO.*;
 

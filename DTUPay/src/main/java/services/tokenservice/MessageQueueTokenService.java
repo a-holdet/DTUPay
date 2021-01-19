@@ -1,4 +1,4 @@
-package services.token;
+package services.tokenservice;
 
 import DTO.TokenCreationDTO;
 import messaging.rmq.event.interfaces.IEventReceiver;

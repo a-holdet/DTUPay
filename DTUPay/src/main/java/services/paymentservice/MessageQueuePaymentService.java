@@ -1,4 +1,4 @@
-package services.payment;
+package services.paymentservice;
 
 import DTO.Payment;
 import services.accountservice.CustomerDoesNotExistException;
@@ -7,7 +7,7 @@ import messaging.rmq.event.objects.MessageQueueBase;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 import messaging.rmq.event.objects.EventType;
-import services.token.TokenDoesNotExistException;
+import services.tokenservice.TokenDoesNotExistException;
 
 public class MessageQueuePaymentService extends MessageQueueBase implements IPaymentService {
 

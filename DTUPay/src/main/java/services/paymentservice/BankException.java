@@ -1,4 +1,4 @@
-package services.payment;
+package services.paymentservice;
 
 public class BankException extends Throwable {
     public BankException(String errorMessage) {
