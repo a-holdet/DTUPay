@@ -1,5 +1,8 @@
 package messaging.rmq;
 
+/***
+ * Christian Dan Hjelmslund, s164412
+ */
 public abstract class RMQExchange {
 
     protected final RMQChannel parentChannel;

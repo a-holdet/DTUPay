@@ -22,8 +22,9 @@ import java.util.UUID;
 import static org.junit.Assert.*;
 
 /***
- * @Author Michael, s153587
+ * @Author Michael Davidsen Kirkegaard, s153587
  */
+
 
 public class MerchantServiceTestsSteps {
 	MessageQueueConnector service;

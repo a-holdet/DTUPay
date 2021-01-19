@@ -3,6 +3,9 @@ package messaging.rmq;
 import com.rabbitmq.client.DeliverCallback;
 import com.rabbitmq.client.CancelCallback;
 
+/***
+ * @Author Michael Davidsen Kirkegaard, s153587
+ */
 public abstract class RMQQueue {
 
     protected final RMQExchange parentExchange;
