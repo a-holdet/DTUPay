@@ -1,4 +1,4 @@
-package tokenservice;
+package services.token;
 
 import DTO.TokenCreationDTO;
 import java.util.List;

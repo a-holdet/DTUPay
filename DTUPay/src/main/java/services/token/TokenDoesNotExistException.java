@@ -1,4 +1,4 @@
-package tokenservice;
+package services.token;
 
 public class TokenDoesNotExistException extends Exception {
 

@@ -1,4 +1,4 @@
-package accountservice;
+package services.accountservice;
 
 import DTO.Customer;
 import DTO.Merchant;

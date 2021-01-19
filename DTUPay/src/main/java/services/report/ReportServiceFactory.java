@@ -1,17 +1,16 @@
-package tokenservice;
+package services.report;
 
 import messagequeue.EventPortAdapterFactory;
 import messaging.rmq.event.EventExchangeFactory;
 import messaging.rmq.event.interfaces.IEventReceiver;
 
-public class TokenServiceFactory {
+public class ReportServiceFactory {
 
-    private static ITokenService service;
-
-    public ITokenService getService() {
+    static IReportService service;
+    public IReportService getService() {
         if(service == null) {
-            // Specific implementation of the service
-            service = new MessageQueueTokenService(
+            // Specific implementation of service
+            service = new MessageQueueReportService(
                     new EventExchangeFactory().getExchange().createIEventSender()
             );
             // Registers to the EventPortAdapter

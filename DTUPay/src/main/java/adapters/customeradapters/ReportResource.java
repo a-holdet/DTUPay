@@ -1,11 +1,9 @@
 package adapters.customeradapters;
 
-import accountservice.CustomerDoesNotExistException;
-import reportservice.IReportService;
-import reportservice.MessageQueueReportService;
+import services.report.IReportService;
 import DTO.UserReport;
-import reportservice.ReportServiceFactory;
-import reportservice.UserDoesNotExistsException;
+import services.report.ReportServiceFactory;
+import services.report.UserDoesNotExistsException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;

@@ -1,8 +1,8 @@
 package adapters.merchantadapters;
 
-import accountservice.AccountServiceFactory;
+import services.accountservice.AccountServiceFactory;
 import DTO.Merchant;
-import accountservice.IAccountService;
+import services.accountservice.IAccountService;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;

@@ -1,10 +1,9 @@
 package adapters.merchantadapters;
 
-import accountservice.MerchantDoesNotExistException;
-import reportservice.IReportService;
+import services.report.IReportService;
 import DTO.UserReport;
-import reportservice.ReportServiceFactory;
-import reportservice.UserDoesNotExistsException;
+import services.report.ReportServiceFactory;
+import services.report.UserDoesNotExistsException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;

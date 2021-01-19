@@ -1,17 +1,16 @@
 
 package AccountMessageQueueTest;
 
-import accountservice.MessageQueueAccountService;
+import services.accountservice.MessageQueueAccountService;
 import com.google.gson.Gson;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import DTO.Merchant;
-import accountservice.MerchantDoesNotExistException;
+import services.accountservice.MerchantDoesNotExistException;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
-import messaging.rmq.event.objects.EventType;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;

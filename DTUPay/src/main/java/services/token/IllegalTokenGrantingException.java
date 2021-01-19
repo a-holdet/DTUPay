@@ -1,4 +1,4 @@
-package tokenservice;
+package services.token;
 
 public class IllegalTokenGrantingException extends Throwable {
     public IllegalTokenGrantingException(String message) {

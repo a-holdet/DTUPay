@@ -1,10 +1,13 @@
 package adapters.merchantadapters;
 
 import DTO.Payment;
-import accountservice.CustomerDoesNotExistException;
-import accountservice.MerchantDoesNotExistException;
-import paymentservice.*;
-import tokenservice.TokenDoesNotExistException;
+import services.accountservice.CustomerDoesNotExistException;
+import services.accountservice.MerchantDoesNotExistException;
+import services.payment.BankException;
+import services.payment.IPaymentService;
+import services.payment.NegativeAmountException;
+import services.payment.PaymentServiceFactory;
+import services.token.TokenDoesNotExistException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

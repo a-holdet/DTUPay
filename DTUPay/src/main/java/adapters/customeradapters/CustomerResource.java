@@ -1,8 +1,8 @@
 package adapters.customeradapters;
 
 import DTO.Customer;
-import accountservice.AccountServiceFactory;
-import accountservice.IAccountService;
+import services.accountservice.AccountServiceFactory;
+import services.accountservice.IAccountService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

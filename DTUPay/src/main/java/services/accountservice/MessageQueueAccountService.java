@@ -1,4 +1,4 @@
-package accountservice;
+package services.accountservice;
 
 import DTO.Customer;
 import DTO.Merchant;
@@ -64,7 +64,6 @@ public class MessageQueueAccountService extends MessageQueueBase implements IAcc
 
     @Override
     public Customer getCustomer(String customerId) throws CustomerDoesNotExistException {
-        System.out.println("Creating GetCustomer event");
         Event response = sendRequestAndAwaitResponse(customerId,getCustomer);
         if(response.isSuccessReponse())
             return response.getPayloadAs(Customer.class);

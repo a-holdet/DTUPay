@@ -1,7 +1,10 @@
 package adapters.customeradapters;
 
 import DTO.TokenCreationDTO;
-import tokenservice.*;
+import services.token.CustomerNotFoundException;
+import services.token.ITokenService;
+import services.token.IllegalTokenGrantingException;
+import services.token.TokenServiceFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

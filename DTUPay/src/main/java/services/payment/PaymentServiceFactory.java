@@ -1,17 +1,16 @@
-package reportservice;
+package services.payment;
 
-import accountservice.AccountServiceFactory;
 import messagequeue.EventPortAdapterFactory;
 import messaging.rmq.event.EventExchangeFactory;
 import messaging.rmq.event.interfaces.IEventReceiver;
 
-public class ReportServiceFactory {
+public class PaymentServiceFactory {
+    static IPaymentService service;
 
-    static IReportService service;
-    public IReportService getService() {
+    public IPaymentService getService() {
         if(service == null) {
             // Specific implementation of service
-            service = new MessageQueueReportService(
+            service = new MessageQueuePaymentService(
                     new EventExchangeFactory().getExchange().createIEventSender()
             );
             // Registers to the EventPortAdapter
