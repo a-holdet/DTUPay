@@ -51,7 +51,7 @@ public class MessageQueueReportService extends EventServiceBase implements IRepo
     }
 
     private UserReport generateReport(AccountType accountType, ReportCreationDTO reportCreationDTO) throws UserDoesNotExistsException {
-        var responseEvent = sendRequestAndAwaitReponse(reportCreationDTO, accountType.eventType);
+        var responseEvent = sendRequestAndAwaitResponse(reportCreationDTO, accountType.eventType);
 
         if (responseEvent.isSuccessReponse())
             return responseEvent.getPayloadAs(UserReport.class);
@@ -63,7 +63,7 @@ public class MessageQueueReportService extends EventServiceBase implements IRepo
     public List<Transaction> generateManagerOverview() {
         // TODO: Handle case of no info sent in request event
         // TODO: Should be handled in EventServiceBase
-        Event responseEvent = sendRequestAndAwaitReponse("", generateManagerOverview);
+        Event responseEvent = sendRequestAndAwaitResponse("", generateManagerOverview);
 
         if (responseEvent.isSuccessReponse())
             return responseEvent.getPayloadAs(new TypeToken<>(){});

@@ -1,6 +1,6 @@
 package DTUPay.CucumberSteps;
 
-import CustomerMobileApp.MerchantAdapter;
+import CustomerMobileApp.MerchantPort;
 import DTUPay.Holders.*;
 import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceException_Exception;
@@ -20,7 +20,7 @@ import static org.junit.Assert.assertNull;
 public class MerchantRegistrationSteps {
     // Adapters
     BankService bankService = new BankServiceService().getBankServicePort();
-    MerchantAdapter merchantAdapter;
+    MerchantPort merchantPort;
 
     // Holders
     private final MerchantHolder merchantHolder;
@@ -36,12 +36,12 @@ public class MerchantRegistrationSteps {
 
     @Before
     public void before() {
-        merchantAdapter = new MerchantAdapter();
+        merchantPort = new MerchantPort();
     }
 
     @After
     public void after() {
-        merchantAdapter.close();
+        merchantPort.close();
         try {
             if (merchantHolder.getAccountId() != null)
                 bankService.retireAccount(merchantHolder.getAccountId());
@@ -116,8 +116,8 @@ public class MerchantRegistrationSteps {
     }
 
     private void registerMerchantWithDTUPay(UserHolder merchantHolder) {
-        String createdMerchantId = merchantAdapter.registerMerchant(merchantHolder.getFirstName(),
-                merchantHolder.getLastName(), merchantHolder.getCpr(), merchantHolder.getAccountId());
+        String createdMerchantId = merchantPort.registerMerchant(merchantHolder.getFirstName(),
+                merchantHolder.getLastName(), merchantHolder.getCpr());
         merchantHolder.setId(createdMerchantId);
     }
 }

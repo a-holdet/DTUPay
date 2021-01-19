@@ -10,7 +10,6 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -20,9 +19,9 @@ import static org.junit.Assert.*;
 public class ReportingSteps {
 
     // Adapters
-    MerchantAdapter merchantAdapter;
-    DTUManagerAdapter managerAdapter;
-    CustomerAdapter customerAdapter;
+    MerchantPort merchantPort;
+    DTUManagerPort managerAdapter;
+    CustomerPort customerPort;
 
     // Holders
     private MerchantHolder merchant;
@@ -47,16 +46,16 @@ public class ReportingSteps {
 
     @Before
     public void before() {
-        merchantAdapter = new MerchantAdapter();
-        managerAdapter = new DTUManagerAdapter();
-        customerAdapter = new CustomerAdapter();
+        merchantPort = new MerchantPort();
+        managerAdapter = new DTUManagerPort();
+        customerPort = new CustomerPort();
     }
 
     @After
     public void after() {
-        merchantAdapter.close();
+        merchantPort.close();
         managerAdapter.close();
-        customerAdapter.close();
+        customerPort.close();
     }
 
     @Then("the merchant receives a report having a transaction of {int} kr for a {string} to the merchant using the same token")
@@ -68,7 +67,7 @@ public class ReportingSteps {
     @Then("he does not see the other merchants report")
     public void heDoesNotSeeTheOtherMerchantsReport() {
         boolean foundOtherMerchantPaymentsInReport = report.getPayments().stream()
-                .anyMatch(payment -> payment.merchantId.equals(otherMerchant.getId()));
+                .anyMatch(payment -> payment.getMerchantId().equals(otherMerchant.getId()));
         assertFalse(foundOtherMerchantPaymentsInReport);
     }
 
@@ -78,14 +77,14 @@ public class ReportingSteps {
         PurchasesHolder.Purchase p2 = purchasesHolder.getPurchases().get(1);
 
         boolean firstProductIsPresent = managerOverview.stream()
-                .anyMatch(transaction -> transaction.customerToken.equals(tokenHolder.getTokens().get(0))
+                .anyMatch(transaction -> transaction.getCustomerToken().equals(tokenHolder.getTokens().get(0))
                         //&& transaction.amount.equals(BigDecimal.valueOf(p1.amount)) //TODO change to BigInt
-                        && transaction.description.equals(p1.description));
+                        && transaction.getDescription().equals(p1.description));
 
         boolean secondProductIsPresent = managerOverview.stream()
-                .anyMatch(transaction -> transaction.customerToken.equals(tokenHolder.getTokens().get(1))
+                .anyMatch(transaction -> transaction.getCustomerToken().equals(tokenHolder.getTokens().get(1))
                         //&& transaction.amount.equals(BigDecimal.valueOf(p2.amount)) //TODO change to BigInt
-                        && transaction.description.equals(p2.description));
+                        && transaction.getDescription().equals(p2.description));
 
         assertTrue(firstProductIsPresent);
         assertTrue(secondProductIsPresent);
@@ -110,7 +109,7 @@ public class ReportingSteps {
     @When("the merchant requests a report of transactions")
     public void theMerchantRequestsAReportOfTransactions() {
         try {
-            report = merchantAdapter.getMerchantReport(merchant.getId(), null, null);
+            report = merchantPort.getMerchantReport(merchant.getId(), null, null);
             assertNotNull(report);
         } catch (IllegalArgumentException e) {
             this.exceptionHolder.setException(e);
@@ -126,7 +125,7 @@ public class ReportingSteps {
     @When("the customer requests a report of transactions")
     public void theCustomerRequestsAReportOfTransactions() {
         try {
-            report = customerAdapter.getCustomerReport(customerHolder.getId());
+            report = customerPort.getCustomerReport(customerHolder.getId());
             assertNotNull(report);
         } catch (IllegalArgumentException e) {
             this.exceptionHolder.setException(e);
@@ -136,7 +135,7 @@ public class ReportingSteps {
     @When("the merchant requests a report of transactions in a time interval")
     public void theMerchantRequestsAReportOfTransactionsInATimeInterval() {
         try {
-            report = merchantAdapter.getMerchantReport(merchant.getId(), LocalDateTime.of(2009,01,01,12,12), LocalDateTime.now());
+            report = merchantPort.getMerchantReport(merchant.getId(), LocalDateTime.of(2009,01,01,12,12), LocalDateTime.now());
             assertNotNull(report);
         } catch (IllegalArgumentException e) {
             this.exceptionHolder.setException(e);
@@ -151,7 +150,7 @@ public class ReportingSteps {
         System.out.println(report.getUser());
         System.out.println(report.getPayments().size());
         for(Payment payment : report.getPayments())
-            System.out.println(payment.description + payment.amount + " merchantid: " +  payment.merchantId + " token:./ "  + payment.customerToken);
+            System.out.println(payment.getDescription() + payment.getAmount() + " merchantid: " + payment.getMerchantId() + " token:./ "  + payment.getCustomerToken());
 
         System.out.println(report.getPayments().size());
         // check merchant is correct
@@ -161,9 +160,9 @@ public class ReportingSteps {
 
         // Check transactions is correct
         boolean foundCorrectTransaction = report.getPayments().stream().anyMatch(payment ->
-                payment.customerToken.equals(token) &&
+                payment.getCustomerToken().equals(token) &&
                         //payment.amount.equals(BigDecimal.valueOf(amount)) && //TODO change to BigInt
-                        payment.description.equals(productDescription)
+                        payment.getDescription().equals(productDescription)
         );
 
         assertTrue(foundCorrectTransaction);
