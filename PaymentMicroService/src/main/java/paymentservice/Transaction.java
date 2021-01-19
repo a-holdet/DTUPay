@@ -1,6 +1,6 @@
-package DTO;
+package paymentservice;
 
-import DTO.Payment;
+import paymentservice.Payment;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

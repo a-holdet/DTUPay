@@ -5,12 +5,12 @@ import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 import com.google.gson.reflect.TypeToken;
-import messaging.rmq.event.objects.EventServiceBase;
+import messaging.rmq.event.objects.MessageQueueBase;
 import messaging.rmq.event.objects.EventType;
 import java.util.List;
 import java.util.UUID;
 
-public class MessageQueueTokenService extends EventServiceBase implements IEventReceiver, ITokenService {
+public class MessageQueueTokenService extends MessageQueueBase implements IEventReceiver, ITokenService {
 
     private static final EventType createTokens = new EventType("createTokens");
 

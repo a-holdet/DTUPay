@@ -14,18 +14,16 @@ import accountservice.IMerchantService;
 import accountservice.MerchantDoesNotExistException;
 import com.google.gson.reflect.TypeToken;
 
-import messaging.rmq.event.EventExchange;
-import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
-import messaging.rmq.event.objects.EventServiceBase;
+import messaging.rmq.event.objects.MessageQueueBase;
 import messaging.rmq.event.objects.EventType;
 
 import java.util.concurrent.CompletableFuture;
 
 
-public class MessageQueueReportService extends EventServiceBase implements IReportService, IEventReceiver {
+public class MessageQueueReportService extends MessageQueueBase implements IReportService, IEventReceiver {
 
     private static final EventType generateReportForCustomer = new EventType("generateReportForCustomer");
     private static final EventType generateReportForMerchant = new EventType("generateReportForMerchant");

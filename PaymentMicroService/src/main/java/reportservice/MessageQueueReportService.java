@@ -1,13 +1,10 @@
-package messagequeue;
+package reportservice;
 
-import DTO.Payment;
-import messaging.rmq.event.EventExchange;
+import paymentservice.Payment;
 import messaging.rmq.event.EventExchangeFactory;
-import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
-import Reports.IReportService;
 import messaging.rmq.event.objects.EventType;
 
 import java.util.UUID;

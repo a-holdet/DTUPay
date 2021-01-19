@@ -4,8 +4,8 @@ package PaymentServiceTests;
 
 import Bank.DTUBankPort;
 import Bank.IBank;
-import DTO.Customer;
-import DTO.Merchant;
+import accountservice.Customer;
+import accountservice.Merchant;
 import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtu.ws.fastmoney.BankServiceService;

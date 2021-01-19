@@ -3,10 +3,9 @@ package accountservice;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 import messaging.rmq.event.objects.EventType;
-import messaging.rmq.event.objects.EventServiceBase;
-import accountservice.ICustomerService;
+import messaging.rmq.event.objects.MessageQueueBase;
 
-public class MessageQueueCustomerService extends EventServiceBase implements ICustomerService {
+public class MessageQueueCustomerService extends MessageQueueBase implements ICustomerService {
 
     private static final EventType customerExistsEvent = new EventType("customerExists");
 

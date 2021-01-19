@@ -1,14 +1,12 @@
-package messagequeue;
+package tokenservice;
 
-import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.EventExchangeFactory;
-import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 import messaging.rmq.event.objects.Result;
-import Tokens.ITokenService;
-import Tokens.TokenDoesNotExistException;
+import tokenservice.ITokenService;
+import tokenservice.TokenDoesNotExistException;
 
 import messaging.rmq.event.objects.EventType;
 
@@ -18,22 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MessageQueueTokenService implements ITokenService, IEventReceiver {
 
-    // Singleton as method due to serviceTest
-    private static MessageQueueTokenService instance;
-    public static MessageQueueTokenService getInstance() {
-        if (instance == null) {
-            try {
-                var ies = new EventExchangeFactory().getExchange().createIEventSender();
-                MessageQueueTokenService service = new MessageQueueTokenService(ies);
-                instance = service;
-                //new EventQueue(instance).startListening();
-            } catch (Exception e) {
-                throw new Error(e);
-            }
-        }
-        return instance;
-    }
-
     private static final EventType consumeToken = new EventType("consumeToken");
     private static final EventType[] supportedEventTypes = new EventType[]{consumeToken};
 
@@ -42,7 +24,6 @@ public class MessageQueueTokenService implements ITokenService, IEventReceiver {
 
     public MessageQueueTokenService(IEventSender sender) {
         this.sender = sender;
-        instance = this;
     }
 
     @Override
@@ -52,7 +33,6 @@ public class MessageQueueTokenService implements ITokenService, IEventReceiver {
 
     private <S> Result<S, String> handle(Object payload, EventType eventType, Class<S> successClass) throws Error {
         UUID requestID = UUID.randomUUID();
-        System.out.println("Making request. ID = " + requestID);
         Event request = new Event(eventType.getName(), new Object[] {payload}, requestID);
         requests.put(requestID, new CompletableFuture<>());
 

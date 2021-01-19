@@ -1,6 +1,4 @@
-package Tokens;
-
-import Tokens.TokenDoesNotExistException;
+package tokenservice;
 
 import java.util.UUID;
 

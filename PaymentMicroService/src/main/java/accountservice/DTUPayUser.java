@@ -1,4 +1,4 @@
-package DTO;
+package accountservice;
 
 public class DTUPayUser {
     private String firstName;

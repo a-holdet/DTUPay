@@ -1,6 +1,6 @@
-package Bank;
+package bank;
 
-public class BankException extends Throwable {
+public class BankException extends Exception {
     public BankException(String errorMessage) {
         super(errorMessage);
     }

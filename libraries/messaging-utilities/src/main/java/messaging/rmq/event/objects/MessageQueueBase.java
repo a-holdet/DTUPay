@@ -10,11 +10,11 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class EventServiceBase implements IEventReceiver {
+public abstract class MessageQueueBase implements IEventReceiver {
     protected final ConcurrentHashMap<UUID, CompletableFuture<Event>> requests = new ConcurrentHashMap<>();
     protected final IEventSender sender;
 
-    protected EventServiceBase(IEventSender sender) {
+    protected MessageQueueBase(IEventSender sender) {
         this.sender = sender;
     }
 
