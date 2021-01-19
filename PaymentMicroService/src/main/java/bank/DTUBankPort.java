@@ -5,6 +5,11 @@ import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtu.ws.fastmoney.BankServiceService;
 import java.math.BigDecimal;
+/***
+ * @Author Benjamin Wrist Lam, s153486
+ */
+
+
 
 public class DTUBankPort implements IBank {
 
