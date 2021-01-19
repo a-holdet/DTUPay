@@ -31,21 +31,13 @@ public class CustomerPort {
         Response response = baseUrl.path("customers").request()
                 .post(Entity.entity(customer, MediaType.APPLICATION_JSON));
 
+        System.out.println(response.getStatus());
         if (response.getStatus() == 422) {
             String errorMessage = response.readEntity(String.class); // error message is in payload
+            System.out.println(errorMessage);
             response.close();
             throw new IllegalArgumentException(errorMessage);
         }
-//        else if (response.getStatus() >= 300) {
-//            String errorMessage = response.readEntity(String.class); // error message is in payload
-//            response.close();
-//            throw new IllegalArgumentException(errorMessage);
-//        }
-
-//        // TODO: Refactor
-//        if (customerId.equals("")) {
-//            throw new RuntimeException("wtf");
-//        }
 
         String customerId = response.readEntity(String.class);
 

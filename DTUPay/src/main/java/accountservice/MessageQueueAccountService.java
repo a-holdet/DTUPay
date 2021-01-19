@@ -3,11 +3,11 @@ package accountservice;
 import DTO.Customer;
 import DTO.Merchant;
 import messaging.rmq.event.interfaces.IEventSender;
-import messaging.rmq.event.objects.EventServiceBase;
+import messaging.rmq.event.objects.MessageQueueBase;
 import messaging.rmq.event.objects.Event;
 import messaging.rmq.event.objects.EventType;
 
-public class MessageQueueAccountService extends EventServiceBase implements IAccountService {
+public class MessageQueueAccountService extends MessageQueueBase implements IAccountService {
 
     static final EventType registerMerchant = new EventType("registerMerchant");
     static final EventType getMerchant = new EventType("getMerchant");

@@ -3,13 +3,13 @@ package paymentservice;
 import DTO.Payment;
 import accountservice.CustomerDoesNotExistException;
 import accountservice.MerchantDoesNotExistException;
-import messaging.rmq.event.objects.EventServiceBase;
+import messaging.rmq.event.objects.MessageQueueBase;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 import messaging.rmq.event.objects.EventType;
 import tokenservice.TokenDoesNotExistException;
 
-public class MessageQueuePaymentService extends EventServiceBase implements IPaymentService {
+public class MessageQueuePaymentService extends MessageQueueBase implements IPaymentService {
 
     private static final EventType registerPayment = new EventType("registerPayment");
     private static final EventType[] supportedEventTypes = new EventType[] {registerPayment};

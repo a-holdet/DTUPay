@@ -30,12 +30,6 @@ public class EventExchange extends RMQExchange {
                 String message = new Gson().toJson(event);
                 parentChannel.basicPublish(EXCHANGE_NAME, routingKey, message);
             }
-
-            @Override
-            public void sendErrorEvent(EventType eventType, Exception exception, UUID eventID) {
-                Event event = new Event(eventType.failed(), new Object[] {exception.getClass().getSimpleName(), exception.getMessage()}, eventID);
-                sendEvent(event);
-            }
         };
     }
 }

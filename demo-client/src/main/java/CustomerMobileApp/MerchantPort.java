@@ -63,13 +63,15 @@ public class MerchantPort {
         Response response = baseUrl.path("reports").queryParam("id", merchantId).queryParam("start", start
                 .toString()).queryParam("end", end.toString()).request().get(new GenericType<>() {
         });
+
+
         if (response.getStatus() == 422) {
             String errorMessage = response.readEntity(String.class); // error message is in payload
             response.close();
             throw new IllegalArgumentException(errorMessage);
         }
-        return response.readEntity(UserReport.class);
-
+        UserReport userReport = response.readEntity(UserReport.class);
+        return userReport;
     }
 
     public void close() {

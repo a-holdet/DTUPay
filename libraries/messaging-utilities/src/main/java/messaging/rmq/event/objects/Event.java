@@ -11,6 +11,14 @@ import com.google.gson.reflect.TypeToken;
 
 public class Event {
 
+    public static Event GetFailedEvent(EventType eventType, Exception exception, UUID eventID) {
+        return new Event(
+                eventType.failed(),
+                new Object[] {exception.getClass().getSimpleName(), exception.getMessage()},
+                eventID
+        );
+    }
+
     static Gson GSON = new Gson();
 
     private String eventType;

@@ -38,16 +38,17 @@ public class MessageQueueConnector implements IEventReceiver {
         reportService.registerTransaction(payment, CustomerId);
     }
 
-    private void generateReportForCustomer(String customerId, String startTimeString, String endTimeString, UUID eventId) {
-        LocalDateTime startTime = getDateTimeFromString(startTimeString);
-        LocalDateTime endTime = getDateTimeFromString(endTimeString);
-        try {
-            UserReport userReport = reportService.generateReportForCustomer(customerId, startTime, endTime);
-            sendReportEvent(generateReportForCustomer.succeeded(), userReport, eventId);
-        } catch (CustomerDoesNotExistException e) {
-            this.sender.sendErrorEvent(generateReportForCustomer, e, eventId);
-        }
-    }
+	private void generateReportForCustomer(String customerId, String startTimeString, String endTimeString, UUID eventId)  {
+		LocalDateTime startTime = getDateTimeFromString(startTimeString);
+		LocalDateTime endTime = getDateTimeFromString(endTimeString);
+		try {
+			UserReport userReport = reportService.generateReportForCustomer(customerId, startTime, endTime);
+			sendReportEvent(generateReportForCustomer.succeeded(),userReport,eventId);
+		}
+		catch (CustomerDoesNotExistException e) {
+			this.sender.sendEvent(Event.GetFailedEvent(generateReportForCustomer, e, eventId));
+		}
+	}
 
     private LocalDateTime getDateTimeFromString(String datetimeString) {
         return datetimeString != null ? LocalDateTime.parse(datetimeString) : null;
@@ -58,11 +59,12 @@ public class MessageQueueConnector implements IEventReceiver {
         LocalDateTime endTime = getDateTimeFromString(endTimeString);
         try {
             UserReport userReport = reportService.generateReportForMerchant(merchantId, startTime, endTime);
-            sendReportEvent(generateReportForMerchant.succeeded(), userReport, eventId);
-        } catch (MerchantDoesNotExistException e) {
-            this.sender.sendErrorEvent(generateReportForMerchant, e, eventId);
+			sendReportEvent(generateReportForMerchant.succeeded(),userReport,eventId);
         }
-    }
+        catch (MerchantDoesNotExistException e) {
+			this.sender.sendEvent(Event.GetFailedEvent(generateReportForMerchant, e, eventId));
+		}
+	}
 
     private void generateManagerOverview(UUID eventId) {
         List<Transaction> allTransactions = reportService.generateManagerOverview();

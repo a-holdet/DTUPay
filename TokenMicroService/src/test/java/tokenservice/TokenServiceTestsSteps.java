@@ -1,17 +1,16 @@
-/*
+
 package tokenservice;
 
 import com.google.gson.reflect.TypeToken;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import messagequeue.MessageQueueConnector;
 import messaging.rmq.event.objects.Event;
-import tokenservice.interfaces.ITokenRepository;
-import tokenservice.interfaces.ITokenService;
-import tokenservice.tokenservice.LocalTokenService;
-import tokenservice.MQ.MQTokenService;
-import tokenservice.tokenservice.TokenCreation;
-import tokenservice.tokenservice.TokenInMemoryRepository;
+import tokenservice.ITokenRepository;
+import tokenservice.ITokenService;
+import tokenservice.LocalTokenService;
+import tokenservice.TokenInMemoryRepository;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TokenServiceTestsSteps {
-    MQTokenService s;
+    MessageQueueConnector s;
     Event event;
     String customerId;
     ITokenRepository tokenRepository = new TokenInMemoryRepository();
@@ -28,7 +27,7 @@ public class TokenServiceTestsSteps {
 
     public TokenServiceTestsSteps() {
         ITokenService tokenService = new LocalTokenService(customerId -> true, tokenRepository);
-        s = new MQTokenService(e -> {
+        s = new MessageQueueConnector(e -> {
             event = e;
             eventSet.complete(true);
         }, tokenService);
@@ -41,7 +40,7 @@ public class TokenServiceTestsSteps {
 
     @When("I receive event createTokensForCustomer with {int} tokens")
     public void iReceiveEventWithTokens(int amount) {
-        TokenCreation tokenCreation = new TokenCreation(customerId, amount);
+        TokenCreationDTO tokenCreation = new TokenCreationDTO(customerId, amount);
         s.receiveEvent(new Event("createTokens", new Object[]{tokenCreation}));
     }
 
@@ -53,4 +52,3 @@ public class TokenServiceTestsSteps {
         assertEquals(amount, tokens.size());
     }
 }
-*/

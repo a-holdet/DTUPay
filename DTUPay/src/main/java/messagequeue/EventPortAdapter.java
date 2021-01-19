@@ -1,15 +1,11 @@
 package messagequeue;
 
 import messaging.rmq.event.interfaces.IEventReceiver;
-import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
-import messaging.rmq.event.objects.EventServiceBase;
 import messaging.rmq.event.objects.EventType;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 public class EventPortAdapter implements IEventReceiver {
 
