@@ -51,7 +51,7 @@ public class MessageQueueConnector implements IEventReceiver {
 			sendReportEvent(generateReportForCustomer.succeeded(),userReport,eventId);
 		}
 		catch (CustomerDoesNotExistException e) {
-			this.sender.sendErrorEvent(generateReportForCustomer, e, eventId);
+			this.sender.sendEvent(Event.GetFailedEvent(generateReportForCustomer, e, eventId));
 		}
 	}
 
@@ -66,7 +66,7 @@ public class MessageQueueConnector implements IEventReceiver {
 			sendReportEvent(generateReportForMerchant.succeeded(),userReport,eventId);
         }
         catch (MerchantDoesNotExistException e) {
-			this.sender.sendErrorEvent(generateReportForMerchant, e, eventId);
+			this.sender.sendEvent(Event.GetFailedEvent(generateReportForMerchant, e, eventId));
 		}
 	}
 

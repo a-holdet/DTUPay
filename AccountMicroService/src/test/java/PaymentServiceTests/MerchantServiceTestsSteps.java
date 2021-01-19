@@ -8,9 +8,9 @@ import io.cucumber.java.en.Given;
 import merchantservice.LocalMerchantService;
 import merchantservice.Merchant;
 import merchantservice.MerchantInMemoryRepository;
-import messagequeue.AccountServicePortAdapter;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import messagequeue.MessageQueueConnector;
 import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.EventExchangeFactory;
 import messaging.rmq.event.interfaces.IEventSender;
@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
  */
 
 public class MerchantServiceTestsSteps {
-	AccountServicePortAdapter service;
+	MessageQueueConnector service;
 	Event event;
 	Merchant merchant;
 
@@ -37,7 +37,7 @@ public class MerchantServiceTestsSteps {
 				event = ev;
 			}
         };
-		service = new AccountServicePortAdapter(
+		service = new MessageQueueConnector(
 				new LocalMerchantService(
 						new MerchantInMemoryRepository()
 				),
