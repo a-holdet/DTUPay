@@ -1,11 +1,11 @@
 package accountservice;
 
 import messaging.rmq.event.objects.EventType;
-import messaging.rmq.event.objects.EventServiceBase;
+import messaging.rmq.event.objects.MessageQueueBase;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 
-public class MessageQueueAccountService extends EventServiceBase implements IAccountService {
+public class MessageQueueAccountService extends MessageQueueBase implements IAccountService {
 
     private final EventType registerMerchant = new EventType("registerMerchant");
     private final EventType getMerchant = new EventType("getMerchant");
