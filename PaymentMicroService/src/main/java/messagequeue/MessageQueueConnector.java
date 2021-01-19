@@ -38,7 +38,7 @@ public class MessageQueueConnector implements IEventReceiver {
 			Event event = new Event(registerPayment.succeeded(), new Object[] {}, eventID);
 			this.sender.sendEvent(event);
 		} catch (TokenDoesNotExistException | MerchantDoesNotExistException | CustomerDoesNotExistException | NegativeAmountException | BankException e) {
-			this.sender.sendErrorEvent(registerPayment, e, eventID);
+			this.sender.sendEvent(Event.GetFailedEvent(registerPayment, e, eventID));
 		}
 	}
 

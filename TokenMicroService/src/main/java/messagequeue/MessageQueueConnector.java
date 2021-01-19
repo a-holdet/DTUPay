@@ -48,7 +48,7 @@ public class MessageQueueConnector implements IEventReceiver {
             Event createTokensResponse = new Event(createTokens.succeeded(), new Object[]{tokens}, eventID);
             sender.sendEvent(createTokensResponse);
         } catch (IllegalTokenGrantingException | CustomerNotFoundException e) {
-            sender.sendErrorEvent(createTokens, e, eventID);
+            sender.sendEvent(Event.GetFailedEvent(createTokens, e, eventID));
         }
     }
 
@@ -57,7 +57,7 @@ public class MessageQueueConnector implements IEventReceiver {
             String customerId = tokenService.consumeToken(customerToken);
             sender.sendEvent(new Event(consumeToken.succeeded(), new Object[]{customerId}, eventID));
         } catch (TokenDoesNotExistException e) {
-            sender.sendErrorEvent(consumeToken, e, eventID);
+            sender.sendEvent(Event.GetFailedEvent(consumeToken, e, eventID));
         }
     }
 
