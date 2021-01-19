@@ -12,12 +12,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class EventServiceBase implements IEventReceiver {
     protected final ConcurrentHashMap<UUID, CompletableFuture<Event>> requests = new ConcurrentHashMap<>();
-    protected final IEventSender sender; //TODO could be changed to private once subclasses uses it properly
+    protected final IEventSender sender;
 
-    protected EventType[] supportedEventTypes;
-
-    protected EventServiceBase(IEventSender sender, EventType[] supportedEventTypes) {
-        this.supportedEventTypes = supportedEventTypes;
+    protected EventServiceBase(IEventSender sender) {
         this.sender = sender;
     }
 
@@ -33,7 +30,7 @@ public abstract class EventServiceBase implements IEventReceiver {
         System.out.println("--------------------------------------------------------");
         System.out.println("Event received! : " + event);
 
-        if (Arrays.stream(supportedEventTypes).anyMatch(eventType -> eventType.matches(event.getEventType()))) {
+        if (Arrays.stream(this.getSupportedEventTypes()).anyMatch(eventType -> eventType.matches(event.getEventType()))) {
             CompletableFuture<Event> cf = requests.get(event.getUUID());
             if (cf != null)
                 cf.complete(event);

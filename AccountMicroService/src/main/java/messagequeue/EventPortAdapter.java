@@ -29,6 +29,12 @@ public class EventPortAdapter implements IEventReceiver {
 	private static final EventType[] supportedEventTypes = { registerMerchant, getMerchant, registerCustomer,
 			customerExists, getCustomer };
 
+	@Override
+	public EventType[] getSupportedEventTypes() {
+		return supportedEventTypes;
+	}
+
+
 	public void registerMerchant(Merchant merchant, UUID eventID)  {
 		try {
 			String merchantId = merchantService.registerMerchant(merchant);

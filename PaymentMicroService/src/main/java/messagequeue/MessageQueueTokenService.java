@@ -10,6 +10,8 @@ import messaging.rmq.event.objects.Result;
 import Tokens.ITokenService;
 import Tokens.TokenDoesNotExistException;
 
+import messaging.rmq.event.objects.EventType;
+
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,12 +35,19 @@ public class MessageQueueTokenService implements ITokenService, IEventReceiver {
     }
 
     private static final EventType consumeToken = new EventType("consumeToken");
+    private static final EventType[] supportedEventTypes = new EventType[]{consumeToken};
+
     private final IEventSender sender;
     private final ConcurrentHashMap<UUID, CompletableFuture<Event>> requests = new ConcurrentHashMap<>();
 
     public MessageQueueTokenService(IEventSender sender) {
         this.sender = sender;
         instance = this;
+    }
+
+    @Override
+    public EventType[] getSupportedEventTypes() {
+        return supportedEventTypes;
     }
 
     private <S> Result<S, String> handle(Object payload, EventType eventType, Class<S> successClass) throws Error {

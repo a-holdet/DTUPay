@@ -20,10 +20,16 @@ public class MQTokenService implements IEventReceiver {
 
     private final EventType consumeToken = new EventType("consumeToken");
     private final EventType createTokens = new EventType("createTokens");
+    private final EventType[] supportedEventTypes = new EventType[] {consumeToken, createTokens};
 
     public MQTokenService(IEventSender sender, ITokenService tokenService) {
         this.sender = sender;
         this.tokenService = tokenService;
+    }
+
+    @Override
+    public EventType[] getSupportedEventTypes() {
+        return supportedEventTypes;
     }
 
     @Override

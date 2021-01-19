@@ -18,7 +18,12 @@ public class MessageQueueAccountService extends EventServiceBase implements IAcc
             new EventType[]{registerMerchant, getMerchant, registerCustomer, customerExists, getCustomer};
 
     public MessageQueueAccountService(IEventSender sender) {
-        super(sender, supportedEventTypes);
+        super(sender);
+    }
+
+    @Override
+    public EventType[] getSupportedEventTypes() {
+        return supportedEventTypes;
     }
 
     @Override

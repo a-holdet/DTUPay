@@ -4,12 +4,14 @@ package messagequeue;
 import accountservice.CustomerDoesNotExistException;
 import accountservice.Merchant;
 import accountservice.MerchantDoesNotExistException;
+import io.cucumber.java.an.E;
 import messaging.rmq.event.EventExchangeFactory;
 import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
+import messaging.rmq.event.objects.EventType;
 
 import reportservice.*;
 
@@ -39,10 +41,17 @@ public class EventService implements IEventReceiver {
 
 	public EventService(IEventSender sender) { this.sender = sender; }
 
-    EventType generateReportForCustomer = new EventType("generateReportForCustomer");
+	private static final EventType generateReportForCustomer = new EventType("generateReportForCustomer");
     private static final EventType generateReportForMerchant = new EventType("generateReportForMerchant");
     private static final EventType generateManagerOverview = new EventType("generateManagerOverview");
 	private static final EventType registerTransaction = new EventType("registerTransaction");
+	private static final EventType[] supportedEventTypes =
+			new EventType[] {generateReportForCustomer, generateReportForMerchant, generateManagerOverview, registerTransaction};
+
+	@Override
+	public EventType[] getSupportedEventTypes() {
+		return supportedEventTypes;
+	}
 
 	private void registerTransaction(Payment payment, String CustomerId) {
 		System.out.println("register transaction");
@@ -111,8 +120,6 @@ public class EventService implements IEventReceiver {
 			throw new Error(e);
 		}
 	}
-
-
 
 	@Override
 	public void receiveEvent(Event event) {

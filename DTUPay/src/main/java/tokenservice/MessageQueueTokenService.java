@@ -17,7 +17,12 @@ public class MessageQueueTokenService extends EventServiceBase implements IEvent
     private static final EventType[] supportedEventTypes = {createTokens};
 
     public MessageQueueTokenService(IEventSender sender) {
-        super(sender, supportedEventTypes);
+        super(sender);
+    }
+
+    @Override
+    public EventType[] getSupportedEventTypes() {
+        return supportedEventTypes;
     }
 
     @Override

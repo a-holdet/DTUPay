@@ -9,6 +9,7 @@ import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
+import messaging.rmq.event.objects.EventType;
 import messaging.rmq.event.objects.Result;
 import Accounts.CustomerDoesNotExistException;
 import Accounts.ICustomerService;
@@ -46,6 +47,11 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
     public MessageQueueAccountService(IEventSender sender) {
         this.sender = sender;
         instance = this; // needed for service tests!
+    }
+
+    @Override
+    public EventType[] getSupportedEventTypes() {
+        return supportedEventTypes;
     }
 
     private final ConcurrentHashMap<UUID, CompletableFuture<Event>> requests = new ConcurrentHashMap<>();

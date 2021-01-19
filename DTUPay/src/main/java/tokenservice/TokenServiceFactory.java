@@ -1,7 +1,7 @@
 package tokenservice;
 
+import messagequeue.EventPortAdapterFactory;
 import messaging.rmq.event.EventExchangeFactory;
-import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 
 public class TokenServiceFactory {
@@ -10,10 +10,13 @@ public class TokenServiceFactory {
 
     public ITokenService getService() {
         if(service == null) {
+            // Specific implementation of the service
             service = new MessageQueueTokenService(
                     new EventExchangeFactory().getExchange().getSender()
             );
-            new EventQueue((IEventReceiver) service).startListening();
+            // Registers to the EventPortAdapter
+            new EventPortAdapterFactory().getPortAdapter()
+                    .registerReceiver( (IEventReceiver) service);
         }
         return service;
     }

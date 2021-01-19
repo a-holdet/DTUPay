@@ -7,6 +7,7 @@ import DTO.Payment;
 import Tokens.TokenDoesNotExistException;
 import messaging.rmq.event.EventExchangeFactory;
 import messaging.rmq.event.EventQueue;
+import messaging.rmq.event.objects.EventType;
 import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
@@ -41,6 +42,12 @@ public class EventService implements IEventReceiver {
 	public EventService(IEventSender sender) { this.sender = sender; }
 
 	private static final EventType registerPayment = new EventType("registerPayment");
+	private static final EventType[] SupportedEventTypes = new EventType[] {registerPayment};
+
+	@Override
+	public EventType[] getSupportedEventTypes() {
+		return SupportedEventTypes;
+	}
 
 	private void registerPayment(Payment payment, UUID eventID) throws Exception {
 		try {
