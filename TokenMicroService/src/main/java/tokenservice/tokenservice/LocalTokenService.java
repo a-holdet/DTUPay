@@ -22,11 +22,12 @@ public class LocalTokenService implements ITokenService {
     @Override
     public List<UUID> createTokensForCustomer(String customerId, int amount) throws IllegalTokenGrantingException, CustomerNotFoundException {
         int currentCustomerTokenAmount = readTokensForCustomer(customerId).size();
+
         if (currentCustomerTokenAmount > 1)
             throw new IllegalTokenGrantingException("Customer cannot request more tokens");
         if (currentCustomerTokenAmount + amount > 6)
             throw new IllegalTokenGrantingException("Customer requested too many tokens");
-        if (!customerService.customerExists(customerId))
+        if (customerId == null || !customerService.customerExists(customerId))
             throw new CustomerNotFoundException("Customer must have a customer id to request tokens");
         for (int i = 0; i < amount; i++) {
             tokenRepository.add(UUID.randomUUID(), customerId);

@@ -1,19 +1,22 @@
 package tokenservice;
 
-import messaging.rmq.event.EventExchange;
+import messagequeue.EventPortAdapterFactory;
 import messaging.rmq.event.EventExchangeFactory;
-import messaging.rmq.event.EventQueue;
 import messaging.rmq.event.interfaces.IEventReceiver;
 
 public class TokenServiceFactory {
 
-    static ITokenService service;
+    private static ITokenService service;
+
     public ITokenService getService() {
         if(service == null) {
+            // Specific implementation of the service
             service = new MessageQueueTokenService(
-                    new EventExchangeFactory().getExchange().getSender()
+                    new EventExchangeFactory().getExchange().createIEventSender()
             );
-            new EventQueue((IEventReceiver) service).startListening();
+            // Registers to the EventPortAdapter
+            new EventPortAdapterFactory().getPortAdapter()
+                    .registerReceiver( (IEventReceiver) service);
         }
         return service;
     }

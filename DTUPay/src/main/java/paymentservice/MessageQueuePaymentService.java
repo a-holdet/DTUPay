@@ -15,7 +15,12 @@ public class MessageQueuePaymentService extends EventServiceBase implements IPay
     private static final EventType[] supportedEventTypes = new EventType[] {registerPayment};
 
     public MessageQueuePaymentService(IEventSender sender) {
-        super(sender, supportedEventTypes);
+        super(sender);
+    }
+
+    @Override
+    public EventType[] getSupportedEventTypes() {
+        return supportedEventTypes;
     }
 
     @Override

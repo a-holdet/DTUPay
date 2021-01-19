@@ -8,6 +8,7 @@ import tokenservice.exceptions.CustomerNotFoundException;
 import tokenservice.interfaces.ITokenService;
 import tokenservice.exceptions.IllegalTokenGrantingException;
 import tokenservice.exceptions.TokenDoesNotExistException;
+import tokenservice.tokenservice.TokenCreation;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,8 +17,10 @@ public class MQTokenService implements IEventReceiver {
 
     private final IEventSender sender;
     private final ITokenService tokenService;
+
     private final EventType consumeToken = new EventType("consumeToken");
-    private final EventType createTokensForCustomer = new EventType("createTokensForCustomer");
+    private final EventType createTokens = new EventType("createTokens");
+    private final EventType[] supportedEventTypes = new EventType[] {consumeToken, createTokens};
 
     public MQTokenService(IEventSender sender, ITokenService tokenService) {
         this.sender = sender;
@@ -25,28 +28,31 @@ public class MQTokenService implements IEventReceiver {
     }
 
     @Override
+    public EventType[] getSupportedEventTypes() {
+        return supportedEventTypes;
+    }
+
+    @Override
     public void receiveEvent(Event event) {
         if (event.getEventType().equals(consumeToken.getName())) {
             consumeToken(event);
-        } else if (event.getEventType().equals(createTokensForCustomer.getName())) {
+        } else if (event.getEventType().equals(createTokens.getName())) {
             new Thread(() -> createTokensForCustomer(event)).start();
         }
     }
 
     private void createTokensForCustomer(Event event) {
         Event createTokensResponse;
-
-        String customerId = event.getArgument(0, String.class);
-        int amount = event.getArgument(1, int.class);
+        TokenCreation tokenCreation = event.getArgument(0, TokenCreation.class);
 
         try {
-            List<UUID> tokens = tokenService.createTokensForCustomer(customerId, amount);
-            createTokensResponse = new Event(createTokensForCustomer.succeeded(), new Object[]{tokens}, event.getUUID());
+            List<UUID> tokens = tokenService.createTokensForCustomer(tokenCreation.getUserId(), tokenCreation.getTokenAmount());
+            createTokensResponse = new Event(createTokens.succeeded(), new Object[]{tokens}, event.getUUID());
             sender.sendEvent(createTokensResponse);
         } catch (IllegalTokenGrantingException | CustomerNotFoundException e) {
             String errorType = e.getClass().getSimpleName();
             String errorMessage = e.getMessage();
-            createTokensResponse = new Event(createTokensForCustomer.failed(), new Object[]{errorType, errorMessage}, event.getUUID());
+            createTokensResponse = new Event(createTokens.failed(), new Object[]{errorType, errorMessage}, event.getUUID());
             sender.sendEvent(createTokensResponse);
         }
     }

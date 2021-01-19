@@ -9,10 +9,15 @@ import tokenservice.interfaces.ICustomerService;
 public class MQCustomerService extends EventServiceBase implements ICustomerService {
 
     private static final EventType customerExistsEvent = new EventType("customerExists");
-    private static final EventType[] supportEventTypes = new EventType[]{customerExistsEvent};
+    private static final EventType[] supportedEventTypes = new EventType[]{customerExistsEvent};
 
     public MQCustomerService(IEventSender sender) {
-        super(sender, supportEventTypes);
+        super(sender);
+    }
+
+    @Override
+    public EventType[] getSupportedEventTypes() {
+        return supportedEventTypes;
     }
 
     @Override

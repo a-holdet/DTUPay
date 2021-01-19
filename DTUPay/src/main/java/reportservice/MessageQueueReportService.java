@@ -35,8 +35,14 @@ public class MessageQueueReportService extends EventServiceBase implements IRepo
             new EventType[] {generateReportForCustomer, generateReportForMerchant, registerTransaction, generateManagerOverview};
 
     public MessageQueueReportService(IEventSender sender, IMerchantService merchantService, ICustomerService customerService) {
-        super(sender, supportedEventTypes);
+        super(sender);
     }
+
+    @Override
+    public EventType[] getSupportedEventTypes() {
+        return supportedEventTypes;
+    }
+
     @Override
     public UserReport generateReportForCustomer(String customerId, String startTime, String endTime) throws CustomerDoesNotExistException {
         Event event = new Event(generateReportForCustomer.getName(), new Object[] { customerId, startTime, endTime });

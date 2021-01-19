@@ -5,13 +5,12 @@ import com.google.gson.reflect.TypeToken;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
-import messaging.rmq.event.objects.EventType;
 import tokenservice.interfaces.ITokenRepository;
 import tokenservice.interfaces.ITokenService;
 import tokenservice.tokenservice.LocalTokenService;
 import tokenservice.MQ.MQTokenService;
+import tokenservice.tokenservice.TokenCreation;
 import tokenservice.tokenservice.TokenInMemoryRepository;
 
 import java.util.List;
@@ -21,35 +20,18 @@ import java.util.concurrent.CompletableFuture;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TokenServiceTestsSteps {
-
-    private static class MockEventSender implements IEventSender {
-
-        Event event;
-        CompletableFuture<Boolean> eventSet;
-
-        public MockEventSender(CompletableFuture<Boolean> eventSet) {
-            this.event = null;
-            this.eventSet = eventSet;
-        }
-
-        @Override
-        public void sendEvent(Event event) {
-            this.event = event;
-        }
-
-        @Override
-        public void sendErrorEvent(EventType eventType, Exception exception, UUID eventID) {}
-    }
-
     MQTokenService s;
+    Event event;
     String customerId;
     ITokenRepository tokenRepository = new TokenInMemoryRepository();
-    MockEventSender mockEventSender;
+    CompletableFuture<Boolean> eventSet = new CompletableFuture<>();
 
     public TokenServiceTestsSteps() {
         ITokenService tokenService = new LocalTokenService(customerId -> true, tokenRepository);
-        mockEventSender = new MockEventSender(new CompletableFuture<>());
-        s = new MQTokenService(mockEventSender, tokenService);
+        s = new MQTokenService(e -> {
+            event = e;
+            eventSet.complete(true);
+        }, tokenService);
     }
 
     @Given("a valid customer")
@@ -59,14 +41,15 @@ public class TokenServiceTestsSteps {
 
     @When("I receive event createTokensForCustomer with {int} tokens")
     public void iReceiveEventWithTokens(int amount) {
-        s.receiveEvent(new Event("createTokensForCustomer", new Object[]{customerId, amount}));
+        TokenCreation tokenCreation = new TokenCreation(customerId, amount);
+        s.receiveEvent(new Event("createTokens", new Object[]{tokenCreation}));
     }
 
     @Then("I have sent event createTokensForCustomerSuccess with {int} tokens")
     public void iHaveSentEventWithTokens(int amount) {
-        mockEventSender.eventSet.join();
-        assertEquals("createTokensForCustomerSuccess", mockEventSender.event.getEventType());
-        List<UUID> tokens = mockEventSender.event.getArgument(0, new TypeToken<>() {});
+        eventSet.join();
+        assertEquals("createTokensSuccess",event.getEventType());
+        List<UUID> tokens = event.getArgument(0, new TypeToken<>() {});
         assertEquals(amount, tokens.size());
     }
 }

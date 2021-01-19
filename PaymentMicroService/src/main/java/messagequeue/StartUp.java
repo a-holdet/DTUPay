@@ -1,10 +1,18 @@
 package messagequeue;
 
-import messaging.rmq.event.objects.Event;
-
 public class StartUp {
 
     public static void main(String[] args) throws Exception {
-        EventService.getInstance();
+        //instantiates listeners
+        var paymentServicePortAdapter = PaymentServicePortAdaper.getInstance();
+        var accountService= MessageQueueAccountService.getInstance();
+        var reportService = MessageQueueReportService.getInstance();
+        var tokenService = MessageQueueTokenService.getInstance();
+
+        var eventPortAdapter = new EventPortAdapterFactory().getPortAdapter();
+        eventPortAdapter.registerReceiver(paymentServicePortAdapter);
+        eventPortAdapter.registerReceiver(accountService);
+        eventPortAdapter.registerReceiver(reportService);
+        eventPortAdapter.registerReceiver(tokenService);
     }
 }

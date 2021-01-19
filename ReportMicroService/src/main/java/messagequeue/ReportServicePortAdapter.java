@@ -2,31 +2,30 @@ package messagequeue;
 
 
 import accountservice.CustomerDoesNotExistException;
-import accountservice.Merchant;
 import accountservice.MerchantDoesNotExistException;
 import messaging.rmq.event.EventExchangeFactory;
 import messaging.rmq.event.EventQueue;
-import messaging.rmq.event.EventExchange;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
+import messaging.rmq.event.objects.EventType;
 
 import reportservice.*;
 
 import java.util.List;
 import java.util.UUID;
 
-public class EventService implements IEventReceiver {
+public class ReportServicePortAdapter implements IEventReceiver {
 
 	// Singleton as method due to serviceTest
-	private static EventService instance;
-	public static EventService getInstance() {
+	private static ReportServicePortAdapter instance;
+	public static ReportServicePortAdapter getInstance() {
 		if (instance == null) {
 			try {
-				var ies = new EventExchangeFactory().getExchange().getSender();
-				EventService service = new EventService(ies);
-				new EventQueue(service).startListening();
+				var ies = new EventExchangeFactory().getExchange().createIEventSender();
+				ReportServicePortAdapter service = new ReportServicePortAdapter(ies);
 				instance = service;
+				//new EventQueue(instance).startListening();
 			} catch (Exception e) {
 				throw new Error(e);
 			}
@@ -37,12 +36,19 @@ public class EventService implements IEventReceiver {
 	private static final IReportService reportService = ReportService.getInstance();
 	IEventSender sender;
 
-	public EventService(IEventSender sender) { this.sender = sender; }
+	public ReportServicePortAdapter(IEventSender sender) { this.sender = sender; }
 
-    EventType generateReportForCustomer = new EventType("generateReportForCustomer");
+	private static final EventType generateReportForCustomer = new EventType("generateReportForCustomer");
     private static final EventType generateReportForMerchant = new EventType("generateReportForMerchant");
     private static final EventType generateManagerOverview = new EventType("generateManagerOverview");
 	private static final EventType registerTransaction = new EventType("registerTransaction");
+	private static final EventType[] supportedEventTypes =
+			new EventType[] {generateReportForCustomer, generateReportForMerchant, generateManagerOverview, registerTransaction};
+
+	@Override
+	public EventType[] getSupportedEventTypes() {
+		return supportedEventTypes;
+	}
 
 	private void registerTransaction(Payment payment, String CustomerId) {
 		System.out.println("register transaction");
@@ -111,8 +117,6 @@ public class EventService implements IEventReceiver {
 			throw new Error(e);
 		}
 	}
-
-
 
 	@Override
 	public void receiveEvent(Event event) {

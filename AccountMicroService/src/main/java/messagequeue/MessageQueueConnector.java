@@ -77,6 +77,11 @@ public class MessageQueueConnector implements IEventReceiver {
 	}
 
 	@Override
+	public EventType[] getSupportedEventTypes() {
+		return new EventType[] {registerMerchant, getMerchant, registerCustomer, customerExists, getCustomer};
+	}
+
+	@Override
 	public void receiveEvent(Event event) {
 		System.out.println("--------------------------------------------------------");
 		System.out.println("Event received! : " + event);

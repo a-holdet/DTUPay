@@ -8,6 +8,7 @@ import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
 import messaging.rmq.event.objects.Event;
 import Reports.IReportService;
+import messaging.rmq.event.objects.EventType;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -18,10 +19,10 @@ public class MessageQueueReportService implements IReportService, IEventReceiver
     public static MessageQueueReportService getInstance() {
         if (instance == null) {
             try {
-                var ies = new EventExchangeFactory().getExchange().getSender();
+                var ies = new EventExchangeFactory().getExchange().createIEventSender();
                 MessageQueueReportService service = new MessageQueueReportService(ies);
-                new EventQueue(service).startListening();
                 instance = service;
+                //new EventQueue(instance).startListening();
             } catch (Exception e) {
                 throw new Error(e);
             }
@@ -29,15 +30,23 @@ public class MessageQueueReportService implements IReportService, IEventReceiver
         return instance;
     }
 
+    private static MessageQueueReportService instance;
+
+    private static final EventType registerTransaction = new EventType("registerTransaction");
+    private static final EventType[] supportedEventTypes = new EventType[]{registerTransaction};
+
+    private final IEventSender sender;
+    private final ConcurrentHashMap<UUID, CompletableFuture<Event>> requests = new ConcurrentHashMap<>();
+
     public MessageQueueReportService(IEventSender sender) {
         this.sender = sender;
         instance = this;
     }
 
-    private static MessageQueueReportService instance;
-    private static final EventType registerTransaction = new EventType("registerTransaction");
-    private final IEventSender sender;
-    private final ConcurrentHashMap<UUID, CompletableFuture<Event>> requests = new ConcurrentHashMap<>();
+    @Override
+    public EventType[] getSupportedEventTypes() {
+        return supportedEventTypes;
+    }
 
     @Override
     public void registerTransaction(Payment payment, String customerId) {

@@ -18,9 +18,10 @@ public class StartUp {
         IEventReceiver service = new MessageQueueConnector(
                 merchantService,
                 customerService,
-                new EventExchangeFactory().getExchange().getSender()
+                new EventExchangeFactory().getExchange().createIEventSender()
         );
 
         new EventQueue(service).startListening();
     }
+        // new AccountServicePortAdapterFactory().getPortAdapter(); // Michaels linje fra i nat.
 }

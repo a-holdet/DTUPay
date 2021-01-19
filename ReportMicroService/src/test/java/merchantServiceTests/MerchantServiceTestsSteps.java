@@ -1,25 +1,12 @@
 package merchantServiceTests;
 
-import com.google.gson.Gson;
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
-import messagequeue.EventService;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
-import messaging.rmq.event.interfaces.IEventSender;
-import messaging.rmq.event.objects.Event;
-
-import java.util.UUID;
-
-import static org.junit.Assert.*;
-
 public class MerchantServiceTestsSteps {
-	/*EventService s;
+	/*ReportServicePortAdapter s;
 	Event event;
 	Merchant merchant;
 
 	public MerchantServiceTestsSteps() {
-		s = new EventService(new IEventSender() {
+		s = new ReportServicePortAdapter(new IEventSender() {
 			@Override
 			public void sendEvent(Event ev) {
 				event = ev;
