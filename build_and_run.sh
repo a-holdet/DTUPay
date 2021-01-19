@@ -37,7 +37,7 @@ fi
 # Build and install the libraries
 # abstracting away from using the
 # RabbitMq message queue
-pushd libraries/messaging-utilities
+pushd messaging-utilities
 mvn clean install
 popd
 
