@@ -26,8 +26,8 @@ public class MerchantPort {
         baseUrl = client.target("http://localhost:8042/merchantapi");
     }
 
-    public String registerMerchant(String firstName, String lastName, String cprNumber) throws IllegalArgumentException {
-        DTUPayUser merchant = new DTUPayUser(firstName, lastName, cprNumber);
+    public String registerMerchant(String firstName, String lastName, String cprNumber, String accountId) throws IllegalArgumentException {
+        DTUPayUser merchant = new DTUPayUser(firstName, lastName, cprNumber, accountId);
         Response response = baseUrl.path("merchants").request().post(Entity.entity(merchant, MediaType.APPLICATION_JSON));
 
         if (response.getStatus() == 422) {
@@ -68,9 +68,8 @@ public class MerchantPort {
             response.close();
             throw new IllegalArgumentException(errorMessage);
         }
+        return response.readEntity(UserReport.class);
 
-        return response.readEntity(new GenericType<>() {
-        });
     }
 
     public void close() {

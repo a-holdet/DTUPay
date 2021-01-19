@@ -35,4 +35,19 @@ public class Payment {
         return amount;
     }
 
+    public void setCustomerToken(UUID customerToken) {
+        this.customerToken = customerToken;
+    }
+
+    public void setMerchantId(String merchantId) {
+        this.merchantId = merchantId;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 }

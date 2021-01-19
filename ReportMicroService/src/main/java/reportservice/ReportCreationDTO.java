@@ -1,22 +1,39 @@
 package reportservice;
 
 public class ReportCreationDTO {
-    private final String customerId;
-    private final String startTime;
-    private final String endTime;
+    private String userId;
+    private String startTime;
+    private String endTime;
 
-    public ReportCreationDTO(String customerId, String startTime, String endTime) {
-        this.customerId = customerId;
+    public ReportCreationDTO(String userId, String startTime, String endTime) {
+        this.userId = userId;
         this.startTime = startTime;
         this.endTime = endTime;
     }
-    public String getCustomerId() {
-        return customerId;
+
+    public ReportCreationDTO(){
+
+    }
+
+    public String getUserId() {
+        return userId;
     }
     public String getStartTime() {
         return startTime;
     }
     public String getEndTime() {
         return endTime;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 }

@@ -25,9 +25,9 @@ public class CustomerPort {
         baseUrl = client.target("http://localhost:8042/customerapi");
     }
 
-    public String registerCustomer(String firstName, String lastName, String cprNumber)
+    public String registerCustomer(String firstName, String lastName, String cprNumber, String accountId)
             throws IllegalArgumentException {
-        DTUPayUser customer = new DTUPayUser(firstName, lastName, cprNumber);
+        DTUPayUser customer = new DTUPayUser(firstName, lastName, cprNumber, accountId);
         Response response = baseUrl.path("customers").request()
                 .post(Entity.entity(customer, MediaType.APPLICATION_JSON));
 

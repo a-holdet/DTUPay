@@ -64,7 +64,7 @@ public class CustomerRegistrationSteps {
     @And("the customer is registering with DTUPay")
     public void theCustomerIsRegisteringWithDTUPay() {
         try {
-            String customerId = customerPort.registerCustomer(customerHolder.getFirstName(), customerHolder.getLastName(), customerHolder.getCpr());
+            String customerId = customerPort.registerCustomer(customerHolder.getFirstName(), customerHolder.getLastName(), customerHolder.getCpr(), customerHolder.getAccountId());
             customerHolder.setId(customerId);
         } catch (IllegalArgumentException e) {
             exceptionHolder.setException(e);

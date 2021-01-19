@@ -25,6 +25,8 @@ public class MessageQueueAccountService extends EventServiceBase implements IAcc
 
     @Override
     public Merchant getMerchant(String merchantId) throws MerchantDoesNotExistException {
+        if (merchantId == null)
+            throw new MerchantDoesNotExistException("The merchant does not exists in DTUPay");
         Event response = sendRequestAndAwaitResponse(merchantId,getMerchant);
 
         if(response.isSuccessReponse())
@@ -44,6 +46,8 @@ public class MessageQueueAccountService extends EventServiceBase implements IAcc
 
     @Override
     public Customer getCustomer(String customerId) throws CustomerDoesNotExistException {
+        if (customerId == null)
+            throw new CustomerDoesNotExistException("The customer does not exists in DTUPay");
         Event response = sendRequestAndAwaitResponse(customerId,getCustomer);
         if(response.isSuccessReponse())
             return response.getPayloadAs(Customer.class);

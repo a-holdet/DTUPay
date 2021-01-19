@@ -117,7 +117,7 @@ public class MerchantRegistrationSteps {
 
     private void registerMerchantWithDTUPay(UserHolder merchantHolder) {
         String createdMerchantId = merchantPort.registerMerchant(merchantHolder.getFirstName(),
-                merchantHolder.getLastName(), merchantHolder.getCpr());
+                merchantHolder.getLastName(), merchantHolder.getCpr(), merchantHolder.getAccountId());
         merchantHolder.setId(createdMerchantId);
     }
 }

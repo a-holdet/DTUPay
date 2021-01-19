@@ -3,8 +3,6 @@ package reportservice;
 import DTO.*;
 
 import java.util.List;
-import accountservice.CustomerDoesNotExistException;
-import accountservice.MerchantDoesNotExistException;
 import com.google.gson.reflect.TypeToken;
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.interfaces.IEventSender;
@@ -41,20 +39,27 @@ public class MessageQueueReportService extends EventServiceBase implements IRepo
     @Override
     public UserReport generateReportForCustomer(String customerId, String startTime, String endTime) throws UserDoesNotExistsException {
         ReportCreationDTO reportCreationDTO = new ReportCreationDTO(customerId, startTime, endTime);
+        if (customerId == null)
+            throw new UserDoesNotExistsException("The customer does not exists in DTUPay");
         return generateReport(AccountType.CUSTOMER, reportCreationDTO);
     }
 
     @Override
     public UserReport generateReportForMerchant(String merchantId, String startTime, String endTime)
             throws UserDoesNotExistsException {
+        if (merchantId == null){
+            throw new UserDoesNotExistsException("The merchant does not exists in DTUPay");
+        }
         return generateReport(AccountType.MERCHANT, new ReportCreationDTO(merchantId, startTime, endTime));
     }
 
     private UserReport generateReport(AccountType accountType, ReportCreationDTO reportCreationDTO) throws UserDoesNotExistsException {
+
         var responseEvent = sendRequestAndAwaitResponse(reportCreationDTO, accountType.eventType);
 
-        if (responseEvent.isSuccessReponse())
+        if (responseEvent.isSuccessReponse()){
             return responseEvent.getPayloadAs(UserReport.class);
+        }
 
         throw new UserDoesNotExistsException(responseEvent.getErrorMessage());
     }
