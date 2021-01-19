@@ -8,6 +8,11 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import java.util.List;
 
+
+/***
+ * @Author Jakob Vestergaard Offersen, s163940
+ */
+
 public class DTUManagerPort {
 
     Client client;

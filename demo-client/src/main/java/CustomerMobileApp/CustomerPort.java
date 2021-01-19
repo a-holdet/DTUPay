@@ -16,6 +16,9 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.UUID;
 
+/***
+ * @Author Martin Hemmingsen, s141887
+ */
 public class CustomerPort {
     WebTarget baseUrl;
     Client client;

@@ -16,6 +16,13 @@ import java.util.UUID;
 
 import static org.junit.Assert.*;
 
+
+
+/***
+ * @Author Jakob Vestergaard Offersen, s163940
+ */
+
+
 public class ReportingSteps {
 
     // Adapters
@@ -143,16 +150,6 @@ public class ReportingSteps {
     }
 
     private void verifyUserReport(UserHolder userHolder, int amount, String productDescription, UUID token) {
-        System.out.println("Verify User Report");
-        System.out.println(amount);
-        System.out.println(productDescription);
-        System.out.println(token);
-        System.out.println(report.getUser());
-        System.out.println(report.getPayments().size());
-        for(Payment payment : report.getPayments())
-            System.out.println(payment.getDescription() + payment.getAmount() + " merchantid: " + payment.getMerchantId() + " token:./ "  + payment.getCustomerToken());
-
-        System.out.println(report.getPayments().size());
         // check merchant is correct
         assertEquals(userHolder.getFirstName(), report.getUser().getFirstName());
         assertEquals(userHolder.getLastName(), report.getUser().getLastName());

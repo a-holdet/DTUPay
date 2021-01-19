@@ -57,39 +57,13 @@ public class PaymentSteps {
     public void beforeScenario() {
         customerPort = new CustomerPort();
         merchantPort = new MerchantPort();
-
-        Account acc1 = null;
-        try {
-            acc1 = bankService.getAccountByCprNumber("290276-7777");
-            bankService.retireAccount(acc1.getId());
-        } catch (BankServiceException_Exception e) {}
-
-        Account acc2 = null;
-        try {
-            acc2 = bankService.getAccountByCprNumber("207082-0101");
-            bankService.retireAccount(acc2.getId());
-        } catch (BankServiceException_Exception e) {}
     }
 
     @After
     public void afterScenario() {
         customerPort.close();
         merchantPort.close();
-        Account acc1 = null;
-        try {
-            acc1 = bankService.getAccountByCprNumber("290276-7777");
-            bankService.retireAccount(acc1.getId());
-        } catch (BankServiceException_Exception e) {
 
-        }
-
-        Account acc2 = null;
-        try {
-            acc2 = bankService.getAccountByCprNumber("207082-0101");
-            bankService.retireAccount(acc2.getId());
-        } catch (BankServiceException_Exception e) {
-
-        }
         customerHolder.reset();
         merchantHolder.reset();
         otherMerchantHolder.reset();
@@ -149,7 +123,6 @@ public class PaymentSteps {
 
     @Then("the payment fails")
     public void thePaymentFails() {
-        System.out.println("XXXXX + " + successful);
         assertFalse(successful);
     }
 
@@ -171,7 +144,6 @@ public class PaymentSteps {
     }
 
     private void performPaymentUsing(UUID token, UserHolder merchantHolder, int amount, String productDescription) throws IllegalArgumentException, ForbiddenException {
-        // System.out.println("PERFORMING PAYMENT:" + merchantHolder.getId() + ". " + productDescription);
         merchantPort.transferMoneyFromTo(token, merchantHolder.getId(), BigDecimal.valueOf(amount),
         productDescription); // Make payment
     }

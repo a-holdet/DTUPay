@@ -17,6 +17,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/***
+ * @Author Benjamin Wrist Lam, s153486
+ */
+
 public class MerchantPort {
     Client client;
     WebTarget baseUrl;
