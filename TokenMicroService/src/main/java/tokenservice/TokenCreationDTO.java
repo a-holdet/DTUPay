@@ -1,10 +1,10 @@
-package tokenservice.tokenservice;
+package tokenservice;
 
-public class TokenCreation {
+public class TokenCreationDTO {
     private final String userId;
     private final int tokenAmount;
 
-    public TokenCreation(String userId, int tokenAmount) {
+    public TokenCreationDTO(String userId, int tokenAmount) {
         this.userId = userId;
         this.tokenAmount = tokenAmount;
     }

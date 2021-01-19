@@ -1,11 +1,7 @@
-package tokenservice.tokenservice;
+package tokenservice;
 
-import tokenservice.exceptions.CustomerNotFoundException;
-import tokenservice.interfaces.ICustomerService;
-import tokenservice.exceptions.IllegalTokenGrantingException;
-import tokenservice.exceptions.TokenDoesNotExistException;
-import tokenservice.interfaces.ITokenRepository;
-import tokenservice.interfaces.ITokenService;
+import accountservice.CustomerNotFoundException;
+import accountservice.ICustomerService;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,17 +25,20 @@ public class LocalTokenService implements ITokenService {
             throw new IllegalTokenGrantingException("Customer requested too many tokens");
         if (customerId == null || !customerService.customerExists(customerId))
             throw new CustomerNotFoundException("Customer must have a customer id to request tokens");
-        for (int i = 0; i < amount; i++) {
+
+        for (int i = 0; i < amount; i++)
             tokenRepository.add(UUID.randomUUID(), customerId);
-        }
+
         return readTokensForCustomer(customerId);
     }
 
+    /// Returns the id for the customer who owns the customer token. The token is also removed, so that the token cannot be re-used.
     @Override
     public String consumeToken(UUID customerToken) throws TokenDoesNotExistException {
         String customerId = tokenRepository.consumeToken(customerToken);
         if (customerId == null)
             throw new TokenDoesNotExistException("Token does not exist");
+
         return customerId;
     }
 

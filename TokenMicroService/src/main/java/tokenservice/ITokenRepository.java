@@ -1,4 +1,4 @@
-package tokenservice.interfaces;
+package tokenservice;
 
 import java.util.List;
 import java.util.UUID;

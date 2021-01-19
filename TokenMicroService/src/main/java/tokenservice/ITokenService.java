@@ -1,8 +1,6 @@
-package tokenservice.interfaces;
+package tokenservice;
 
-import tokenservice.exceptions.CustomerNotFoundException;
-import tokenservice.exceptions.IllegalTokenGrantingException;
-import tokenservice.exceptions.TokenDoesNotExistException;
+import accountservice.CustomerNotFoundException;
 
 import java.util.List;
 import java.util.UUID;

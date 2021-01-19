@@ -1,6 +1,6 @@
-package tokenservice.interfaces;
+package accountservice;
 
-import tokenservice.exceptions.CustomerNotFoundException;
+import accountservice.CustomerNotFoundException;
 
 public interface ICustomerService {
     boolean customerExists(String customerId) throws CustomerNotFoundException;

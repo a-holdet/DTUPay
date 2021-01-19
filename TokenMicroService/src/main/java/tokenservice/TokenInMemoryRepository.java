@@ -1,6 +1,4 @@
-package tokenservice.tokenservice;
-
-import tokenservice.interfaces.ITokenRepository;
+package tokenservice;
 
 import java.util.*;
 

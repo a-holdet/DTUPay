@@ -1,4 +1,4 @@
-package tokenservice.messagequeue;
+package messagequeue;
 
 import messaging.rmq.event.interfaces.IEventReceiver;
 import messaging.rmq.event.objects.Event;
