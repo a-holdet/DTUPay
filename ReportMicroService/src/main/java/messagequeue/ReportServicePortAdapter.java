@@ -117,7 +117,7 @@ public class ReportServicePortAdapter implements IEventReceiver {
 			throw new Error(e);
 		}
 	}
-
+	// TODO: Should not use threads any longer
 	@Override
 	public void receiveEvent(Event event) {
 		System.out.println("--------------------------------------------------------");

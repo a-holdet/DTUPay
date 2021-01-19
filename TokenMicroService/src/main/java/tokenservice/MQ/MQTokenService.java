@@ -37,7 +37,7 @@ public class MQTokenService implements IEventReceiver {
         if (event.getEventType().equals(consumeToken.getName())) {
             consumeToken(event);
         } else if (event.getEventType().equals(createTokens.getName())) {
-            new Thread(() -> createTokensForCustomer(event)).start();
+            createTokensForCustomer(event);
         }
     }
 

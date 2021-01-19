@@ -115,8 +115,8 @@ public class ReportingSteps {
         transactions.add(t2);
     }
 
-    @When("when the requester requests a report in the interval between {string} and {string}")
-    public void whenTheRequesterRequestsAReportInTheIntervalBetweenAnd(String start, String end) {
+    @When("the requester requests a report in the interval between {string} and {string}")
+    public void theRequesterRequestsAReportInTheIntervalBetweenAnd(String start, String end) {
         this.start = LocalDateTime.parse(start);
         this.end = LocalDateTime.parse(end);
         if(merchantId.equals("merchantId")){
@@ -135,8 +135,8 @@ public class ReportingSteps {
         }
     }
 
-    @When("when the requester requests a report")
-    public void whenTheRequesterRequestsAReport() {
+    @When("the requester requests a report")
+    public void theRequesterRequestsAReport() {
         if(merchantId.equals("merchantId")){
             try {
                 userReport = reportService.generateReportForCustomer(customerId,null,null);

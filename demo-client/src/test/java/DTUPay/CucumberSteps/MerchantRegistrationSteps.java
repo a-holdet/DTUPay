@@ -57,6 +57,12 @@ public class MerchantRegistrationSteps {
         otherMerchantHolder.reset();
     }
 
+    @Given("the merchant has no bank account")
+    public void theMerchantHasNoBankAccount() {
+        merchantHolder.setMerchantBasics();
+        // Do not create account
+    }
+
     @And("the merchant has a bank account")
     public void theMerchantHasABankAccount() throws BankServiceException_Exception {
         merchantHolder.setMerchantBasics();
@@ -66,12 +72,6 @@ public class MerchantRegistrationSteps {
         merchantBank.setCprNumber(merchantHolder.getCpr());
 
         merchantHolder.setAccountId(bankService.createAccountWithBalance(merchantBank, new BigDecimal(2000)));
-    }
-
-    @Given("the merchant has no bank account")
-    public void theMerchantHasNoBankAccount() {
-        merchantHolder.setMerchantBasics();
-        // Do not create account
     }
 
     @And("another merchant has a bank account")
@@ -105,12 +105,6 @@ public class MerchantRegistrationSteps {
         registerMerchantWithDTUPay(otherMerchantHolder);
     }
 
-    private void registerMerchantWithDTUPay(UserHolder merchantHolder) {
-        String createdMerchantId = merchantAdapter.registerMerchant(merchantHolder.getFirstName(),
-        merchantHolder.getLastName(), merchantHolder.getCpr(), merchantHolder.getAccountId());
-        merchantHolder.setId(createdMerchantId);
-    }
-
     @Then("the merchant registration is successful")
     public void theMerchantRegistrationIsSuccessful() {
         assertNotNull(merchantHolder.getId());
@@ -119,5 +113,11 @@ public class MerchantRegistrationSteps {
     @Then("the merchant registration is not successful")
     public void theMerchantRegistrationIsNotSuccessful() {
         assertNull(merchantHolder.getId());
+    }
+
+    private void registerMerchantWithDTUPay(UserHolder merchantHolder) {
+        String createdMerchantId = merchantAdapter.registerMerchant(merchantHolder.getFirstName(),
+                merchantHolder.getLastName(), merchantHolder.getCpr(), merchantHolder.getAccountId());
+        merchantHolder.setId(createdMerchantId);
     }
 }
