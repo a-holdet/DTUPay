@@ -70,7 +70,7 @@ public class MessageQueueReportService implements IReportService, IEventReceiver
         System.out.println("Event received! : " + event);
 
         if (event.getEventType().equals(registerTransaction.getName())) {
-            CompletableFuture<Event> cf = requests.get(event.getUUID());
+            CompletableFuture<Event> cf = requests.remove(event.getUUID());
             if (cf != null) cf.complete(event);
         }
     }

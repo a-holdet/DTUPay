@@ -15,31 +15,10 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ReportingSteps {
-
-
-
-
-    private static class MerchantServiceMock implements IMerchantService {
-
-        private Merchant merchant;
-
-        @Override
-        public String registerMerchant(Merchant merchant) throws IllegalArgumentException {
-            this.merchant = merchant;
-            String id = "Mock Merchant Id";
-            merchant.id = id;
-            return id;
-        }
-
-        @Override
-        public Merchant getMerchant(String merchantId) throws MerchantDoesNotExistException {
-            return merchant;
-        }
-    }
-
-    private static class CustomerServiceMock implements ICustomerService {
+    private static class AccountServiceMock implements IAccountService {
 
         private Customer customer;
+        private Merchant merchant;
 
         @Override
         public String registerCustomer(Customer customer) throws IllegalArgumentException {
@@ -58,13 +37,25 @@ public class ReportingSteps {
         public Customer getCustomer(String customerId) throws CustomerDoesNotExistException {
             return customer;
         }
+
+        @Override
+        public String registerMerchant(Merchant merchant) throws IllegalArgumentException {
+            this.merchant = merchant;
+            String id = "Mock Merchant Id";
+            merchant.id = id;
+            return id;
+        }
+
+        @Override
+        public Merchant getMerchant(String merchantId) throws MerchantDoesNotExistException {
+            return merchant;
+        }
     }
 
     String merchantId = "merchantId";
     String descriptionT1 = "Old Payment";
     String descriptionT2 = "NEW Payment";
-    ICustomerService customerService = new CustomerServiceMock();
-    IMerchantService merchantService = new MerchantServiceMock();
+    IAccountService accountService = new AccountServiceMock();
     IReportService reportService;
     ITransactionsRepository transactionsRepository;
     String customerId;
@@ -75,7 +66,7 @@ public class ReportingSteps {
 
     public ReportingSteps() {
         transactionsRepository = new TransactionsInMemoryRepository();
-        reportService = new ReportService(transactionsRepository, merchantService, customerService);
+        reportService = new ReportService(transactionsRepository, accountService);
     }
 
     @Given("a customer that is registered")
@@ -85,7 +76,7 @@ public class ReportingSteps {
         customer.firstName = "Joe";
         customer.lastName = "Exotic";
         customer.cprNumber = "121294-0014";
-        customerId = customer.id = customerService.registerCustomer(customer);
+        customerId = customer.id = accountService.registerCustomer(customer);
     }
 
 

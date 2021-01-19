@@ -27,7 +27,7 @@ public class MessageQueueTokenService extends EventServiceBase implements IEvent
 
     @Override
     public List<UUID> createTokens(TokenCreationDTO tokenCreationDTO) throws IllegalTokenGrantingException {
-        Event responseEvent = sendRequestAndAwaitReponse(tokenCreationDTO, createTokens);
+        Event responseEvent = sendRequestAndAwaitResponse(tokenCreationDTO, createTokens);
 
         if (responseEvent.isSuccessReponse())
             return responseEvent.getPayloadAs(new TypeToken<>() {});

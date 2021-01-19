@@ -28,7 +28,7 @@ public class MessageQueueAccountService extends EventServiceBase implements IAcc
 
     @Override
     public String registerMerchant(Merchant merchant) throws IllegalArgumentException {
-        Event response = sendRequestAndAwaitReponse(merchant,registerMerchant);
+        Event response = sendRequestAndAwaitResponse(merchant,registerMerchant);
         if(response.isSuccessReponse())
             return response.getPayloadAs(String.class);
         else
@@ -37,7 +37,7 @@ public class MessageQueueAccountService extends EventServiceBase implements IAcc
 
     @Override
     public Merchant getMerchant(String merchantId) throws MerchantDoesNotExistException {
-        Event response = sendRequestAndAwaitReponse(merchantId,getMerchant);
+        Event response = sendRequestAndAwaitResponse(merchantId,getMerchant);
         if(response.isSuccessReponse())
             return response.getPayloadAs(Merchant.class);
         else
@@ -46,7 +46,7 @@ public class MessageQueueAccountService extends EventServiceBase implements IAcc
 
     @Override
     public String registerCustomer(Customer customer) throws IllegalArgumentException {
-        Event response = sendRequestAndAwaitReponse(customer,registerCustomer);
+        Event response = sendRequestAndAwaitResponse(customer,registerCustomer);
         if(response.isSuccessReponse())
             return response.getPayloadAs(String.class);
         else
@@ -55,7 +55,7 @@ public class MessageQueueAccountService extends EventServiceBase implements IAcc
 
     @Override
     public boolean customerExists(String customerId)  {
-        Event response = sendRequestAndAwaitReponse(customerId,customerExists);
+        Event response = sendRequestAndAwaitResponse(customerId,customerExists);
         if(response.isSuccessReponse())
             return response.getPayloadAs(Boolean.class);
         else
@@ -65,7 +65,7 @@ public class MessageQueueAccountService extends EventServiceBase implements IAcc
     @Override
     public Customer getCustomer(String customerId) throws CustomerDoesNotExistException {
         System.out.println("Creating GetCustomer event");
-        Event response = sendRequestAndAwaitReponse(customerId,getCustomer);
+        Event response = sendRequestAndAwaitResponse(customerId,getCustomer);
         if(response.isSuccessReponse())
             return response.getPayloadAs(Customer.class);
         else

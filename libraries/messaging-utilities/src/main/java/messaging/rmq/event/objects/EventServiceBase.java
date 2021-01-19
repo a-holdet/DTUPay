@@ -18,7 +18,7 @@ public abstract class EventServiceBase implements IEventReceiver {
         this.sender = sender;
     }
 
-    protected Event sendRequestAndAwaitReponse(Object payload, EventType eventType){
+    protected Event sendRequestAndAwaitResponse(Object payload, EventType eventType){
         Event request = new Event(eventType.getName(), new Object[] {payload}, UUID.randomUUID());
         requests.put(request.getUUID(), new CompletableFuture<>());
         this.sender.sendEvent(request);
@@ -31,7 +31,7 @@ public abstract class EventServiceBase implements IEventReceiver {
         System.out.println("Event received! : " + event);
 
         if (Arrays.stream(this.getSupportedEventTypes()).anyMatch(eventType -> eventType.matches(event.getEventType()))) {
-            CompletableFuture<Event> cf = requests.get(event.getUUID());
+            CompletableFuture<Event> cf = requests.remove(event.getUUID());
             if (cf != null)
                 cf.complete(event);
         }
