@@ -6,6 +6,9 @@ public class TokenRequestObject {
 
     public TokenRequestObject() {}
 
+    public TokenRequestObject(String customerId, int amount) {
+    }
+
     public void setUserId(String userId) {
         this.userId = userId;
     }

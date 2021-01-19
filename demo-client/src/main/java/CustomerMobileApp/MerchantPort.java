@@ -17,21 +17,21 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class MerchantAdapter {
+public class MerchantPort {
     Client client;
     WebTarget baseUrl;
 
-    public MerchantAdapter(){
+    public MerchantPort() {
         client = ClientBuilder.newClient();
         baseUrl = client.target("http://localhost:8042/merchantapi");
     }
 
-    public String registerMerchant(String firstName, String lastName, String cprNumber, String merchantAccountId) throws IllegalArgumentException{
-        DTUPayUser merchant = new DTUPayUser(firstName, lastName, cprNumber, merchantAccountId);
+    public String registerMerchant(String firstName, String lastName, String cprNumber, String accountId) throws IllegalArgumentException {
+        DTUPayUser merchant = new DTUPayUser(firstName, lastName, cprNumber, accountId);
         Response response = baseUrl.path("merchants").request().post(Entity.entity(merchant, MediaType.APPLICATION_JSON));
 
-        if(response.getStatus()==422){
-            String errorMessage = response.readEntity(String.class); //error message is in payload
+        if (response.getStatus() == 422) {
+            String errorMessage = response.readEntity(String.class);
             response.close();
             throw new IllegalArgumentException(errorMessage);
         }
@@ -42,18 +42,14 @@ public class MerchantAdapter {
     }
 
     public void transferMoneyFromTo(UUID selectedToken, String merchantId, BigDecimal amount, String description) throws IllegalArgumentException, ForbiddenException {
-        Payment payment = new Payment();
-        payment.amount = amount;
-        payment.customerToken = selectedToken;
-        payment.merchantId = merchantId;
-        payment.description = description;
+        Payment payment = new Payment(selectedToken, merchantId, description, amount);
 
         Response response = baseUrl.path("payments").request().post(Entity.entity(payment, MediaType.APPLICATION_JSON));
-        if(response.getStatus()==422){
-            String errorMessage = response.readEntity(String.class); //error message is in payload
+        if (response.getStatus() == 422) {
+            String errorMessage = response.readEntity(String.class);
             response.close();
             throw new IllegalArgumentException(errorMessage);
-        } else if (response.getStatus() == 403){
+        } else if (response.getStatus() == 403) {
             String errorMessage = response.readEntity(String.class);
             response.close();
             throw new ForbiddenException(errorMessage);
@@ -62,25 +58,20 @@ public class MerchantAdapter {
     }
 
     public UserReport getMerchantReport(String merchantId, LocalDateTime start, LocalDateTime end) {
-        if(start== null) start= LocalDateTime.MIN;
-        if(end==null) end = LocalDateTime.MAX;
-        Response response = baseUrl.path("reports").queryParam("id", merchantId).queryParam("start",start
-        .toString()).queryParam("end",end.toString()).request().get(new GenericType<>() {
+        if (start == null) start = LocalDateTime.MIN;
+        if (end == null) end = LocalDateTime.MAX;
+        Response response = baseUrl.path("reports").queryParam("id", merchantId).queryParam("start", start
+                .toString()).queryParam("end", end.toString()).request().get(new GenericType<>() {
         });
-        if(response.getStatus() == 422){
+
+
+        if (response.getStatus() == 422) {
             String errorMessage = response.readEntity(String.class); // error message is in payload
             response.close();
             throw new IllegalArgumentException(errorMessage);
         }
-
-        UserReport report  = response.readEntity(new GenericType<>() {});
-        return report;
-
-        /*return baseUrl
-                .path("reports")
-                .queryParam("id", merchantId)
-                .request()
-                .get(new GenericType<>() {});*/
+        UserReport userReport = response.readEntity(UserReport.class);
+        return userReport;
     }
 
     public void close() {

@@ -1,6 +1,6 @@
 package DTUPay.CucumberSteps;
 
-import CustomerMobileApp.CustomerAdapter;
+import CustomerMobileApp.CustomerPort;
 import DTUPay.Holders.CustomerHolder;
 import DTUPay.Holders.ExceptionHolder;
 import DTUPay.Holders.TokenHolder;
@@ -22,7 +22,7 @@ public class TokenSteps {
 
     //Adapters
     BankService bankService;
-    CustomerAdapter customerAdapter;
+    CustomerPort customerPort;
 
     //Holders
     private final TokenHolder tokenHolder;
@@ -37,13 +37,13 @@ public class TokenSteps {
 
     @Before
     public void setup() {
-        this.customerAdapter = new CustomerAdapter();
+        this.customerPort = new CustomerPort();
         this.bankService = new BankServiceService().getBankServicePort();
     }
 
     @After
     public void teardown() {
-        this.customerAdapter.close();
+        this.customerPort.close();
         if (customerHolder.getId() != null) {
             tokenHolder.reset();
         }
@@ -57,7 +57,7 @@ public class TokenSteps {
     @When("the customer requests {int} tokens")
     public void theCustomerRequestsTokens(int tokenAmount) {
         try {
-            List<UUID> uuids = customerAdapter.createTokensForCustomer(customerHolder.getId(), tokenAmount);
+            List<UUID> uuids = customerPort.createTokensForCustomer(customerHolder.getId(), tokenAmount);
             tokenHolder.setTokens(uuids);
         } catch (Exception e) {
             this.exceptionHolder.setException(e);
