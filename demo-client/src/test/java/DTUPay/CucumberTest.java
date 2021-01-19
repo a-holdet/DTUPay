@@ -10,4 +10,5 @@ For example, the class name CucumberTests (Test with an s) will be ignored by Ma
 
 @Cucumber
 public class CucumberTest {
+
 }
