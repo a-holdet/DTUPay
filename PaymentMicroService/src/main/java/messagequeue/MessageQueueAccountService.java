@@ -59,7 +59,8 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
     private <S> Result<S, String> handle(Object payload, EventType eventType, Class<S> successClass) throws Error {
         UUID requestID = UUID.randomUUID();
         Event request = new Event(eventType.getName(), new Object[] {payload}, requestID);
-        requests.put(requestID, new CompletableFuture<>());
+        var waitForResponse = new CompletableFuture<Event>();
+        requests.put(requestID, waitForResponse);
 
         try {
             this.sender.sendEvent(request);
@@ -67,7 +68,7 @@ public class MessageQueueAccountService implements IMerchantService, ICustomerSe
             throw new Error(e);
         }
 
-        Event response = requests.get(request.getUUID()).join();
+        Event response = waitForResponse.join();
         String type = response.getEventType();
 
         if (type.equals(eventType.succeeded())) {
