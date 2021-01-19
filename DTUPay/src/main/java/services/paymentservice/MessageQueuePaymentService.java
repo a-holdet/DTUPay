@@ -25,10 +25,7 @@ public class MessageQueuePaymentService extends MessageQueueBase implements IPay
 
     @Override
     public void registerPayment(Payment payment) throws TokenDoesNotExistException, MerchantDoesNotExistException, NegativeAmountException, BankException, CustomerDoesNotExistException {
-        System.out.println("REGISTER PAYMENT: ");
         Event response = sendRequestAndAwaitResponse(payment, registerPayment);
-
-        System.out.println("REGISTER PAYMENT2: ");
         if (response.isFailureReponse()) {
             String exceptionType = response.getErrorType();
             String exceptionMessage = response.getErrorMessage();

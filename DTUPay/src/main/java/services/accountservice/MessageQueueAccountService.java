@@ -52,22 +52,4 @@ public class MessageQueueAccountService extends MessageQueueBase implements IAcc
         else
             throw new IllegalArgumentException(response.getErrorMessage());
     }
-
-    @Override
-    public boolean customerExists(String customerId)  {
-        Event response = sendRequestAndAwaitResponse(customerId,customerExists);
-        if(response.isSuccessReponse())
-            return response.getPayloadAs(Boolean.class);
-        else
-            throw new IllegalArgumentException(response.getErrorMessage());
-    }
-
-    @Override
-    public Customer getCustomer(String customerId) throws CustomerDoesNotExistException {
-        Event response = sendRequestAndAwaitResponse(customerId,getCustomer);
-        if(response.isSuccessReponse())
-            return response.getPayloadAs(Customer.class);
-        else
-            throw new CustomerDoesNotExistException(response.getErrorMessage());
-    }
 }
