@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/***
+ * @Author Sebastian Arcos Specht, s164394
+ */
+
 public class EventPortAdapter implements IEventReceiver {
 
 	private ConcurrentHashMap<String, List<IEventReceiver>> eventTypeMapper = new ConcurrentHashMap<>();

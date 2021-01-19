@@ -8,6 +8,10 @@ import tokenservice.ITokenRepository;
 import tokenservice.LocalTokenService;
 import tokenservice.TokenInMemoryRepository;
 
+/***
+ * @Author Christian Dan Hjelmslund, s164412
+ */
+
 public class StartUp {
     public static void main(String[] args) {
         IEventSender eventSender1 = new EventExchangeFactory().getExchange().createIEventSender();

@@ -7,10 +7,6 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import messagequeue.MessageQueueConnector;
 import messaging.rmq.event.objects.Event;
-import tokenservice.ITokenRepository;
-import tokenservice.ITokenService;
-import tokenservice.LocalTokenService;
-import tokenservice.TokenInMemoryRepository;
 
 import java.util.List;
 import java.util.UUID;

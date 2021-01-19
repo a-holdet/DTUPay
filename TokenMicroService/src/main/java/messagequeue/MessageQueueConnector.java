@@ -13,6 +13,10 @@ import tokenservice.TokenCreationDTO;
 import java.util.List;
 import java.util.UUID;
 
+/***
+ * @Author Christian Dan Hjelmslund, s164412
+ */
+
 public class MessageQueueConnector implements IEventReceiver {
 
     private final IEventSender sender;

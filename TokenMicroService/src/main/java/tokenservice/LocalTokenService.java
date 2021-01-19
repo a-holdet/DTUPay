@@ -6,6 +6,10 @@ import accountservice.ICustomerService;
 import java.util.List;
 import java.util.UUID;
 
+/***
+ * @Author Sebastian Arcos Specht, s164394
+ */
+
 public class LocalTokenService implements ITokenService {
     private final ITokenRepository tokenRepository;
     private final ICustomerService customerService;
